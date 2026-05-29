@@ -38,6 +38,14 @@ The project should produce:
 - `outputs/charts/transfer_quality_distribution.png`
 - `outputs/charts/captaincy_delta.png`
 - `outputs/charts/rule_confidence_summary.png`
+- `outputs/tables/weekly_transfer_candidate_shortlist.csv`
+- `outputs/tables/weekly_sell_candidate_review.csv`
+- `outputs/tables/weekly_transfer_package_review.csv`
+- `outputs/tables/weekly_captaincy_decision.csv`
+- `outputs/tables/weekly_decision_pack_summary.csv`
+- `outputs/charts/weekly_candidate_score_breakdown.png`
+- `outputs/charts/weekly_hit_payoff_curve.png`
+- `outputs/charts/weekly_captaincy_score_breakdown.png`
 
 ## Epics
 
@@ -81,6 +89,10 @@ Goal: Test candidate rules using leakage-safe historical features and future out
 
 Goal: Produce final summary, charts, tables, and next-season rulebook.
 
+### Epic 11: Weekly Decision System
+
+Goal: Convert the retrospective evidence into a reusable weekly decision system that narrows transfer candidates, reviews sell candidates, evaluates hit packages, ranks captaincy options, and produces a practical weekly decision pack for manager `816200`.
+
 ## Build order
 
 Work through the epics in order.
@@ -100,3 +112,4 @@ If a story is blocked, update `STATUS.md` and continue with the next unblocked s
 | End of Epic 4 | Did manager fetches work without too many failures? |
 | End of Epic 7 | Are decision labels reasonable? |
 | End of Epic 9 | Are rules useful or just obvious? |
+| End of Epic 11 | Is the weekly decision system practical, conservative about hits, and free from hindsight leakage? |

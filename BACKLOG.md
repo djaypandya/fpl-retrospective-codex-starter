@@ -1651,7 +1651,7 @@ As an FPL manager, I want to know my biggest leaks, so that I can focus on the f
 
 ## Story 10.2: Create final executive summary
 
-Status: In Review  
+Status: Done  
 Epic: Epic 10  
 Sprint: Sprint 10  
 Size: M  
@@ -1691,5 +1691,515 @@ As an FPL manager, I want the notebook to end with a written summary, so that th
 ### Definition of done
 
 - Final report section exists.
+- Checks pass.
+- Board and status updated.
+
+---
+
+# Epic 11: Weekly Decision System
+
+## Story 11.1: Create weekly decision-system skeleton
+
+Status: Done  
+Epic: Epic 11  
+Sprint: Sprint 11  
+Size: S  
+Priority: High  
+Depends on: Story 10.2 accepted as Done  
+Human review: Required
+
+### User story
+
+As a manager, I want one function that orchestrates the weekly decision pack, so that I can call it for a target gameweek without manually stitching together tables.
+
+### Acceptance criteria
+
+- Creates `src/fpl_retro/weekly_decision_system.py`.
+- Adds a public function `build_weekly_decision_pack(...)`.
+- Function arguments include `target_gw`, `manager_id=816200`, `free_transfers=1`, `bank=0.0`, and optional dataframes or file paths.
+- Returns a dictionary of DataFrames.
+- Adds clear docstrings.
+- Adds validation that required inputs exist.
+
+### Tasks
+
+- [x] Inspect existing processed output names and schemas.
+- [x] Create `weekly_decision_system.py`.
+- [x] Add small helper `_require_columns`.
+- [x] Add small helper `_safe_numeric`.
+- [x] Add `build_weekly_decision_pack` stub that wires the later outputs.
+- [x] Add placeholder return keys for candidate shortlist, sell review, package review, captaincy decision, and summary.
+- [x] Add notebook section `## 11 Weekly Decision System`.
+- [x] Add smoke test with empty or minimal placeholder data.
+
+### Checks
+
+- [x] Module imports successfully.
+- [x] `build_weekly_decision_pack` exists.
+- [x] Function returns the expected dictionary keys.
+- [x] Notebook section exists.
+
+### Definition of done
+
+- Skeleton exists.
+- No retrospective functionality is broken.
+- Board and status updated.
+
+---
+
+## Story 11.2: Build current-squad context for a target gameweek
+
+Status: Done  
+Epic: Epic 11  
+Sprint: Sprint 11  
+Size: M  
+Priority: High  
+Depends on: Story 11.1, Story 6.2  
+Human review: Required
+
+### User story
+
+As a manager, I want the system to understand my current squad for a target gameweek, so that transfer and captaincy decisions are grounded in the actual players I own.
+
+### Acceptance criteria
+
+- Builds a current squad table for `manager_id` and `target_gw`.
+- Uses `my_squad_gameweek.csv` or equivalent reconstructed squad data.
+- Includes starter/bench status, squad position, player price, player team, player position, prior player metrics, team strength, and fixture outlook.
+- Adds `is_likely_starter`, `squad_role`, `price_slot`, and `current_squad_priority_score`.
+- Does not use current gameweek outcome points.
+
+### Tasks
+
+- [x] Load or accept squad dataframe.
+- [x] Filter to `manager_id` and `target_gw`.
+- [x] Validate one squad of 15 players where data exists.
+- [x] Add current squad role fields.
+- [x] Add pre-GW score components.
+- [x] Return `current_squad_context` internally.
+
+### Checks
+
+- [x] Exactly one row per player in the squad.
+- [x] No current GW outcome is used as a feature.
+- [x] Captain and vice-captain fields are preserved if present.
+
+### Definition of done
+
+- Current-squad context is available in the weekly decision pack.
+- Checks pass.
+- Board and status updated.
+
+---
+
+## Story 11.3: Build transfer candidate shortlist
+
+Status: Done  
+Epic: Epic 11  
+Sprint: Sprint 11  
+Size: M  
+Priority: High  
+Depends on: Story 11.1, Story 9.1  
+Human review: Required
+
+### User story
+
+As a manager, I want a systematic way to narrow the full player pool into transfer candidates, so that I do not chase random players based on one haul or social media pressure.
+
+### Acceptance criteria
+
+- Starts from `candidate_rule_features.csv` or equivalent dataframe.
+- Filters to `target_gw`.
+- Excludes players already owned unless `include_owned=True` is passed.
+- Excludes players with weak minutes/security unless explicitly flagged as punts.
+- Scores players using role security, position-relevant route-to-points, fixture outlook, team strength, price/value, and top-sample ownership/adoption signal where available.
+- Produces a ranked shortlist by position and overall.
+- Adds explanation fields.
+
+### Tasks
+
+- [x] Load candidate rule features.
+- [x] Filter to target GW.
+- [x] Exclude current squad players.
+- [x] Add candidate score components.
+- [x] Add total candidate score.
+- [x] Add candidate tier: `strong`, `viable`, `punt`, `avoid`.
+- [x] Add explanation text.
+- [x] Save `weekly_transfer_candidate_shortlist.csv`.
+
+### Checks
+
+- [x] Output includes candidates from multiple positions where available.
+- [x] Owned players are excluded by default.
+- [x] Score components are bounded and interpretable.
+- [x] No future outcome columns are used in candidate score.
+
+### Definition of done
+
+- Weekly transfer candidate shortlist exists.
+- Checks pass.
+- Board and status updated.
+
+---
+
+## Story 12.1: Build sell candidate review
+
+Status: In Review  
+Epic: Epic 11  
+Sprint: Sprint 12  
+Size: M  
+Priority: High  
+Depends on: Story 11.2  
+Human review: Required
+
+### User story
+
+As a manager, I want to know which player in my squad is most replaceable, so that I avoid selling good assets after one bad score.
+
+### Acceptance criteria
+
+- Reviews all current squad players.
+- Scores each player as `sell`, `hold`, or `monitor`.
+- Uses weak fixture outlook, weak role security, weak position-relevant route score, poor team strength, bad value for price slot, opportunity cost, and squad role.
+- Explains why a player is or is not a sell.
+
+### Tasks
+
+- [x] Start from current squad context.
+- [x] Add sell-risk score components.
+- [x] Add opportunity-cost comparison to candidate pool.
+- [x] Add recommendation labels.
+- [x] Save `weekly_sell_candidate_review.csv`.
+
+### Implementation task breakdown
+
+- [x] Confirm Sprint 12 is the next dependency-valid sprint.
+- [x] Move Story 12.1 to In Progress in board/status files.
+- [x] Add reusable sell candidate review logic to `weekly_decision_system.py`.
+- [x] Integrate the sell review into `build_weekly_decision_pack`.
+- [x] Add notebook smoke coverage for the sell review output.
+- [x] Run validation checks for row count, labels, explanations, confidence, and leakage.
+- [x] Update board/status files after checks.
+
+### Checks
+
+- [x] All current squad players appear.
+- [x] Strong players with bad one-week outcomes are not automatically sell candidates.
+- [x] Output contains explanation and confidence columns.
+
+### Definition of done
+
+- Weekly sell candidate review exists.
+- Checks pass.
+- Board and status updated.
+
+---
+
+## Story 12.2: Match transfer candidates to sell candidates
+
+Status: Backlog  
+Epic: Epic 11  
+Sprint: Sprint 12  
+Size: M  
+Priority: High  
+Depends on: Story 11.3, Story 12.1  
+Human review: Required
+
+### User story
+
+As a manager, I want each transfer candidate compared against realistic players to sell, so that I can identify actual upgrades rather than attractive players with no route into my team.
+
+### Acceptance criteria
+
+- Builds possible transfer pairs from sell candidates and buy candidates.
+- Respects position constraints unless a broader multi-transfer package changes formation or structure.
+- Respects affordability using bank and sell price where available.
+- Calculates upgrade score from buy-sell score, fixture swing, route-to-points, role security, team strength, and value impact.
+- Adds recommendation label.
+
+### Tasks
+
+- [ ] Build valid single-transfer pairs.
+- [ ] Check affordability.
+- [ ] Calculate upgrade components.
+- [ ] Rank upgrades.
+- [ ] Save candidate pair table.
+
+### Checks
+
+- [ ] No impossible position swaps are recommended for single transfers.
+- [ ] Unaffordable transfers are flagged or excluded.
+- [ ] Upgrade score is interpretable.
+
+### Definition of done
+
+- Weekly transfer pair review exists.
+- Checks pass.
+- Board and status updated.
+
+---
+
+## Story 12.3: Build transfer package and hit justification engine
+
+Status: Backlog  
+Epic: Epic 11  
+Sprint: Sprint 12  
+Size: M  
+Priority: High  
+Depends on: Story 12.2, Story 9.3  
+Human review: Required
+
+### User story
+
+As a manager, I want to know whether a `-4`, `-8`, or `-12` is justified, so that I only spend points when the package-level expected benefit is strong enough.
+
+### Acceptance criteria
+
+- Builds packages for no transfer, one transfer, two transfers, three transfers, and four transfers.
+- Calculates hit cost based on `free_transfers`.
+- Evaluates package-level benefit, not just isolated transfer legs.
+- Uses 1GW, 3GW, and 5GW expected payoff proxies.
+- Incorporates evidence from historical transfer package rules where available.
+- Adds hit recommendation, confidence, and explanation.
+
+### Tasks
+
+- [ ] Generate feasible packages from top transfer pairs.
+- [ ] Avoid duplicate sold or bought players within a package.
+- [ ] Estimate total package upgrade score.
+- [ ] Calculate hit cost.
+- [ ] Calculate net package value after hit.
+- [ ] Add historical evidence modifier from transfer rule candidates if available.
+- [ ] Save `weekly_transfer_package_review.csv`.
+
+### Checks
+
+- [ ] Package hit cost is correct for free transfer count.
+- [ ] No package has duplicate bought or sold players.
+- [ ] Package-level score is not just sum of individual rows without hit cost.
+- [ ] Output includes `-4`, `-8`, and `-12` scenarios where feasible.
+
+### Definition of done
+
+- Weekly transfer package review and hit payoff chart exist.
+- Checks pass.
+- Board and status updated.
+
+---
+
+## Story 13.1: Build weekly captaincy decision table
+
+Status: Backlog  
+Epic: Epic 11  
+Sprint: Sprint 13  
+Size: M  
+Priority: High  
+Depends on: Story 11.2, Story 7.4  
+Human review: Required
+
+### User story
+
+As a manager, I want a weekly captaincy ranking, so that I can choose captain and vice captain using a repeatable process.
+
+### Acceptance criteria
+
+- Scores only current squad players.
+- Prioritises likely starters.
+- Uses ceiling, route-to-points, minutes security, fixture quality, team attack strength, and sample captaincy behaviour where available.
+- Recommends captain and vice captain.
+- Labels recommendation type as `safe/template`, `balanced`, `aggressive/differential`, or `avoid`.
+- Explains each candidate.
+
+### Tasks
+
+- [ ] Reuse or adapt captaincy scoring from `evaluation.py`.
+- [ ] Add top-sample captaincy signal if available.
+- [ ] Rank current squad players.
+- [ ] Select captain and vice captain.
+- [ ] Save `weekly_captaincy_decision.csv`.
+
+### Checks
+
+- [ ] Only owned players are included.
+- [ ] Non-playing or low-minutes players are penalised.
+- [ ] Recommended captain and vice captain are different players.
+- [ ] No current-GW outcome is used.
+
+### Definition of done
+
+- Weekly captaincy decision table and chart exist.
+- Checks pass.
+- Board and status updated.
+
+---
+
+## Story 13.2: Create final weekly decision pack summary
+
+Status: Backlog  
+Epic: Epic 11  
+Sprint: Sprint 13  
+Size: M  
+Priority: High  
+Depends on: Story 12.3, Story 13.1  
+Human review: Required
+
+### User story
+
+As a manager, I want a concise weekly decision summary, so that I can take action without reading every table.
+
+### Acceptance criteria
+
+- Produces one summary table with target GW, recommended action, best free-transfer option, hit justification, max hit level justified, captain and vice captain, top buy and sell candidates, main risks, and confidence.
+- Adds readable notebook output.
+- Saves summary table.
+
+### Tasks
+
+- [ ] Combine outputs from all weekly decision components.
+- [ ] Choose best action pathway.
+- [ ] Add summary narrative fields.
+- [ ] Save summary table.
+- [ ] Add notebook display section.
+
+### Checks
+
+- [ ] Summary matches underlying tables.
+- [ ] Hit recommendation matches package review.
+- [ ] Captain recommendation matches captaincy decision table.
+- [ ] Output CSV exists.
+
+### Definition of done
+
+- Weekly decision pack summary exists.
+- Checks pass.
+- Board and status updated.
+
+---
+
+## Story 14.1: Backtest weekly candidate shortlist quality
+
+Status: Backlog  
+Epic: Epic 11  
+Sprint: Sprint 14  
+Size: M  
+Priority: High  
+Depends on: Story 11.3  
+Human review: Required
+
+### User story
+
+As a manager, I want to know whether the weekly shortlist would have surfaced useful players historically, so that I trust the shortlist next season.
+
+### Acceptance criteria
+
+- Runs the shortlist logic across historical gameweeks.
+- Measures forward 1GW, 3GW, and 5GW points of shortlisted players versus non-shortlisted players by position.
+- Measures adoption among top-N managers where available.
+- Labels confidence by sample size and uplift consistency.
+
+### Tasks
+
+- [ ] Run shortlist scoring across historical gameweeks.
+- [ ] Evaluate top 5 by position, top 10 overall, and candidate tiers.
+- [ ] Compare forward outcomes against same-position baselines.
+- [ ] Add confidence labels.
+- [ ] Save `weekly_candidate_shortlist_backtest.csv`.
+
+### Checks
+
+- [ ] Shortlist features use only pre-GW inputs.
+- [ ] Future outcomes are used only for post-hoc evaluation.
+- [ ] Output includes position-level baselines.
+
+### Definition of done
+
+- Candidate shortlist backtest exists.
+- Checks pass.
+- Board and status updated.
+
+---
+
+## Story 14.2: Backtest hit justification thresholds
+
+Status: Backlog  
+Epic: Epic 11  
+Sprint: Sprint 14  
+Size: M  
+Priority: High  
+Depends on: Story 12.3  
+Human review: Required
+
+### User story
+
+As a manager, I want hit thresholds to be based on historical evidence, so that I know when a `-4`, `-8`, or `-12` is actually worth it.
+
+### Acceptance criteria
+
+- Uses historical transfer packages from sampled managers where available.
+- Compares package features to actual 1GW, 3GW, and 5GW net outcomes.
+- Estimates practical thresholds for hit justification.
+- Produces conservative rules for free transfer, `-4`, `-8`, and `-12`.
+
+### Tasks
+
+- [ ] Load historical transfer package data.
+- [ ] Compare package feature strength against forward net outcomes.
+- [ ] Estimate conservative hit thresholds.
+- [ ] Save `hit_threshold_backtest.csv`.
+- [ ] Update package review logic to reference thresholds if available.
+
+### Checks
+
+- [ ] Thresholds are package-level, not isolated-leg estimates.
+- [ ] Hit costs are correctly represented.
+- [ ] Threshold recommendations are conservative.
+
+### Definition of done
+
+- Hit threshold backtest exists.
+- Checks pass.
+- Board and status updated.
+
+---
+
+## Story 14.3: Backtest captaincy decision quality
+
+Status: Backlog  
+Epic: Epic 11  
+Sprint: Sprint 14  
+Size: M  
+Priority: High  
+Depends on: Story 13.1  
+Human review: Required
+
+### User story
+
+As a manager, I want to know whether the captaincy scoring process would have made reasonable decisions historically, so that I can trust it next season.
+
+### Acceptance criteria
+
+- Runs captaincy scoring across manager `816200`'s historical squads.
+- Compares recommended captain against actual captain, vice captain, best starter, and best squad player.
+- Measures loss/gain versus actual and reasonable alternatives.
+- Labels whether the model is too safe, too aggressive, or well-calibrated.
+
+### Tasks
+
+- [ ] Score historical squads using pre-GW captaincy features.
+- [ ] Recommend captain and vice captain per gameweek.
+- [ ] Compare against actual captain, best starter, and best squad player.
+- [ ] Add calibration labels.
+- [ ] Save `weekly_captaincy_backtest.csv`.
+- [ ] Save `weekly_captaincy_backtest_delta.png`.
+
+### Checks
+
+- [ ] Recommendation does not use current-GW actual points.
+- [ ] Actual points are used only for post-hoc evaluation.
+- [ ] Recommended captain and vice captain are different where possible.
+
+### Definition of done
+
+- Captaincy backtest table and chart exist.
 - Checks pass.
 - Board and status updated.

@@ -16,6 +16,74 @@ Follow-up needed:
 
 ## Decisions
 
+### 2026-05-30: Score sell candidates with current-player risk plus same-position opportunity cost
+
+Decision:  
+Story 12.1 uses a transparent weighted `sell_risk_score` built from role-security risk, position-relevant route risk, fixture risk, team-context risk, value risk within position, squad-role replaceability, and the gap to the best affordable same-position transfer candidate.
+
+Reason:  
+Selling should not be driven by a single bad score or by raw xGI alone. The review needs to respect FPL scoring routes by position, avoid current-gameweek outcomes, and separate "this player is weak" from "there is a realistic upgrade available".
+
+Alternatives considered:  
+Rank current squad players only by low priority score, or sell whoever has the highest-scoring outside replacement.
+
+Risk:  
+This is still a heuristic review layer. Story 12.2 must compare concrete buy/sell pairs before the system can recommend actual transfers.
+
+Follow-up needed:  
+Use Story 12.2 to turn sell and buy tables into affordable position-valid transfer pairs.
+
+### 2026-05-30: Use transparent weighted scores for weekly transfer candidates
+
+Decision:  
+Story 11.3 scores transfer candidates with a transparent weighted formula using role security, position-relevant route-to-points, next-3 fixture outlook, team strength, price value, and prior ownership/adoption signal. Outcome columns are not included in the shortlist output or score calculation.
+
+Reason:  
+The weekly decision system should explain why a player is shortlisted and avoid black-box recommendations. The weights match the next-phase plan and keep ranking separate from later transfer-pair and hit-threshold decisions.
+
+Alternatives considered:  
+Use the historical rulebook labels directly, or rank candidates by predicted future points from outcome windows.
+
+Risk:  
+The score is a first-pass ranking, not a transfer recommendation. Some strong candidates may still be unaffordable, already structurally awkward, or not worth a hit.
+
+Follow-up needed:  
+Sprint 12 should compare candidates against owned players and affordability before recommending actual transfers.
+
+### 2026-05-30: Exclude current-gameweek outcomes from weekly squad context
+
+Decision:  
+Story 11.2 builds `current_squad_context` from `my_squad_gameweek.csv` but drops current-gameweek outcome columns such as actual points, current minutes, goals, assists, saves, bonus, BPS, defensive contributions, and expected metrics for the target gameweek.
+
+Reason:  
+The weekly decision system must mimic pre-deadline decision-making. The reconstructed squad table contains useful selected-squad state and prior-only features, but also includes current-gameweek outcomes that would leak future information into transfer and captaincy recommendations.
+
+Alternatives considered:  
+Keep all reconstructed squad columns and rely on later scoring functions to ignore outcome fields, or rebuild the squad context from lower-level tables.
+
+Risk:  
+Some useful diagnostic fields are unavailable in the weekly context until post-hoc backtest stories add explicit evaluation outputs.
+
+Follow-up needed:  
+Story 11.3 should use `current_squad_context` only for owned-player exclusion and should continue excluding outcome columns from transfer-candidate scoring.
+
+### 2026-05-30: Start weekly decision system as orchestration skeleton
+
+Decision:  
+Story 11.1 creates `build_weekly_decision_pack(...)` as a validation and orchestration skeleton that returns placeholder DataFrames for the five weekly decision-pack outputs. It does not implement candidate, sell, package, or captaincy scoring yet.
+
+Reason:  
+The Weekly Decision System has several dependent components. A small callable skeleton lets later stories add one decision layer at a time while preserving a stable public entry point and smoke-testable return contract.
+
+Alternatives considered:  
+Implement candidate scoring immediately, or make separate functions without a top-level orchestrator.
+
+Risk:  
+The first version is not useful for decision-making by itself; it only proves the interface and notebook wiring.
+
+Follow-up needed:  
+Story 11.2 should add current-squad context to the returned decision pack before candidate and captaincy logic rely on owned-player state.
+
 ### 2026-05-30: Separate additive leak estimates from diagnostic evidence
 
 Decision:  

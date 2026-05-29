@@ -31,13 +31,14 @@ Codex must not start a new story if another story is In Progress.
 
 # Current Sprint Board
 
-Current sprint: Sprint 10 - Final report
+Current sprint: Sprint 12 - Sell decisions and transfer package evaluation
 
 ## Backlog
 
 | Story | Epic | Size | Dependency | Notes |
 |---|---|---:|---|---|
-| None |  |  |  |  |
+| 12.2 Match transfer candidates to sell candidates | Epic 11 | M | Story 11.3, Story 12.1 | Waiting for sell candidate review |
+| 12.3 Build transfer package and hit justification engine | Epic 11 | M | Story 12.2, Story 9.3 | Waiting for transfer pair review |
 
 ## Ready
 
@@ -55,12 +56,16 @@ Current sprint: Sprint 10 - Final report
 
 | Story | Epic | Checks run | Human review needed |
 |---|---|---|---|
-| 10.2 Create final executive summary | Epic 10 | final summary content validation; referenced outputs check; confidence qualification check; compileall | Yes |
+| 12.1 Build sell candidate review | Epic 11 | compileall; weekly pack smoke; row/label/score/leakage/output checks | Yes |
 
 ## Done
 
 | Story | Epic | Completed | Outputs |
 |---|---|---|---|
+| 11.3 Build transfer candidate shortlist | Epic 11 | 2026-05-30 | weekly_transfer_candidate_shortlist.csv |
+| 11.2 Build current-squad context for a target gameweek | Epic 11 | 2026-05-30 | current_squad_context in weekly decision pack |
+| 11.1 Create weekly decision-system skeleton | Epic 11 | 2026-05-30 | weekly_decision_system.py; notebook smoke section |
+| 10.2 Create final executive summary | Epic 10 | 2026-05-30 | final notebook executive summary |
 | 10.1 Create season gap and leak summary | Epic 10 | 2026-05-30 | season_gap_leak_summary.csv; season_gap_waterfall.png |
 | 9.4 Generate plain-English rules for next season | Epic 9 | 2026-05-30 | next_season_rulebook.csv |
 | 9.3 Test transfer-style rules | Epic 9 | 2026-05-30 | transfer_rule_candidates.csv; transfer_rule_packages.csv; transfer_rule_enriched.csv |
@@ -107,7 +112,11 @@ Current sprint: Sprint 10 - Final report
 | Sprint 7 | 5 | 5 | 0 | 0 | 100% |
 | Sprint 8 | 4 | 4 | 0 | 0 | 100% |
 | Sprint 9 | 4 | 4 | 0 | 0 | 100% |
-| Sprint 10 | 2 | 1 | 1 | 0 | 100% |
+| Sprint 10 | 2 | 2 | 0 | 0 | 100% |
+| Sprint 11 | 3 | 3 | 0 | 0 | 100% |
+| Sprint 12 | 3 | 0 | 1 | 0 | 0% |
+| Sprint 13 | 2 | 0 | 0 | 0 | 0% |
+| Sprint 14 | 3 | 0 | 0 | 0 | 0% |
 
 ---
 
@@ -124,7 +133,8 @@ Current sprint: Sprint 10 - Final report
 | Epic 7: Evaluate my decisions | 5 | 5 | 100% | Done |
 | Epic 8: Compare me against the top-N sample | 4 | 4 | 100% | Done |
 | Epic 9: Build decision rules under uncertainty | 4 | 4 | 100% | Done |
-| Epic 10: Build final retrospective report | 1 | 2 | 100% | Active |
+| Epic 10: Build final retrospective report | 2 | 2 | 100% | Done |
+| Epic 11: Weekly Decision System | 3 | 11 | 27% | Active |
 
 ---
 
@@ -132,5 +142,5 @@ Current sprint: Sprint 10 - Final report
 
 Date: 2026-05-30  
 Updated by: ChatGPT  
-Summary: Story 10.2 moved to In Review after adding the final executive summary section to the notebook. Sprint 10 remains open pending human acceptance of Story 10.2.  
-Next recommended story: Review Story 10.2 and accept it if the final summary is useful.
+Summary: Sprint 12 prepared as the next dependency-valid sprint. Story 12.1 implemented and moved to In Review; Stories 12.2 and 12.3 remain Backlog until Story 12.1 is accepted.  
+Next recommended story: Review Story 12.1, then accept it as Done before moving Story 12.2 to Ready.

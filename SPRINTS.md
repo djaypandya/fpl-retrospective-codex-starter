@@ -252,17 +252,122 @@ Turn analysis into a readable retrospective and next-season operating system.
 
 ## Preparation status
 
-Sprint 10 is in progress. Story 10.1 is accepted as Done. Story 10.2 is in review after adding the final executive summary.
+Sprint 10 is closed. Story 10.1 and Story 10.2 are accepted as Done.
 
 ## Stories
 
 | Story | Epic | Size | Status |
 |---|---|---:|---|
 | 10.1 Create season gap and leak summary | Epic 10 | M | Done |
-| 10.2 Create final executive summary | Epic 10 | M | In Review |
+| 10.2 Create final executive summary | Epic 10 | M | Done |
 
 ## Sprint acceptance criteria
 
 - Leak summary exists.
 - Final retrospective summary exists.
 - Rulebook is referenced.
+
+---
+
+# Sprint 11: Weekly decision engine foundation
+
+## Sprint goal
+
+Create the reusable weekly decision-system module and basic decision-pack orchestration.
+
+## Preparation status
+
+Sprint 11 is complete. Stories 11.1, 11.2, and 11.3 are accepted as Done.
+
+## Stories
+
+| Story | Epic | Size | Status |
+|---|---|---:|---|
+| 11.1 Create weekly decision-system skeleton | Epic 11 | S | Done |
+| 11.2 Build current-squad context for a target gameweek | Epic 11 | M | Done |
+| 11.3 Build transfer candidate shortlist | Epic 11 | M | Done |
+
+## Sprint acceptance criteria
+
+- Weekly decision-system skeleton exists.
+- Current-squad context can be built for a target gameweek.
+- Transfer candidate shortlist exists and avoids hindsight leakage.
+
+---
+
+# Sprint 12: Sell decisions and transfer package evaluation
+
+## Sprint goal
+
+Convert candidate ranking into actual transfer decisions by comparing outside players against current squad players and transfer costs.
+
+## Preparation status
+
+Sprint 12 is active. Story 12.1 is in review; Stories 12.2 and 12.3 remain in Backlog until Story 12.1 is accepted.
+
+## Stories
+
+| Story | Epic | Size | Status |
+|---|---|---:|---|
+| 12.1 Build sell candidate review | Epic 11 | M | In Review |
+| 12.2 Match transfer candidates to sell candidates | Epic 11 | M | Backlog |
+| 12.3 Build transfer package and hit justification engine | Epic 11 | M | Backlog |
+
+## Sprint acceptance criteria
+
+- Sell candidate review exists.
+- Transfer pair review exists.
+- Transfer package and hit justification engine exists.
+- Hit recommendations are package-level and conservative.
+
+---
+
+# Sprint 13: Captaincy decision and weekly output pack
+
+## Sprint goal
+
+Add weekly captaincy decision support and produce the final weekly decision pack.
+
+## Preparation status
+
+Sprint 13 is planned but not started. It depends on current-squad, package-review, and captaincy foundations.
+
+## Stories
+
+| Story | Epic | Size | Status |
+|---|---|---:|---|
+| 13.1 Build weekly captaincy decision table | Epic 11 | M | Backlog |
+| 13.2 Create final weekly decision pack summary | Epic 11 | M | Backlog |
+
+## Sprint acceptance criteria
+
+- Weekly captaincy decision table exists.
+- Weekly decision pack summary exists.
+- Captaincy and hit recommendations match the underlying tables.
+
+---
+
+# Sprint 14: Backtest the weekly decision process
+
+## Sprint goal
+
+Test whether the weekly decision process would have made sensible historical recommendations under uncertainty.
+
+## Preparation status
+
+Sprint 14 is planned but not started. It depends on the implemented weekly decision process.
+
+## Stories
+
+| Story | Epic | Size | Status |
+|---|---|---:|---|
+| 14.1 Backtest weekly candidate shortlist quality | Epic 11 | M | Backlog |
+| 14.2 Backtest hit justification thresholds | Epic 11 | M | Backlog |
+| 14.3 Backtest captaincy decision quality | Epic 11 | M | Backlog |
+
+## Sprint acceptance criteria
+
+- Candidate shortlist backtest exists.
+- Hit threshold backtest exists.
+- Captaincy decision backtest exists.
+- Backtests use future outcomes only for post-hoc evaluation, not recommendation scoring.
