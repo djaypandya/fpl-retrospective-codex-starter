@@ -1,0 +1,655 @@
+{
+  "chips": [
+    {
+      "event": 6,
+      "name": "wildcard",
+      "time": "2025-09-22T14:59:17.139361Z"
+    },
+    {
+      "event": 7,
+      "name": "bboost",
+      "time": "2025-10-03T12:31:44.715742Z"
+    },
+    {
+      "event": 13,
+      "name": "freehit",
+      "time": "2025-11-26T16:20:39.408880Z"
+    },
+    {
+      "event": 17,
+      "name": "3xc",
+      "time": "2025-12-19T19:36:37.492152Z"
+    },
+    {
+      "event": 26,
+      "name": "3xc",
+      "time": "2026-02-09T16:24:48.527766Z"
+    },
+    {
+      "event": 32,
+      "name": "wildcard",
+      "time": "2026-04-10T08:30:28.748963Z"
+    },
+    {
+      "event": 33,
+      "name": "bboost",
+      "time": "2026-04-14T06:20:32.669095Z"
+    },
+    {
+      "event": 34,
+      "name": "freehit",
+      "time": "2026-04-24T15:02:36.005058Z"
+    }
+  ],
+  "current": [
+    {
+      "bank": 0,
+      "event": 1,
+      "event_transfers": 0,
+      "event_transfers_cost": 0,
+      "overall_rank": 5781357,
+      "percentile_rank": 65,
+      "points": 50,
+      "points_on_bench": 4,
+      "rank": 5781366,
+      "rank_sort": 5830610,
+      "total_points": 50,
+      "value": 1000
+    },
+    {
+      "bank": 0,
+      "event": 2,
+      "event_transfers": 0,
+      "event_transfers_cost": 0,
+      "overall_rank": 7974800,
+      "percentile_rank": 90,
+      "points": 35,
+      "points_on_bench": 11,
+      "rank": 9512674,
+      "rank_sort": 9524146,
+      "total_points": 85,
+      "value": 1000
+    },
+    {
+      "bank": 2,
+      "event": 3,
+      "event_transfers": 2,
+      "event_transfers_cost": 0,
+      "overall_rank": 7312237,
+      "percentile_rank": 50,
+      "points": 49,
+      "points_on_bench": 3,
+      "rank": 5226808,
+      "rank_sort": 5241828,
+      "total_points": 134,
+      "value": 998
+    },
+    {
+      "bank": 7,
+      "event": 4,
+      "event_transfers": 1,
+      "event_transfers_cost": 0,
+      "overall_rank": 7256330,
+      "percentile_rank": 65,
+      "points": 59,
+      "points_on_bench": 8,
+      "rank": 7460062,
+      "rank_sort": 7474389,
+      "total_points": 193,
+      "value": 997
+    },
+    {
+      "bank": 7,
+      "event": 5,
+      "event_transfers": 0,
+      "event_transfers_cost": 0,
+      "overall_rank": 6029098,
+      "percentile_rank": 20,
+      "points": 52,
+      "points_on_bench": 8,
+      "rank": 2085575,
+      "rank_sort": 2107874,
+      "total_points": 245,
+      "value": 997
+    },
+    {
+      "bank": 1,
+      "event": 6,
+      "event_transfers": 0,
+      "event_transfers_cost": 0,
+      "overall_rank": 3642606,
+      "percentile_rank": 15,
+      "points": 69,
+      "points_on_bench": 7,
+      "rank": 1227843,
+      "rank_sort": 1252742,
+      "total_points": 314,
+      "value": 996
+    },
+    {
+      "bank": 1,
+      "event": 7,
+      "event_transfers": 0,
+      "event_transfers_cost": 0,
+      "overall_rank": 2509940,
+      "percentile_rank": 10,
+      "points": 81,
+      "points_on_bench": 0,
+      "rank": 972884,
+      "rank_sort": 983967,
+      "total_points": 395,
+      "value": 1000
+    },
+    {
+      "bank": 1,
+      "event": 8,
+      "event_transfers": 0,
+      "event_transfers_cost": 0,
+      "overall_rank": 2328430,
+      "percentile_rank": 30,
+      "points": 66,
+      "points_on_bench": 17,
+      "rank": 3091355,
+      "rank_sort": 3111306,
+      "total_points": 461,
+      "value": 1007
+    },
+    {
+      "bank": 1,
+      "event": 9,
+      "event_transfers": 0,
+      "event_transfers_cost": 0,
+      "overall_rank": 2824266,
+      "percentile_rank": 70,
+      "points": 39,
+      "points_on_bench": 3,
+      "rank": 8476092,
+      "rank_sort": 8503073,
+      "total_points": 500,
+      "value": 1007
+    },
+    {
+      "bank": 5,
+      "event": 10,
+      "event_transfers": 3,
+      "event_transfers_cost": 0,
+      "overall_rank": 1695372,
+      "percentile_rank": 5,
+      "points": 93,
+      "points_on_bench": 7,
+      "rank": 189945,
+      "rank_sort": 190582,
+      "total_points": 593,
+      "value": 1005
+    },
+    {
+      "bank": 1,
+      "event": 11,
+      "event_transfers": 2,
+      "event_transfers_cost": 0,
+      "overall_rank": 1461872,
+      "percentile_rank": 25,
+      "points": 46,
+      "points_on_bench": 6,
+      "rank": 2780845,
+      "rank_sort": 2788957,
+      "total_points": 639,
+      "value": 1007
+    },
+    {
+      "bank": 1,
+      "event": 12,
+      "event_transfers": 0,
+      "event_transfers_cost": 0,
+      "overall_rank": 851371,
+      "percentile_rank": 10,
+      "points": 59,
+      "points_on_bench": 7,
+      "rank": 694362,
+      "rank_sort": 699257,
+      "total_points": 698,
+      "value": 1010
+    },
+    {
+      "bank": 1,
+      "event": 13,
+      "event_transfers": 0,
+      "event_transfers_cost": 0,
+      "overall_rank": 203492,
+      "percentile_rank": 1,
+      "points": 78,
+      "points_on_bench": 0,
+      "rank": 17573,
+      "rank_sort": 18365,
+      "total_points": 776,
+      "value": 1010
+    },
+    {
+      "bank": 0,
+      "event": 14,
+      "event_transfers": 3,
+      "event_transfers_cost": 0,
+      "overall_rank": 193039,
+      "percentile_rank": 25,
+      "points": 71,
+      "points_on_bench": 7,
+      "rank": 3077933,
+      "rank_sort": 3079929,
+      "total_points": 847,
+      "value": 1007
+    },
+    {
+      "bank": 11,
+      "event": 15,
+      "event_transfers": 1,
+      "event_transfers_cost": 0,
+      "overall_rank": 144338,
+      "percentile_rank": 20,
+      "points": 61,
+      "points_on_bench": 11,
+      "rank": 2210865,
+      "rank_sort": 2221320,
+      "total_points": 908,
+      "value": 1010
+    },
+    {
+      "bank": 1,
+      "event": 16,
+      "event_transfers": 3,
+      "event_transfers_cost": 0,
+      "overall_rank": 116128,
+      "percentile_rank": 10,
+      "points": 81,
+      "points_on_bench": 4,
+      "rank": 1096429,
+      "rank_sort": 1100701,
+      "total_points": 989,
+      "value": 1017
+    },
+    {
+      "bank": 1,
+      "event": 17,
+      "event_transfers": 0,
+      "event_transfers_cost": 0,
+      "overall_rank": 102189,
+      "percentile_rank": 20,
+      "points": 85,
+      "points_on_bench": 8,
+      "rank": 1937722,
+      "rank_sort": 1947694,
+      "total_points": 1074,
+      "value": 1022
+    },
+    {
+      "bank": 3,
+      "event": 18,
+      "event_transfers": 2,
+      "event_transfers_cost": 0,
+      "overall_rank": 163745,
+      "percentile_rank": 80,
+      "points": 36,
+      "points_on_bench": 11,
+      "rank": 9920728,
+      "rank_sort": 9929474,
+      "total_points": 1110,
+      "value": 1021
+    },
+    {
+      "bank": 3,
+      "event": 19,
+      "event_transfers": 1,
+      "event_transfers_cost": 0,
+      "overall_rank": 136258,
+      "percentile_rank": 35,
+      "points": 45,
+      "points_on_bench": 13,
+      "rank": 4193413,
+      "rank_sort": 4206836,
+      "total_points": 1155,
+      "value": 1019
+    },
+    {
+      "bank": 3,
+      "event": 20,
+      "event_transfers": 0,
+      "event_transfers_cost": 0,
+      "overall_rank": 124273,
+      "percentile_rank": 20,
+      "points": 53,
+      "points_on_bench": 6,
+      "rank": 2446071,
+      "rank_sort": 2466022,
+      "total_points": 1208,
+      "value": 1019
+    },
+    {
+      "bank": 5,
+      "event": 21,
+      "event_transfers": 1,
+      "event_transfers_cost": 0,
+      "overall_rank": 106378,
+      "percentile_rank": 20,
+      "points": 60,
+      "points_on_bench": 9,
+      "rank": 2453466,
+      "rank_sort": 2465816,
+      "total_points": 1268,
+      "value": 1016
+    },
+    {
+      "bank": 31,
+      "event": 22,
+      "event_transfers": 1,
+      "event_transfers_cost": 0,
+      "overall_rank": 92170,
+      "percentile_rank": 35,
+      "points": 44,
+      "points_on_bench": 16,
+      "rank": 4442529,
+      "rank_sort": 4456438,
+      "total_points": 1312,
+      "value": 1014
+    },
+    {
+      "bank": 31,
+      "event": 23,
+      "event_transfers": 0,
+      "event_transfers_cost": 0,
+      "overall_rank": 97094,
+      "percentile_rank": 60,
+      "points": 41,
+      "points_on_bench": 5,
+      "rank": 7385186,
+      "rank_sort": 7420877,
+      "total_points": 1353,
+      "value": 1014
+    },
+    {
+      "bank": 8,
+      "event": 24,
+      "event_transfers": 3,
+      "event_transfers_cost": 0,
+      "overall_rank": 60716,
+      "percentile_rank": 10,
+      "points": 75,
+      "points_on_bench": 0,
+      "rank": 714004,
+      "rank_sort": 716483,
+      "total_points": 1428,
+      "value": 1008
+    },
+    {
+      "bank": 10,
+      "event": 25,
+      "event_transfers": 2,
+      "event_transfers_cost": 0,
+      "overall_rank": 43269,
+      "percentile_rank": 10,
+      "points": 78,
+      "points_on_bench": 4,
+      "rank": 803461,
+      "rank_sort": 807091,
+      "total_points": 1506,
+      "value": 1008
+    },
+    {
+      "bank": 3,
+      "event": 26,
+      "event_transfers": 1,
+      "event_transfers_cost": 0,
+      "overall_rank": 79881,
+      "percentile_rank": 70,
+      "points": 53,
+      "points_on_bench": 3,
+      "rank": 8603337,
+      "rank_sort": 8610520,
+      "total_points": 1559,
+      "value": 1012
+    },
+    {
+      "bank": 3,
+      "event": 27,
+      "event_transfers": 0,
+      "event_transfers_cost": 0,
+      "overall_rank": 63564,
+      "percentile_rank": 25,
+      "points": 53,
+      "points_on_bench": 8,
+      "rank": 2812957,
+      "rank_sort": 2834461,
+      "total_points": 1612,
+      "value": 1012
+    },
+    {
+      "bank": 21,
+      "event": 28,
+      "event_transfers": 3,
+      "event_transfers_cost": 0,
+      "overall_rank": 80984,
+      "percentile_rank": 30,
+      "points": 66,
+      "points_on_bench": 0,
+      "rank": 3278949,
+      "rank_sort": 3281451,
+      "total_points": 1678,
+      "value": 1012
+    },
+    {
+      "bank": 21,
+      "event": 29,
+      "event_transfers": 0,
+      "event_transfers_cost": 0,
+      "overall_rank": 145504,
+      "percentile_rank": 70,
+      "points": 46,
+      "points_on_bench": 2,
+      "rank": 8670502,
+      "rank_sort": 8689937,
+      "total_points": 1724,
+      "value": 1016
+    },
+    {
+      "bank": 16,
+      "event": 30,
+      "event_transfers": 1,
+      "event_transfers_cost": 0,
+      "overall_rank": 59753,
+      "percentile_rank": 1,
+      "points": 81,
+      "points_on_bench": 18,
+      "rank": 11046,
+      "rank_sort": 11221,
+      "total_points": 1805,
+      "value": 1018
+    },
+    {
+      "bank": 16,
+      "event": 31,
+      "event_transfers": 0,
+      "event_transfers_cost": 0,
+      "overall_rank": 74998,
+      "percentile_rank": 25,
+      "points": 52,
+      "points_on_bench": 0,
+      "rank": 3014022,
+      "rank_sort": 3032303,
+      "total_points": 1857,
+      "value": 1022
+    },
+    {
+      "bank": 0,
+      "event": 32,
+      "event_transfers": 0,
+      "event_transfers_cost": 0,
+      "overall_rank": 49708,
+      "percentile_rank": 5,
+      "points": 69,
+      "points_on_bench": 11,
+      "rank": 603381,
+      "rank_sort": 614675,
+      "total_points": 1926,
+      "value": 1007
+    },
+    {
+      "bank": 20,
+      "event": 33,
+      "event_transfers": 1,
+      "event_transfers_cost": 0,
+      "overall_rank": 34749,
+      "percentile_rank": 5,
+      "points": 119,
+      "points_on_bench": 0,
+      "rank": 284470,
+      "rank_sort": 286290,
+      "total_points": 2045,
+      "value": 1009
+    },
+    {
+      "bank": 20,
+      "event": 34,
+      "event_transfers": 0,
+      "event_transfers_cost": 0,
+      "overall_rank": 41058,
+      "percentile_rank": 15,
+      "points": 53,
+      "points_on_bench": 2,
+      "rank": 1907947,
+      "rank_sort": 1923549,
+      "total_points": 2098,
+      "value": 1009
+    },
+    {
+      "bank": 20,
+      "event": 35,
+      "event_transfers": 0,
+      "event_transfers_cost": 0,
+      "overall_rank": 41867,
+      "percentile_rank": 35,
+      "points": 56,
+      "points_on_bench": 14,
+      "rank": 4156291,
+      "rank_sort": 4195436,
+      "total_points": 2154,
+      "value": 1011
+    },
+    {
+      "bank": 5,
+      "event": 36,
+      "event_transfers": 3,
+      "event_transfers_cost": 0,
+      "overall_rank": 56990,
+      "percentile_rank": 40,
+      "points": 73,
+      "points_on_bench": 10,
+      "rank": 5094463,
+      "rank_sort": 5097642,
+      "total_points": 2227,
+      "value": 1012
+    },
+    {
+      "bank": 10,
+      "event": 37,
+      "event_transfers": 2,
+      "event_transfers_cost": 0,
+      "overall_rank": 61606,
+      "percentile_rank": 35,
+      "points": 61,
+      "points_on_bench": 13,
+      "rank": 4309160,
+      "rank_sort": 4314957,
+      "total_points": 2288,
+      "value": 1014
+    },
+    {
+      "bank": 9,
+      "event": 38,
+      "event_transfers": 2,
+      "event_transfers_cost": 4,
+      "overall_rank": 78139,
+      "percentile_rank": 30,
+      "points": 52,
+      "points_on_bench": 2,
+      "rank": 3395743,
+      "rank_sort": 3402270,
+      "total_points": 2336,
+      "value": 1011
+    }
+  ],
+  "past": [
+    {
+      "rank": 1688041,
+      "season_name": "2010/11",
+      "total_points": 1509
+    },
+    {
+      "rank": 1234681,
+      "season_name": "2011/12",
+      "total_points": 1703
+    },
+    {
+      "rank": 544572,
+      "season_name": "2012/13",
+      "total_points": 1901
+    },
+    {
+      "rank": 721224,
+      "season_name": "2013/14",
+      "total_points": 2080
+    },
+    {
+      "rank": 1026085,
+      "season_name": "2014/15",
+      "total_points": 1816
+    },
+    {
+      "rank": 266304,
+      "season_name": "2015/16",
+      "total_points": 2086
+    },
+    {
+      "rank": 2737823,
+      "season_name": "2016/17",
+      "total_points": 1660
+    },
+    {
+      "rank": 671627,
+      "season_name": "2017/18",
+      "total_points": 2069
+    },
+    {
+      "rank": 2892310,
+      "season_name": "2018/19",
+      "total_points": 1917
+    },
+    {
+      "rank": 1553182,
+      "season_name": "2019/20",
+      "total_points": 2032
+    },
+    {
+      "rank": 109430,
+      "season_name": "2020/21",
+      "total_points": 2387
+    },
+    {
+      "rank": 24358,
+      "season_name": "2021/22",
+      "total_points": 2587
+    },
+    {
+      "rank": 148253,
+      "season_name": "2022/23",
+      "total_points": 2508
+    },
+    {
+      "rank": 50745,
+      "season_name": "2023/24",
+      "total_points": 2518
+    },
+    {
+      "rank": 248361,
+      "season_name": "2024/25",
+      "total_points": 2461
+    }
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "active_chip": null,
+  "automatic_subs": [
+    {
+      "element_in": 317,
+      "element_out": 82,
+      "entry": 92196,
+      "event": 12
+    }
+  ],
+  "entry_history": {
+    "bank": 1,
+    "event": 12,
+    "event_transfers": 2,
+    "event_transfers_cost": 0,
+    "overall_rank": 77658,
+    "percentile_rank": 25,
+    "points": 47,
+    "points_on_bench": 6,
+    "rank": 3070864,
+    "rank_sort": 3071715,
+    "total_points": 751,
+    "value": 1033
+  },
+  "picks": [
+    {
+      "element": 1,
+      "element_type": 1,
+      "is_captain": false,
+      "is_vice_captain": false,
+      "multiplier": 1,
+      "position": 1
+    },
+    {
+      "element": 72,
+      "element_type": 2,
+      "is_captain": false,
+      "is_vice_captain": false,
+      "multiplier": 1,
+      "position": 2
+    },
+    {
+      "element": 257,
+      "element_type": 2,
+      "is_captain": false,
+      "is_vice_captain": false,
+      "multiplier": 1,
+      "position": 3
+    },
+    {
+      "element": 224,
+      "element_type": 2,
+      "is_captain": false,
+      "is_vice_captain": false,
+      "multiplier": 1,
+      "position": 4
+    },
+    {
+      "element": 317,
+      "element_type": 2,
+      "is_captain": false,
+      "is_vice_captain": false,
+      "multiplier": 1,
+      "position": 5
+    },
+    {
+      "element": 16,
+      "element_type": 3,
+      "is_captain": false,
+      "is_vice_captain": false,
+      "multiplier": 1,
+      "position": 6
+    },
+    {
+      "element": 449,
+      "element_type": 3,
+      "is_captain": false,
+      "is_vice_captain": true,
+      "multiplier": 1,
+      "position": 7
+    },
+    {
+      "element": 267,
+      "element_type": 3,
+      "is_captain": false,
+      "is_vice_captain": false,
+      "multiplier": 1,
+      "position": 8
+    },
+    {
+      "element": 430,
+      "element_type": 4,
+      "is_captain": true,
+      "is_vice_captain": false,
+      "multiplier": 2,
+      "position": 9
+    },
+    {
+      "element": 283,
+      "element_type": 4,
+      "is_captain": false,
+      "is_vice_captain": false,
+      "multiplier": 1,
+      "position": 10
+    },
+    {
+      "element": 249,
+      "element_type": 4,
+      "is_captain": false,
+      "is_vice_captain": false,
+      "multiplier": 1,
+      "position": 11
+    },
+    {
+      "element": 470,
+      "element_type": 1,
+      "is_captain": false,
+      "is_vice_captain": false,
+      "multiplier": 0,
+      "position": 12
+    },
+    {
+      "element": 82,
+      "element_type": 3,
+      "is_captain": false,
+      "is_vice_captain": false,
+      "multiplier": 0,
+      "position": 13
+    },
+    {
+      "element": 347,
+      "element_type": 2,
+      "is_captain": false,
+      "is_vice_captain": false,
+      "multiplier": 0,
+      "position": 14
+    },
+    {
+      "element": 335,
+      "element_type": 3,
+      "is_captain": false,
+      "is_vice_captain": false,
+      "multiplier": 0,
+      "position": 15
+    }
+  ]
+}

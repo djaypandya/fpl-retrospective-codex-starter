@@ -1,0 +1,10 @@
+"""Project configuration defaults."""
+
+MY_TEAM_ID = 816200
+TOP_N = 80_000
+SAMPLE_SIZE = 1000
+SEASON_GWS = list(range(1, 39))
+RANDOM_SEED = 42
+CACHE_ENABLED = True
+REQUEST_SLEEP_SECONDS = 0.25
+MAX_MANAGERS_FOR_PICKS = 50
