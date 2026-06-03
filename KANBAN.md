@@ -37,8 +37,7 @@ Current sprint: Sprint 12 - Sell decisions and transfer package evaluation
 
 | Story | Epic | Size | Dependency | Notes |
 |---|---|---:|---|---|
-| 12.2 Match transfer candidates to sell candidates | Epic 11 | M | Story 11.3, Story 12.1 | Waiting for sell candidate review |
-| 12.3 Build transfer package and hit justification engine | Epic 11 | M | Story 12.2, Story 9.3 | Waiting for transfer pair review |
+| None |  |  |  |
 
 ## Ready
 
@@ -56,12 +55,15 @@ Current sprint: Sprint 12 - Sell decisions and transfer package evaluation
 
 | Story | Epic | Checks run | Human review needed |
 |---|---|---|---|
-| 12.1 Build sell candidate review | Epic 11 | compileall; weekly pack smoke; row/label/score/leakage/output checks | Yes |
+| 12.3 Build transfer package and hit justification engine | Epic 11 | compileall; notebook JSON; package hit/duplicate/scenario/output checks | Yes |
 
 ## Done
 
 | Story | Epic | Completed | Outputs |
 |---|---|---|---|
+| 12.2 Match transfer candidates to sell candidates | Epic 11 | 2026-05-30 | weekly_transfer_pair_review.csv |
+| 12.1a Calibrate candidate and sell rules from sampled cohort | Epic 11 | 2026-05-30 | learned_candidate_shortlist_rules.csv; learned_sell_hold_rules.csv |
+| 12.1 Build sell candidate review | Epic 11 | 2026-05-30 | weekly_sell_candidate_review.csv |
 | 11.3 Build transfer candidate shortlist | Epic 11 | 2026-05-30 | weekly_transfer_candidate_shortlist.csv |
 | 11.2 Build current-squad context for a target gameweek | Epic 11 | 2026-05-30 | current_squad_context in weekly decision pack |
 | 11.1 Create weekly decision-system skeleton | Epic 11 | 2026-05-30 | weekly_decision_system.py; notebook smoke section |
@@ -114,7 +116,7 @@ Current sprint: Sprint 12 - Sell decisions and transfer package evaluation
 | Sprint 9 | 4 | 4 | 0 | 0 | 100% |
 | Sprint 10 | 2 | 2 | 0 | 0 | 100% |
 | Sprint 11 | 3 | 3 | 0 | 0 | 100% |
-| Sprint 12 | 3 | 0 | 1 | 0 | 0% |
+| Sprint 12 | 4 | 3 | 1 | 0 | 75% |
 | Sprint 13 | 2 | 0 | 0 | 0 | 0% |
 | Sprint 14 | 3 | 0 | 0 | 0 | 0% |
 
@@ -134,7 +136,7 @@ Current sprint: Sprint 12 - Sell decisions and transfer package evaluation
 | Epic 8: Compare me against the top-N sample | 4 | 4 | 100% | Done |
 | Epic 9: Build decision rules under uncertainty | 4 | 4 | 100% | Done |
 | Epic 10: Build final retrospective report | 2 | 2 | 100% | Done |
-| Epic 11: Weekly Decision System | 3 | 11 | 27% | Active |
+| Epic 11: Weekly Decision System | 6 | 12 | 50% | Active |
 
 ---
 
@@ -142,5 +144,5 @@ Current sprint: Sprint 12 - Sell decisions and transfer package evaluation
 
 Date: 2026-05-30  
 Updated by: ChatGPT  
-Summary: Sprint 12 prepared as the next dependency-valid sprint. Story 12.1 implemented and moved to In Review; Stories 12.2 and 12.3 remain Backlog until Story 12.1 is accepted.  
-Next recommended story: Review Story 12.1, then accept it as Done before moving Story 12.2 to Ready.
+Summary: Story 12.3 implemented and moved to In Review after creating package-level hit scenarios and payoff chart.  
+Next recommended story: Review Story 12.3. Do not start Sprint 13 until Sprint 12 is accepted/closed.

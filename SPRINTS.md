@@ -303,19 +303,21 @@ Convert candidate ranking into actual transfer decisions by comparing outside pl
 
 ## Preparation status
 
-Sprint 12 is active. Story 12.1 is in review; Stories 12.2 and 12.3 remain in Backlog until Story 12.1 is accepted.
+Sprint 12 is active. Stories 12.1, 12.1a, and 12.2 are accepted as Done. Story 12.3 is in review.
 
 ## Stories
 
 | Story | Epic | Size | Status |
 |---|---|---:|---|
-| 12.1 Build sell candidate review | Epic 11 | M | In Review |
-| 12.2 Match transfer candidates to sell candidates | Epic 11 | M | Backlog |
-| 12.3 Build transfer package and hit justification engine | Epic 11 | M | Backlog |
+| 12.1 Build sell candidate review | Epic 11 | M | Done |
+| 12.1a Calibrate candidate and sell rules from sampled cohort | Epic 11 | M | Done |
+| 12.2 Match transfer candidates to sell candidates | Epic 11 | M | Done |
+| 12.3 Build transfer package and hit justification engine | Epic 11 | M | In Review |
 
 ## Sprint acceptance criteria
 
 - Sell candidate review exists.
+- Candidate shortlist and sell/hold learned-rule calibration exists.
 - Transfer pair review exists.
 - Transfer package and hit justification engine exists.
 - Hit recommendations are package-level and conservative.

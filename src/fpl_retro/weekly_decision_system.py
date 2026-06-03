@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from itertools import combinations
 from pathlib import Path
 from typing import Any
 
@@ -30,7 +31,41 @@ SUPPORTED_INPUTS = {
 
 DEFAULT_CURRENT_SQUAD_PATH = Path("data/processed/my_squad_gameweek.csv")
 DEFAULT_CANDIDATE_RULE_FEATURES_PATH = Path("outputs/tables/candidate_rule_features.csv")
+DEFAULT_PLAYER_SELECTION_RULES_PATH = Path("outputs/tables/player_selection_rule_candidates.csv")
+DEFAULT_MANAGER_TRANSFERS_PATH = Path("data/processed/manager_transfers.csv")
+DEFAULT_MANAGER_PICKS_PATH = Path("data/processed/manager_picks.csv")
+DEFAULT_TOP_N_SAMPLE_MANAGERS_PATH = Path("data/processed/top_n_sample_managers.csv")
+DEFAULT_LEARNED_CANDIDATE_RULES_PATH = Path("outputs/tables/learned_candidate_shortlist_rules.csv")
+DEFAULT_LEARNED_SELL_HOLD_RULES_PATH = Path("outputs/tables/learned_sell_hold_rules.csv")
+DEFAULT_TRANSFER_RULE_CANDIDATES_PATH = Path("outputs/tables/transfer_rule_candidates.csv")
 DEFAULT_OUTPUT_TABLES_DIR = Path("outputs/tables")
+
+LEARNED_RULE_COLUMNS = [
+    "rule_id",
+    "decision_area",
+    "plain_english_rule",
+    "sample_size",
+    "sample_manager_count",
+    "rank_band_coverage",
+    "evidence_window",
+    "mean_outcome",
+    "median_outcome",
+    "baseline_outcome",
+    "uplift_vs_baseline",
+    "confidence",
+    "when_to_use",
+    "when_to_ignore",
+    "risk_of_overfitting",
+]
+
+SELL_HOLD_RULE_DEFINITIONS = [
+    ("rule_sell_low_minutes", "Low minutes security", "availability"),
+    ("rule_sell_weak_position_route", "Weak position-specific route to points", "position_route"),
+    ("rule_sell_bad_fixtures", "Weak next-3 fixture outlook", "fixtures"),
+    ("rule_sell_weak_team", "Weak team context", "team_strength"),
+    ("rule_sell_poor_value", "Poor value within position", "price_value"),
+    ("rule_sell_low_sample_ownership", "Low prior ownership among sampled managers", "ownership"),
+]
 
 
 def _require_columns(df: pd.DataFrame, required_columns: list[str] | tuple[str, ...], *, name: str = "dataframe") -> None:
@@ -203,6 +238,122 @@ def _candidate_risk(row: pd.Series) -> str:
     if not risks:
         risks.append("no major pre-GW risk flagged")
     return "; ".join(risks)
+
+
+def _rank_band_coverage(df: pd.DataFrame) -> str:
+    if "rank_band" not in df.columns:
+        return "unavailable"
+    bands = sorted(str(value) for value in df["rank_band"].dropna().unique())
+    return ", ".join(bands) if bands else "unavailable"
+
+
+def _calibration_confidence(sample_size: int, sample_manager_count: int, uplift: float) -> str:
+    if sample_size >= 500 and sample_manager_count >= 100 and abs(uplift) >= 1.0:
+        return "High"
+    if sample_size >= 150 and sample_manager_count >= 50 and abs(uplift) >= 0.3:
+        return "Medium"
+    return "Low"
+
+
+def _overfitting_risk(confidence: str, sample_size: int, rank_band_coverage: str) -> str:
+    if confidence == "High" and sample_size >= 500 and "," in rank_band_coverage:
+        return "Low: broad sample and consistent uplift, but still historical evidence."
+    if confidence == "Medium":
+        return "Medium: useful sample-backed signal, but threshold should be applied conservatively."
+    return "High: small, narrow, or weak signal; use only as supporting evidence."
+
+
+def _candidate_rule_text(row: pd.Series) -> str:
+    position = row.get("position_short", "all positions")
+    rule_name = row.get("rule_name", row.get("rule_id", "this profile"))
+    return f"For {position}, shortlist players matching '{rule_name}' when the squad needs that scoring route."
+
+
+def _candidate_when_to_use(row: pd.Series) -> str:
+    family = str(row.get("route_family", "")).lower()
+    if family == "ownership":
+        return "Use as confirmation that strong managers were already moving toward the player before the deadline."
+    if family == "fixtures":
+        return "Use when fixture quality is a meaningful reason to spend a transfer, especially over a 3-5 GW horizon."
+    if family in {"attacking", "clean_sheet", "defensive_contribution", "goalkeeper_save", "bps_bonus", "position_route"}:
+        return "Use when the player's scoring route matches their FPL position and your squad need."
+    if family == "availability":
+        return "Use as a minimum minutes-security filter before considering upside."
+    return "Use as one evidence-backed shortlist signal, not as a standalone transfer reason."
+
+
+def _candidate_when_to_ignore(row: pd.Series) -> str:
+    family = str(row.get("route_family", "")).lower()
+    if family == "ownership":
+        return "Ignore when ownership is stale, bandwagon-driven, or conflicts with role, fixtures, and squad structure."
+    if family == "fixtures":
+        return "Ignore when minutes security or scoring route is weak despite the fixture run."
+    if family == "attacking":
+        return "Ignore for players whose role or position does not actually support attacking returns."
+    return "Ignore when team news, rotation risk, price structure, or upcoming blanks make the profile misleading."
+
+
+def build_learned_candidate_shortlist_rules(
+    player_selection_rule_results_df: pd.DataFrame,
+    top_n_sample_managers_df: pd.DataFrame,
+) -> pd.DataFrame:
+    """Convert historical player-selection evidence into next-season shortlist rules."""
+
+    _require_columns(
+        player_selection_rule_results_df,
+        (
+            "rule_id",
+            "rule_name",
+            "route_family",
+            "position_short",
+            "sample_size",
+            "confidence",
+        ),
+        name="player_selection_rule_results",
+    )
+    _require_columns(top_n_sample_managers_df, ("manager_id", "rank_band"), name="top_n_sample_managers")
+
+    sample_manager_count = int(top_n_sample_managers_df["manager_id"].nunique())
+    rank_band_coverage = _rank_band_coverage(top_n_sample_managers_df)
+    rows: list[dict[str, Any]] = []
+    for _, row in player_selection_rule_results_df.iterrows():
+        for window in (1, 3, 5):
+            mean_column = f"mean_points_next{window}"
+            median_column = f"median_points_next{window}"
+            baseline_column = f"position_baseline_mean_points_next{window}"
+            uplift_column = f"mean_uplift_vs_position_baseline_next{window}"
+            if mean_column not in row.index or uplift_column not in row.index:
+                continue
+            sample_size = int(_safe_numeric(row.get("sample_size"), default=0))
+            uplift = _safe_numeric(row.get(uplift_column), default=0.0)
+            confidence = str(row.get("confidence", _calibration_confidence(sample_size, sample_manager_count, uplift)))
+            rows.append(
+                {
+                    "rule_id": f"candidate_{row['rule_id']}_{row['position_short']}_next{window}",
+                    "decision_area": "candidate_shortlist",
+                    "plain_english_rule": _candidate_rule_text(row),
+                    "sample_size": sample_size,
+                    "sample_manager_count": sample_manager_count,
+                    "rank_band_coverage": rank_band_coverage,
+                    "evidence_window": f"{window}GW",
+                    "mean_outcome": _safe_numeric(row.get(mean_column), default=0.0),
+                    "median_outcome": _safe_numeric(row.get(median_column), default=0.0),
+                    "baseline_outcome": _safe_numeric(row.get(baseline_column), default=0.0),
+                    "uplift_vs_baseline": uplift,
+                    "confidence": confidence,
+                    "when_to_use": _candidate_when_to_use(row),
+                    "when_to_ignore": _candidate_when_to_ignore(row),
+                    "risk_of_overfitting": _overfitting_risk(confidence, sample_size, rank_band_coverage),
+                }
+            )
+
+    output = pd.DataFrame(rows, columns=LEARNED_RULE_COLUMNS)
+    if output.empty:
+        return output
+    return output.sort_values(
+        ["confidence", "uplift_vs_baseline", "sample_size"],
+        ascending=[True, False, False],
+    ).reset_index(drop=True)
 
 
 def _sell_recommendation(score: float, priority_score: float, opportunity_score: float) -> str:
@@ -420,6 +571,822 @@ def build_sell_candidate_review(
         ascending=[False, False, True],
     )
     return review.reset_index(drop=True)
+
+
+def _learned_position_evidence(
+    learned_rules_df: pd.DataFrame | None,
+    *,
+    decision_area: str,
+) -> pd.DataFrame:
+    """Summarise learned-rule evidence by position for weekly application scoring."""
+
+    if learned_rules_df is None or learned_rules_df.empty:
+        return pd.DataFrame(
+            columns=[
+                "position_short",
+                f"{decision_area}_learned_uplift",
+                f"{decision_area}_learned_sample_size",
+                f"{decision_area}_learned_confidence",
+            ]
+        )
+    _require_columns(
+        learned_rules_df,
+        ("decision_area", "plain_english_rule", "sample_size", "uplift_vs_baseline", "confidence"),
+        name=f"{decision_area}_learned_rules",
+    )
+    rules = learned_rules_df[learned_rules_df["decision_area"].eq(decision_area)].copy()
+    if rules.empty:
+        return pd.DataFrame()
+    extracted = rules["plain_english_rule"].astype(str).str.extract(r"For\s+([A-Z]{3}),", expand=False)
+    rules["position_short"] = extracted.fillna("ALL")
+    rules["positive_uplift"] = pd.to_numeric(rules["uplift_vs_baseline"], errors="coerce").clip(lower=0)
+    confidence_rank = {"Low": 1, "Medium": 2, "High": 3}
+    rules["confidence_rank"] = rules["confidence"].map(confidence_rank).fillna(1)
+    grouped = (
+        rules.groupby("position_short", as_index=False)
+        .agg(
+            learned_uplift=("positive_uplift", "mean"),
+            learned_sample_size=("sample_size", "sum"),
+            confidence_rank=("confidence_rank", "max"),
+        )
+        .rename(
+            columns={
+                "learned_uplift": f"{decision_area}_learned_uplift",
+                "learned_sample_size": f"{decision_area}_learned_sample_size",
+            }
+        )
+    )
+    inverse_confidence = {value: key for key, value in confidence_rank.items()}
+    grouped[f"{decision_area}_learned_confidence"] = grouped["confidence_rank"].map(inverse_confidence).fillna("Low")
+    return grouped.drop(columns=["confidence_rank"])
+
+
+def _pair_recommendation(is_affordable: bool, score: float, sell_label: str) -> str:
+    if not is_affordable:
+        return "unaffordable"
+    if score >= 0.70 and sell_label in {"sell", "monitor"}:
+        return "strong_upgrade"
+    if score >= 0.55:
+        return "viable_upgrade"
+    return "avoid"
+
+
+def _pair_reason(row: pd.Series) -> str:
+    if not bool(row["is_affordable"]):
+        return "Unaffordable as a single transfer with current bank"
+    reasons: list[str] = []
+    if row["buy_score_delta"] > 0.10:
+        reasons.append("buy profile is stronger than sell profile")
+    if row["fixture_swing_score"] > 0.55:
+        reasons.append("fixture swing is positive")
+    if row["route_swing_score"] > 0.55:
+        reasons.append("route-to-points swing is positive")
+    if row["role_security_swing_score"] > 0.55:
+        reasons.append("role security improves")
+    if row["learned_evidence_score"] > 0.55:
+        reasons.append("sampled-cohort rules support the direction")
+    if not reasons:
+        reasons.append("upgrade case is marginal")
+    return "; ".join(reasons)
+
+
+def build_transfer_pair_review(
+    transfer_candidate_shortlist_df: pd.DataFrame,
+    sell_candidate_review_df: pd.DataFrame,
+    *,
+    bank: float = 0.0,
+    learned_candidate_rules_df: pd.DataFrame | None = None,
+    learned_sell_hold_rules_df: pd.DataFrame | None = None,
+    max_pairs: int = 120,
+) -> pd.DataFrame:
+    """Build affordable same-position buy/sell pairs for single-transfer review."""
+
+    _require_columns(
+        transfer_candidate_shortlist_df,
+        (
+            "target_gw",
+            "player_id",
+            "web_name",
+            "team_name",
+            "position_short",
+            "price",
+            "role_security_score",
+            "route_to_points_score",
+            "fixture_score",
+            "team_strength_score",
+            "price_value_score",
+            "transfer_candidate_score",
+        ),
+        name="transfer_candidate_shortlist",
+    )
+    _require_columns(
+        sell_candidate_review_df,
+        (
+            "target_gw",
+            "element",
+            "player_web_name",
+            "player_position_short",
+            "player_price",
+            "role_security_score",
+            "position_route_score",
+            "fixture_outlook_score",
+            "team_context_score",
+            "current_squad_priority_score",
+            "sell_risk_score",
+            "sell_recommendation",
+        ),
+        name="sell_candidate_review",
+    )
+
+    bank_float = _safe_numeric(bank, default=0.0)
+    buys = transfer_candidate_shortlist_df.copy()
+    sells = sell_candidate_review_df.copy()
+    buys["position_short"] = buys["position_short"].astype(str).str.upper()
+    sells["player_position_short"] = sells["player_position_short"].astype(str).str.upper()
+
+    candidate_evidence = _learned_position_evidence(
+        learned_candidate_rules_df,
+        decision_area="candidate_shortlist",
+    ).rename(columns={"position_short": "position_short"})
+    sell_evidence = _learned_position_evidence(
+        learned_sell_hold_rules_df,
+        decision_area="sell_hold",
+    ).rename(columns={"position_short": "player_position_short"})
+
+    if not candidate_evidence.empty:
+        buys = buys.merge(candidate_evidence, on="position_short", how="left", validate="many_to_one")
+    if not sell_evidence.empty:
+        sells = sells.merge(sell_evidence, on="player_position_short", how="left", validate="many_to_one")
+
+    pairs = buys.merge(
+        sells,
+        left_on=["target_gw", "position_short"],
+        right_on=["target_gw", "player_position_short"],
+        how="inner",
+        suffixes=("_buy", "_sell"),
+    )
+    if pairs.empty:
+        raise ValueError("No same-position buy/sell transfer pairs could be built")
+
+    pairs["available_budget"] = pd.to_numeric(pairs["player_price"], errors="coerce").fillna(0.0) + bank_float
+    pairs["is_affordable"] = pd.to_numeric(pairs["price"], errors="coerce").le(pairs["available_budget"])
+    pairs["buy_score_delta"] = (
+        pd.to_numeric(pairs["transfer_candidate_score"], errors="coerce").fillna(0.0)
+        - pd.to_numeric(pairs["current_squad_priority_score"], errors="coerce").fillna(0.0)
+    )
+    pairs["fixture_swing_raw"] = (
+        pd.to_numeric(pairs["fixture_score"], errors="coerce").fillna(0.0)
+        - pd.to_numeric(pairs["fixture_outlook_score"], errors="coerce").fillna(0.0)
+    )
+    pairs["route_swing_raw"] = (
+        pd.to_numeric(pairs["route_to_points_score"], errors="coerce").fillna(0.0)
+        - pd.to_numeric(pairs["position_route_score"], errors="coerce").fillna(0.0)
+    )
+    pairs["role_security_swing_raw"] = (
+        pd.to_numeric(pairs["role_security_score_buy"], errors="coerce").fillna(0.0)
+        - pd.to_numeric(pairs["role_security_score_sell"], errors="coerce").fillna(0.0)
+    )
+    pairs["team_strength_swing_raw"] = (
+        pd.to_numeric(pairs["team_strength_score"], errors="coerce").fillna(0.0)
+        - pd.to_numeric(pairs["team_context_score"], errors="coerce").fillna(0.0)
+    )
+    pairs["value_swing_raw"] = (
+        pd.to_numeric(pairs["price_value_score"], errors="coerce").fillna(0.0)
+        - (pd.to_numeric(pairs["current_squad_priority_score"], errors="coerce").fillna(0.0) / pd.to_numeric(pairs["player_price"], errors="coerce").replace(0, pd.NA)).fillna(0.0)
+    )
+
+    pairs["buy_score_component"] = pairs["buy_score_delta"].add(1).div(2).clip(0, 1)
+    pairs["fixture_swing_score"] = pairs["fixture_swing_raw"].add(1).div(2).clip(0, 1)
+    pairs["route_swing_score"] = pairs["route_swing_raw"].add(1).div(2).clip(0, 1)
+    pairs["role_security_swing_score"] = pairs["role_security_swing_raw"].add(1).div(2).clip(0, 1)
+    pairs["team_strength_swing_score"] = pairs["team_strength_swing_raw"].add(1).div(2).clip(0, 1)
+    pairs["value_swing_score"] = _normalise_series(pairs["value_swing_raw"])
+
+    candidate_uplift = pd.to_numeric(
+        pairs.get("candidate_shortlist_learned_uplift", pd.Series(0.0, index=pairs.index)),
+        errors="coerce",
+    ).fillna(0.0)
+    sell_uplift = pd.to_numeric(
+        pairs.get("sell_hold_learned_uplift", pd.Series(0.0, index=pairs.index)),
+        errors="coerce",
+    ).fillna(0.0)
+    pairs["learned_candidate_uplift"] = candidate_uplift
+    pairs["learned_sell_hold_uplift"] = sell_uplift
+    pairs["learned_evidence_score"] = _normalise_series(candidate_uplift + sell_uplift)
+    pairs["upgrade_score"] = (
+        0.22 * pairs["buy_score_component"]
+        + 0.18 * pairs["fixture_swing_score"]
+        + 0.18 * pairs["route_swing_score"]
+        + 0.14 * pairs["role_security_swing_score"]
+        + 0.10 * pairs["team_strength_swing_score"]
+        + 0.08 * pairs["value_swing_score"]
+        + 0.10 * pairs["learned_evidence_score"]
+    ).clip(0, 1)
+    pairs.loc[~pairs["is_affordable"], "upgrade_score"] = 0.0
+    pairs["recommendation"] = [
+        _pair_recommendation(affordable, score, sell_label)
+        for affordable, score, sell_label in zip(
+            pairs["is_affordable"],
+            pairs["upgrade_score"],
+            pairs["sell_recommendation"],
+        )
+    ]
+    pairs["reason_summary"] = pairs.apply(_pair_reason, axis=1)
+
+    output = pd.DataFrame(
+        {
+            "target_gw": pairs["target_gw"],
+            "sell_player_id": pairs["element"],
+            "sell_player_name": pairs["player_web_name"],
+            "sell_position": pairs["player_position_short"],
+            "sell_price": pairs["player_price"],
+            "sell_recommendation": pairs["sell_recommendation"],
+            "sell_risk_score": pairs["sell_risk_score"],
+            "buy_player_id": pairs["player_id"],
+            "buy_player_name": pairs["web_name"],
+            "buy_team_name": pairs["team_name"],
+            "buy_position": pairs["position_short"],
+            "buy_price": pairs["price"],
+            "available_budget": pairs["available_budget"],
+            "is_affordable": pairs["is_affordable"],
+            "buy_score_delta": pairs["buy_score_delta"],
+            "fixture_swing_score": pairs["fixture_swing_score"],
+            "route_swing_score": pairs["route_swing_score"],
+            "role_security_swing_score": pairs["role_security_swing_score"],
+            "team_strength_swing_score": pairs["team_strength_swing_score"],
+            "value_swing_score": pairs["value_swing_score"],
+            "learned_candidate_uplift": pairs["learned_candidate_uplift"],
+            "learned_sell_hold_uplift": pairs["learned_sell_hold_uplift"],
+            "learned_evidence_score": pairs["learned_evidence_score"],
+            "upgrade_score": pairs["upgrade_score"],
+            "recommendation": pairs["recommendation"],
+            "reason_summary": pairs["reason_summary"],
+        }
+    )
+    output = output.sort_values(
+        ["upgrade_score", "is_affordable", "sell_risk_score", "buy_score_delta"],
+        ascending=[False, False, False, False],
+    ).reset_index(drop=True)
+    if max_pairs > 0:
+        output = output.head(int(max_pairs)).copy()
+    return output
+
+
+def _historical_package_modifier(
+    transfer_rule_candidates_df: pd.DataFrame | None,
+    *,
+    transfer_count: int,
+    hit_cost: int,
+    spent_budget: bool,
+    released_budget: bool,
+    fixture_improvement_majority: bool,
+    window: int,
+) -> float:
+    """Return a conservative historical uplift modifier for a package profile."""
+
+    if transfer_rule_candidates_df is None or transfer_rule_candidates_df.empty:
+        return 0.0
+    required = ("rule_level", "rule_id", f"mean_uplift_vs_baseline_next{window}")
+    if any(column not in transfer_rule_candidates_df.columns for column in required):
+        return 0.0
+    rules = transfer_rule_candidates_df[transfer_rule_candidates_df["rule_level"].eq("transfer_package")].copy()
+    if rules.empty:
+        return 0.0
+
+    matched_rule_ids: list[str] = []
+    if transfer_count > 1:
+        matched_rule_ids.append("package_is_multi_transfer")
+    if hit_cost > 0:
+        matched_rule_ids.append("package_is_hit")
+    if spent_budget:
+        matched_rule_ids.append("package_spent_budget")
+    if released_budget:
+        matched_rule_ids.append("package_released_budget")
+    if fixture_improvement_majority:
+        matched_rule_ids.append("package_fixture_improvement_majority")
+
+    if not matched_rule_ids:
+        return 0.0
+    matched = rules[rules["rule_id"].isin(matched_rule_ids)]
+    if matched.empty:
+        return 0.0
+    uplift = pd.to_numeric(matched[f"mean_uplift_vs_baseline_next{window}"], errors="coerce").dropna()
+    if uplift.empty:
+        return 0.0
+    return float(uplift.mean())
+
+
+def _hit_recommendation(transfer_count: int, hit_cost: int, net_next1: float, net_next3: float, net_next5: float) -> str:
+    if transfer_count == 0:
+        return "roll_transfer"
+    if hit_cost == 0:
+        return "use_free_transfer" if net_next5 > 0 else "hold"
+    if hit_cost == 4 and net_next1 >= -1 and net_next3 > 0 and net_next5 >= 4:
+        return "consider_minus_4"
+    if hit_cost == 8 and net_next1 >= 0 and net_next3 >= 4 and net_next5 >= 12:
+        return "consider_minus_8"
+    if hit_cost == 12 and net_next1 >= 0 and net_next3 >= 8 and net_next5 >= 20:
+        return "consider_minus_12"
+    return "avoid_hit"
+
+
+def _package_confidence(row: dict[str, Any]) -> str:
+    if row["hit_cost"] == 0 and row["net_package_value_next5"] > 2:
+        return "Medium"
+    if row["hit_cost"] == 4 and row["net_package_value_next5"] >= 4 and row["net_package_value_next3"] > 1:
+        return "Medium"
+    if row["hit_cost"] >= 8 and row["net_package_value_next5"] >= row["hit_cost"]:
+        return "Low"
+    if row["recommendation"] in {"roll_transfer", "avoid_hit"}:
+        return "Medium"
+    return "Low"
+
+
+def _package_reason(row: dict[str, Any]) -> str:
+    if row["transfer_count"] == 0:
+        return "No-transfer baseline keeps flexibility and avoids unnecessary hit cost"
+    reasons: list[str] = []
+    if row["hit_cost"] > 0:
+        reasons.append(f"package carries a -{row['hit_cost']} hit")
+    else:
+        reasons.append("covered by available free transfers")
+    if row["net_package_value_next5"] > 0:
+        reasons.append("5GW net payoff proxy is positive")
+    else:
+        reasons.append("5GW net payoff proxy does not clear cost")
+    if row["historical_modifier_next5"] < 0:
+        reasons.append("historical package evidence applies a conservative penalty")
+    elif row["historical_modifier_next5"] > 0:
+        reasons.append("historical package evidence supports this package type")
+    if row["duplicate_check_passed"]:
+        reasons.append("no duplicate sold or bought players")
+    return "; ".join(reasons)
+
+
+def build_transfer_package_review(
+    transfer_pair_review_df: pd.DataFrame,
+    *,
+    free_transfers: int = 1,
+    transfer_rule_candidates_df: pd.DataFrame | None = None,
+    max_pairs_considered: int = 24,
+    max_packages_per_size: int = 20,
+) -> pd.DataFrame:
+    """Build package-level transfer and hit justification scenarios."""
+
+    _require_columns(
+        transfer_pair_review_df,
+        (
+            "target_gw",
+            "sell_player_id",
+            "sell_player_name",
+            "buy_player_id",
+            "buy_player_name",
+            "buy_price",
+            "sell_price",
+            "is_affordable",
+            "fixture_swing_score",
+            "route_swing_score",
+            "learned_evidence_score",
+            "upgrade_score",
+        ),
+        name="transfer_pair_review",
+    )
+    free_transfer_count = int(_safe_numeric(free_transfers, default=1))
+    if free_transfer_count < 0:
+        raise ValueError("free_transfers must be zero or greater")
+
+    pairs = transfer_pair_review_df.copy()
+    pairs = pairs[pairs["is_affordable"].astype(bool)].copy()
+    pairs = pairs[~pairs["recommendation"].eq("unaffordable")].copy() if "recommendation" in pairs.columns else pairs
+    if pairs.empty:
+        raise ValueError("No affordable transfer pairs available for package review")
+    pairs = pairs.sort_values("upgrade_score", ascending=False).head(int(max_pairs_considered)).reset_index(drop=True)
+    target_gw = int(_safe_numeric(pairs["target_gw"].iloc[0], default=0))
+
+    rows: list[dict[str, Any]] = [
+        {
+            "target_gw": target_gw,
+            "package_id": f"gw{target_gw:02d}_no_transfer",
+            "transfer_count": 0,
+            "sold_player_ids": "",
+            "sold_player_names": "",
+            "bought_player_ids": "",
+            "bought_player_names": "",
+            "gross_package_score": 0.0,
+            "package_upgrade_score": 0.0,
+            "gross_expected_gain_next1": 0.0,
+            "gross_expected_gain_next3": 0.0,
+            "gross_expected_gain_next5": 0.0,
+            "hit_cost": 0,
+            "hit_scenario": "0",
+            "net_package_value_next1": 0.0,
+            "net_package_value_next3": 0.0,
+            "net_package_value_next5": 0.0,
+            "historical_modifier_next1": 0.0,
+            "historical_modifier_next3": 0.0,
+            "historical_modifier_next5": 0.0,
+            "recommendation": "roll_transfer",
+            "confidence": "Medium",
+            "duplicate_check_passed": True,
+            "reason_summary": "No-transfer baseline keeps flexibility and avoids unnecessary hit cost",
+        }
+    ]
+
+    for transfer_count in range(1, 5):
+        package_rows: list[dict[str, Any]] = []
+        for combo in combinations(pairs.index, transfer_count):
+            package = pairs.loc[list(combo)].copy()
+            if package["sell_player_id"].nunique() != transfer_count:
+                continue
+            if package["buy_player_id"].nunique() != transfer_count:
+                continue
+
+            hit_cost = max(0, transfer_count - free_transfer_count) * 4
+            spent_budget = float(package["buy_price"].sum()) > float(package["sell_price"].sum())
+            released_budget = float(package["buy_price"].sum()) < float(package["sell_price"].sum())
+            fixture_improvement_majority = pd.to_numeric(
+                package["fixture_swing_score"],
+                errors="coerce",
+            ).fillna(0.5).gt(0.55).mean() >= 0.5
+
+            gross_score = float(package["upgrade_score"].sum())
+            average_score = float(package["upgrade_score"].mean())
+            package_upgrade_score = min(1.0, 0.70 * average_score + 0.30 * min(gross_score / max(transfer_count, 1), 1.0))
+
+            base_next1 = float((package["upgrade_score"] * 3.0 + package["learned_evidence_score"]).sum())
+            base_next3 = float((package["upgrade_score"] * 7.0 + package["learned_evidence_score"] * 2.0).sum())
+            base_next5 = float((package["upgrade_score"] * 11.0 + package["learned_evidence_score"] * 3.0).sum())
+            historical_next1 = _historical_package_modifier(
+                transfer_rule_candidates_df,
+                transfer_count=transfer_count,
+                hit_cost=hit_cost,
+                spent_budget=spent_budget,
+                released_budget=released_budget,
+                fixture_improvement_majority=fixture_improvement_majority,
+                window=1,
+            )
+            historical_next3 = _historical_package_modifier(
+                transfer_rule_candidates_df,
+                transfer_count=transfer_count,
+                hit_cost=hit_cost,
+                spent_budget=spent_budget,
+                released_budget=released_budget,
+                fixture_improvement_majority=fixture_improvement_majority,
+                window=3,
+            )
+            historical_next5 = _historical_package_modifier(
+                transfer_rule_candidates_df,
+                transfer_count=transfer_count,
+                hit_cost=hit_cost,
+                spent_budget=spent_budget,
+                released_budget=released_budget,
+                fixture_improvement_majority=fixture_improvement_majority,
+                window=5,
+            )
+            gross_next1 = base_next1 + 0.25 * historical_next1
+            gross_next3 = base_next3 + 0.25 * historical_next3
+            gross_next5 = base_next5 + 0.25 * historical_next5
+            row = {
+                "target_gw": target_gw,
+                "package_id": f"gw{target_gw:02d}_{transfer_count}t_{'_'.join(package['buy_player_id'].astype(int).astype(str))}",
+                "transfer_count": transfer_count,
+                "sold_player_ids": ",".join(package["sell_player_id"].astype(int).astype(str)),
+                "sold_player_names": "; ".join(package["sell_player_name"].astype(str)),
+                "bought_player_ids": ",".join(package["buy_player_id"].astype(int).astype(str)),
+                "bought_player_names": "; ".join(package["buy_player_name"].astype(str)),
+                "gross_package_score": gross_score,
+                "package_upgrade_score": package_upgrade_score,
+                "gross_expected_gain_next1": gross_next1,
+                "gross_expected_gain_next3": gross_next3,
+                "gross_expected_gain_next5": gross_next5,
+                "hit_cost": hit_cost,
+                "hit_scenario": f"-{hit_cost}" if hit_cost > 0 else "0",
+                "net_package_value_next1": gross_next1 - hit_cost,
+                "net_package_value_next3": gross_next3 - hit_cost,
+                "net_package_value_next5": gross_next5 - hit_cost,
+                "historical_modifier_next1": historical_next1,
+                "historical_modifier_next3": historical_next3,
+                "historical_modifier_next5": historical_next5,
+                "duplicate_check_passed": True,
+            }
+            row["recommendation"] = _hit_recommendation(
+                transfer_count,
+                hit_cost,
+                row["net_package_value_next1"],
+                row["net_package_value_next3"],
+                row["net_package_value_next5"],
+            )
+            row["confidence"] = _package_confidence(row)
+            row["reason_summary"] = _package_reason(row)
+            package_rows.append(row)
+
+        package_rows = sorted(
+            package_rows,
+            key=lambda item: (item["net_package_value_next5"], item["net_package_value_next3"], item["package_upgrade_score"]),
+            reverse=True,
+        )[: int(max_packages_per_size)]
+        rows.extend(package_rows)
+
+    output = pd.DataFrame(rows)
+    if output.empty:
+        return output
+    return output.sort_values(
+        ["net_package_value_next5", "net_package_value_next3", "transfer_count"],
+        ascending=[False, False, True],
+    ).reset_index(drop=True)
+
+
+def save_weekly_hit_payoff_curve(
+    transfer_package_review_df: pd.DataFrame,
+    chart_path: str | Path,
+) -> Path:
+    """Save a simple best-package payoff curve by hit cost."""
+
+    _require_columns(
+        transfer_package_review_df,
+        ("hit_cost", "net_package_value_next1", "net_package_value_next3", "net_package_value_next5"),
+        name="transfer_package_review",
+    )
+    from PIL import Image, ImageDraw
+
+    chart_path = Path(chart_path)
+    chart_path.parent.mkdir(parents=True, exist_ok=True)
+    best = (
+        transfer_package_review_df.groupby("hit_cost", as_index=False)[
+            ["net_package_value_next1", "net_package_value_next3", "net_package_value_next5"]
+        ]
+        .max()
+        .sort_values("hit_cost")
+    )
+    width, height = 900, 520
+    margin_left, margin_right, margin_top, margin_bottom = 80, 40, 50, 80
+    image = Image.new("RGB", (width, height), "white")
+    draw = ImageDraw.Draw(image)
+
+    x_values = best["hit_cost"].astype(float).tolist()
+    y_columns = [
+        ("net_package_value_next1", "1GW", (32, 99, 155)),
+        ("net_package_value_next3", "3GW", (50, 140, 90)),
+        ("net_package_value_next5", "5GW", (190, 95, 40)),
+    ]
+    y_values = []
+    for column, _, _ in y_columns:
+        y_values.extend(pd.to_numeric(best[column], errors="coerce").fillna(0).tolist())
+    y_values.append(0.0)
+    x_min, x_max = min(x_values), max(x_values)
+    y_min, y_max = min(y_values), max(y_values)
+    if x_min == x_max:
+        x_max = x_min + 1
+    if y_min == y_max:
+        y_max = y_min + 1
+    y_pad = (y_max - y_min) * 0.12
+    y_min -= y_pad
+    y_max += y_pad
+
+    plot_left = margin_left
+    plot_right = width - margin_right
+    plot_top = margin_top
+    plot_bottom = height - margin_bottom
+
+    def x_to_px(value: float) -> int:
+        return int(plot_left + (value - x_min) / (x_max - x_min) * (plot_right - plot_left))
+
+    def y_to_px(value: float) -> int:
+        return int(plot_bottom - (value - y_min) / (y_max - y_min) * (plot_bottom - plot_top))
+
+    draw.text((margin_left, 18), "Weekly hit payoff curve", fill=(0, 0, 0))
+    draw.line((plot_left, plot_top, plot_left, plot_bottom), fill=(0, 0, 0), width=2)
+    draw.line((plot_left, plot_bottom, plot_right, plot_bottom), fill=(0, 0, 0), width=2)
+    zero_y = y_to_px(0.0)
+    draw.line((plot_left, zero_y, plot_right, zero_y), fill=(160, 160, 160), width=1)
+    for hit_cost in x_values:
+        x = x_to_px(hit_cost)
+        draw.line((x, plot_bottom, x, plot_bottom + 6), fill=(0, 0, 0), width=1)
+        draw.text((x - 8, plot_bottom + 12), str(int(hit_cost)), fill=(0, 0, 0))
+    draw.text((plot_left + 280, height - 35), "Hit cost", fill=(0, 0, 0))
+    draw.text((10, 240), "Best net payoff proxy", fill=(0, 0, 0))
+
+    legend_x = width - 170
+    legend_y = 20
+    for idx, (column, label, color) in enumerate(y_columns):
+        values = pd.to_numeric(best[column], errors="coerce").fillna(0).tolist()
+        points = [(x_to_px(x), y_to_px(y)) for x, y in zip(x_values, values)]
+        if len(points) > 1:
+            draw.line(points, fill=color, width=3)
+        for point in points:
+            x, y = point
+            draw.ellipse((x - 4, y - 4, x + 4, y + 4), fill=color)
+        draw.rectangle((legend_x, legend_y + idx * 22, legend_x + 14, legend_y + 14 + idx * 22), fill=color)
+        draw.text((legend_x + 20, legend_y + idx * 22), label, fill=(0, 0, 0))
+
+    image.save(chart_path)
+    return chart_path
+
+
+def _add_sell_hold_rule_flags(features: pd.DataFrame) -> pd.DataFrame:
+    output = features.copy()
+    output["position_short"] = output["position_short"].astype(str).str.upper()
+    group_keys = ["gameweek", "position_short"]
+
+    output["value_per_price_prior"] = (
+        _optional_numeric(output, "feature_player_points_per_90_prior", default=0.0)
+        / _optional_numeric(output, "feature_player_price", default=0.0).replace(0, pd.NA)
+    )
+    threshold_columns = {
+        "q25_route": ("feature_position_relevant_route_score", 0.25),
+        "q25_team": ("feature_team_points_per_fixture_prior", 0.25),
+        "q25_value": ("value_per_price_prior", 0.25),
+        "q25_ownership": ("feature_ownership_percent_prior", 0.25),
+        "q75_fixture": ("feature_fixture_fpl_difficulty_mean_next3", 0.75),
+    }
+    for output_column, (source_column, quantile) in threshold_columns.items():
+        if source_column not in output.columns:
+            output[output_column] = pd.NA
+            continue
+        output[output_column] = output.groupby(group_keys)[source_column].transform(lambda series: series.quantile(quantile))
+
+    output["rule_sell_low_minutes"] = (
+        _optional_numeric(output, "feature_player_minutes_roll5_mean_prior", default=0.0).lt(45)
+        | _optional_numeric(output, "feature_player_start_rate_prior", default=0.0).lt(0.50)
+    )
+    output["rule_sell_weak_position_route"] = _optional_numeric(
+        output,
+        "feature_position_relevant_route_score",
+        default=0.0,
+    ).le(pd.to_numeric(output["q25_route"], errors="coerce").fillna(-1))
+    output["rule_sell_bad_fixtures"] = (
+        _optional_numeric(output, "feature_fixture_blank_next3", default=0.0).gt(0)
+        | _optional_numeric(output, "feature_fixture_fpl_difficulty_mean_next3", default=3.0).ge(
+            pd.to_numeric(output["q75_fixture"], errors="coerce").fillna(4.0)
+        )
+    )
+    output["rule_sell_weak_team"] = _optional_numeric(
+        output,
+        "feature_team_points_per_fixture_prior",
+        default=0.0,
+    ).le(pd.to_numeric(output["q25_team"], errors="coerce").fillna(-1))
+    output["rule_sell_poor_value"] = pd.to_numeric(output["value_per_price_prior"], errors="coerce").fillna(0.0).le(
+        pd.to_numeric(output["q25_value"], errors="coerce").fillna(-1)
+    )
+    output["rule_sell_low_sample_ownership"] = (
+        output.get("feature_ownership_available", pd.Series(False, index=output.index)).fillna(False).astype(bool)
+        & _optional_numeric(output, "feature_ownership_percent_prior", default=0.0).le(
+            pd.to_numeric(output["q25_ownership"], errors="coerce").fillna(-1)
+        )
+    )
+
+    for rule_id, _, _ in SELL_HOLD_RULE_DEFINITIONS:
+        output[rule_id] = output[rule_id].fillna(False).astype(bool)
+    return output
+
+
+def _sell_rule_text(rule_name: str, position: str) -> str:
+    return f"For {position}, treat '{rule_name}' as a sell/replaceability warning only when a credible replacement exists."
+
+
+def _sell_when_to_use(route_family: str) -> str:
+    if route_family == "availability":
+        return "Use when the player is losing starts or cannot reliably reach appearance/minutes points."
+    if route_family == "fixtures":
+        return "Use when the next 3 GWs materially reduce the player's expected scoring route."
+    if route_family == "ownership":
+        return "Use as a weak confirmation that sampled managers were not broadly holding the player."
+    if route_family == "price_value":
+        return "Use when the player's price slot can be redeployed into a stronger role or route."
+    return "Use when the player's weakness matches their FPL position and there is an evidence-backed replacement path."
+
+
+def _sell_when_to_ignore(route_family: str) -> str:
+    if route_family == "availability":
+        return "Ignore if reliable team news suggests the minutes issue has already reversed."
+    if route_family == "fixtures":
+        return "Ignore if the player has a durable scoring route that is less fixture-sensitive."
+    if route_family == "ownership":
+        return "Ignore when low ownership reflects differential value rather than weak process."
+    return "Ignore when selling would break squad structure, waste transfers, or fund only a marginal upgrade."
+
+
+def build_learned_sell_hold_rules(
+    candidate_rule_features_df: pd.DataFrame,
+    manager_transfers_df: pd.DataFrame,
+    manager_picks_df: pd.DataFrame,
+    top_n_sample_managers_df: pd.DataFrame,
+) -> pd.DataFrame:
+    """Learn sell/hold evidence from sampled-manager transfer-out behaviour."""
+
+    _require_columns(
+        candidate_rule_features_df,
+        ("gameweek", "player_id", "position_short", "outcome_points_next1", "outcome_points_next3", "outcome_points_next5"),
+        name="candidate_rule_features",
+    )
+    _require_columns(manager_transfers_df, ("manager_id", "event", "element_out"), name="manager_transfers")
+    _require_columns(manager_picks_df, ("manager_id", "event", "element"), name="manager_picks")
+    _require_columns(top_n_sample_managers_df, ("manager_id", "rank_band"), name="top_n_sample_managers")
+
+    sample = top_n_sample_managers_df[["manager_id", "rank_band"]].dropna(subset=["manager_id"]).copy()
+    sample["manager_id"] = sample["manager_id"].astype(int)
+    sample_ids = set(sample["manager_id"])
+    rank_band_by_manager = sample.set_index("manager_id")["rank_band"].to_dict()
+
+    features = candidate_rule_features_df.copy()
+    features["gameweek"] = pd.to_numeric(features["gameweek"], errors="coerce").astype("Int64")
+    features["player_id"] = pd.to_numeric(features["player_id"], errors="coerce").astype("Int64")
+    features = _add_sell_hold_rule_flags(features)
+    feature_columns = [
+        column
+        for column in features.columns
+        if column.startswith("feature_")
+        or column.startswith("outcome_")
+        or column.startswith("rule_sell_")
+        or column in {"gameweek", "player_id", "position_short"}
+    ]
+    features = features[feature_columns].dropna(subset=["gameweek", "player_id"]).copy()
+
+    transfers = manager_transfers_df[manager_transfers_df["manager_id"].astype(int).isin(sample_ids)].copy()
+    transfers["manager_id"] = transfers["manager_id"].astype(int)
+    transfers["event"] = pd.to_numeric(transfers["event"], errors="coerce").astype("Int64")
+    transfers["element_out"] = pd.to_numeric(transfers["element_out"], errors="coerce").astype("Int64")
+    transfers = transfers.dropna(subset=["event", "element_out"]).copy()
+    transfers = transfers.merge(
+        features,
+        left_on=["event", "element_out"],
+        right_on=["gameweek", "player_id"],
+        how="inner",
+        validate="many_to_one",
+    )
+    transfers["rank_band"] = transfers["manager_id"].map(rank_band_by_manager)
+    transfers["decision"] = "sold"
+
+    sold_keys = transfers[["manager_id", "event", "element_out"]].rename(columns={"element_out": "element"})
+    sold_keys["was_sold"] = True
+    holds = manager_picks_df[manager_picks_df["manager_id"].astype(int).isin(sample_ids)].copy()
+    holds["manager_id"] = holds["manager_id"].astype(int)
+    holds["event"] = pd.to_numeric(holds["event"], errors="coerce").astype("Int64")
+    holds["element"] = pd.to_numeric(holds["element"], errors="coerce").astype("Int64")
+    holds = holds.dropna(subset=["event", "element"]).copy()
+    holds = holds.merge(sold_keys, on=["manager_id", "event", "element"], how="left")
+    holds = holds[~holds["was_sold"].eq(True)].copy()
+    holds = holds.merge(
+        features,
+        left_on=["event", "element"],
+        right_on=["gameweek", "player_id"],
+        how="inner",
+        validate="many_to_one",
+    )
+    holds["rank_band"] = holds["manager_id"].map(rank_band_by_manager)
+    holds["decision"] = "held"
+
+    rows: list[dict[str, Any]] = []
+    for rule_id, rule_name, route_family in SELL_HOLD_RULE_DEFINITIONS:
+        if rule_id not in transfers.columns or rule_id not in holds.columns:
+            continue
+        for position in sorted(features["position_short"].dropna().unique()):
+            sold_position = transfers[transfers["position_short"].eq(position)]
+            hold_position = holds[holds["position_short"].eq(position)]
+            sold_rule = sold_position[sold_position[rule_id]]
+            hold_rule = hold_position[hold_position[rule_id]]
+            sample_size = int(len(sold_rule))
+            if sample_size < 30:
+                continue
+            sample_manager_count = int(sold_rule["manager_id"].nunique())
+            rank_band_coverage = _rank_band_coverage(sold_rule)
+            for window in (1, 3, 5):
+                outcome_column = f"outcome_points_next{window}"
+                if outcome_column not in sold_rule.columns:
+                    continue
+                baseline_rows = hold_rule if len(hold_rule) >= 30 else hold_position
+                mean_outcome = pd.to_numeric(sold_rule[outcome_column], errors="coerce").mean()
+                median_outcome = pd.to_numeric(sold_rule[outcome_column], errors="coerce").median()
+                baseline_outcome = pd.to_numeric(baseline_rows[outcome_column], errors="coerce").mean()
+                uplift = baseline_outcome - mean_outcome
+                confidence = _calibration_confidence(sample_size, sample_manager_count, uplift)
+                rows.append(
+                    {
+                        "rule_id": f"sell_hold_{rule_id}_{position}_next{window}",
+                        "decision_area": "sell_hold",
+                        "plain_english_rule": _sell_rule_text(rule_name, position),
+                        "sample_size": sample_size,
+                        "sample_manager_count": sample_manager_count,
+                        "rank_band_coverage": rank_band_coverage,
+                        "evidence_window": f"{window}GW",
+                        "mean_outcome": float(mean_outcome),
+                        "median_outcome": float(median_outcome),
+                        "baseline_outcome": float(baseline_outcome),
+                        "uplift_vs_baseline": float(uplift),
+                        "confidence": confidence,
+                        "when_to_use": _sell_when_to_use(route_family),
+                        "when_to_ignore": _sell_when_to_ignore(route_family),
+                        "risk_of_overfitting": _overfitting_risk(confidence, sample_size, rank_band_coverage),
+                    }
+                )
+
+    output = pd.DataFrame(rows, columns=LEARNED_RULE_COLUMNS)
+    if output.empty:
+        return output
+    return output.sort_values(
+        ["confidence", "uplift_vs_baseline", "sample_size"],
+        ascending=[True, False, False],
+    ).reset_index(drop=True)
 
 
 def build_transfer_candidate_shortlist(
@@ -777,4 +1744,70 @@ def build_weekly_decision_pack(
                 output_dir / "weekly_sell_candidate_review.csv",
                 index=False,
             )
+        if (
+            transfer_shortlist is not None
+            and not transfer_shortlist.empty
+            and DEFAULT_LEARNED_CANDIDATE_RULES_PATH.exists()
+            and DEFAULT_LEARNED_SELL_HOLD_RULES_PATH.exists()
+        ):
+            transfer_pair_review = build_transfer_pair_review(
+                transfer_shortlist,
+                pack["sell_candidate_review"],
+                bank=bank_float,
+                learned_candidate_rules_df=pd.read_csv(DEFAULT_LEARNED_CANDIDATE_RULES_PATH),
+                learned_sell_hold_rules_df=pd.read_csv(DEFAULT_LEARNED_SELL_HOLD_RULES_PATH),
+            )
+            if output_tables_dir is not None:
+                output_dir = Path(output_tables_dir)
+                output_dir.mkdir(parents=True, exist_ok=True)
+                transfer_pair_review.to_csv(
+                    output_dir / "weekly_transfer_pair_review.csv",
+                    index=False,
+                )
+            if DEFAULT_TRANSFER_RULE_CANDIDATES_PATH.exists():
+                transfer_package_review = build_transfer_package_review(
+                    transfer_pair_review,
+                    free_transfers=free_transfers_int,
+                    transfer_rule_candidates_df=pd.read_csv(DEFAULT_TRANSFER_RULE_CANDIDATES_PATH),
+                )
+                pack["transfer_package_review"] = transfer_package_review
+                if output_tables_dir is not None:
+                    output_dir = Path(output_tables_dir)
+                    output_dir.mkdir(parents=True, exist_ok=True)
+                    transfer_package_review.to_csv(
+                        output_dir / "weekly_transfer_package_review.csv",
+                        index=False,
+                    )
     return pack
+
+
+def build_learned_weekly_decision_rules(
+    *,
+    candidate_rule_features: str | Path | pd.DataFrame = DEFAULT_CANDIDATE_RULE_FEATURES_PATH,
+    player_selection_rule_results: str | Path | pd.DataFrame = DEFAULT_PLAYER_SELECTION_RULES_PATH,
+    manager_transfers: str | Path | pd.DataFrame = DEFAULT_MANAGER_TRANSFERS_PATH,
+    manager_picks: str | Path | pd.DataFrame = DEFAULT_MANAGER_PICKS_PATH,
+    top_n_sample_managers: str | Path | pd.DataFrame = DEFAULT_TOP_N_SAMPLE_MANAGERS_PATH,
+    output_tables_dir: str | Path | None = DEFAULT_OUTPUT_TABLES_DIR,
+) -> dict[str, pd.DataFrame]:
+    """Build sampled-cohort learned rules for the next-season weekly process."""
+
+    candidate_features_df = _load_dataframe(candidate_rule_features, name="candidate_rule_features")
+    player_rules_df = _load_dataframe(player_selection_rule_results, name="player_selection_rule_results")
+    transfers_df = _load_dataframe(manager_transfers, name="manager_transfers")
+    picks_df = _load_dataframe(manager_picks, name="manager_picks")
+    sample_df = _load_dataframe(top_n_sample_managers, name="top_n_sample_managers")
+
+    learned_candidate_rules = build_learned_candidate_shortlist_rules(player_rules_df, sample_df)
+    learned_sell_hold_rules = build_learned_sell_hold_rules(candidate_features_df, transfers_df, picks_df, sample_df)
+
+    outputs = {
+        "learned_candidate_shortlist_rules": learned_candidate_rules,
+        "learned_sell_hold_rules": learned_sell_hold_rules,
+    }
+    if output_tables_dir is not None:
+        output_dir = Path(output_tables_dir)
+        output_dir.mkdir(parents=True, exist_ok=True)
+        learned_candidate_rules.to_csv(output_dir / "learned_candidate_shortlist_rules.csv", index=False)
+        learned_sell_hold_rules.to_csv(output_dir / "learned_sell_hold_rules.csv", index=False)
+    return outputs

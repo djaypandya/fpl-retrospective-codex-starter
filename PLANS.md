@@ -40,6 +40,12 @@ The project should produce:
 - `outputs/charts/rule_confidence_summary.png`
 - `outputs/tables/weekly_transfer_candidate_shortlist.csv`
 - `outputs/tables/weekly_sell_candidate_review.csv`
+- `outputs/tables/learned_candidate_shortlist_rules.csv`
+- `outputs/tables/learned_sell_hold_rules.csv`
+- `outputs/tables/learned_hit_threshold_rules.csv`
+- `outputs/tables/learned_captaincy_rules.csv`
+- `outputs/tables/next_season_weekly_decision_checklist.csv`
+- `outputs/tables/weekly_transfer_pair_review.csv`
 - `outputs/tables/weekly_transfer_package_review.csv`
 - `outputs/tables/weekly_captaincy_decision.csv`
 - `outputs/tables/weekly_decision_pack_summary.csv`

@@ -1844,7 +1844,7 @@ As a manager, I want a systematic way to narrow the full player pool into transf
 
 ## Story 12.1: Build sell candidate review
 
-Status: In Review  
+Status: Done  
 Epic: Epic 11  
 Sprint: Sprint 12  
 Size: M  
@@ -1895,14 +1895,70 @@ As a manager, I want to know which player in my squad is most replaceable, so th
 
 ---
 
-## Story 12.2: Match transfer candidates to sell candidates
+## Story 12.1a: Calibrate candidate and sell rules from sampled cohort
 
-Status: Backlog  
+Status: Done  
 Epic: Epic 11  
 Sprint: Sprint 12  
 Size: M  
 Priority: High  
-Depends on: Story 11.3, Story 12.1  
+Depends on: Story 12.1, Story 9.2, Story 9.3  
+Human review: Required
+
+### User story
+
+As a manager, I want the weekly decision system to use learned rules from the sampled manager cohort, so that the next-season process is not just a set of hand-weighted heuristics.
+
+### Acceptance criteria
+
+- Converts player-selection rule evidence into `learned_candidate_shortlist_rules.csv`.
+- Learns sell/hold rules from sampled manager transfer-out behaviour and forward outcomes.
+- Reports sample size, sampled manager count, rank-band coverage, evidence window, mean/median outcome, baseline, uplift, confidence, when-to-use, when-to-ignore, and overfitting risk.
+- Uses manager `816200` only as an application example, not as the learning base.
+- Keeps Story 12.2 blocked until these learned rule outputs exist.
+
+### Tasks
+
+- [x] Load sampled manager IDs and rank bands.
+- [x] Convert existing player-selection rule candidates into learned shortlist rules.
+- [x] Join sampled manager transfer-out rows to pre-GW candidate features.
+- [x] Create sell/hold rule evidence from transfer-out profiles.
+- [x] Save `learned_candidate_shortlist_rules.csv`.
+- [x] Save `learned_sell_hold_rules.csv`.
+
+### Implementation task breakdown
+
+- [x] Move Story 12.1 to Done as a v1 application-layer sell review.
+- [x] Add Story 12.1a to Sprint 12 before Story 12.2.
+- [x] Add reusable learned-rule calibration helpers.
+- [x] Add notebook smoke coverage for learned outputs.
+- [x] Run output shape, sample-size, required-column, confidence, and leakage checks.
+- [x] Update board/status files after checks.
+
+### Checks
+
+- [x] Learned rule outputs exist.
+- [x] Each learned rule output contains required next-season process columns.
+- [x] Sample manager count is reported and based on sampled managers.
+- [x] Evidence windows are limited to 1GW, 3GW, and 5GW.
+- [x] Future outcomes are used only for calibration, not current weekly scoring.
+
+### Definition of done
+
+- Candidate and sell/hold learned-rule tables exist.
+- Checks pass.
+- Board and status updated.
+
+---
+
+## Story 12.2: Match transfer candidates to sell candidates
+
+Status: Done  
+Epic: Epic 11  
+Sprint: Sprint 12  
+Size: M  
+Priority: High  
+Depends on: Story 11.3, Story 12.1a  
 Human review: Required
 
 ### User story
@@ -1919,17 +1975,30 @@ As a manager, I want each transfer candidate compared against realistic players 
 
 ### Tasks
 
-- [ ] Build valid single-transfer pairs.
-- [ ] Check affordability.
-- [ ] Calculate upgrade components.
-- [ ] Rank upgrades.
-- [ ] Save candidate pair table.
+- [x] Build valid single-transfer pairs.
+- [x] Check affordability.
+- [x] Calculate upgrade components.
+- [x] Rank upgrades.
+- [x] Save candidate pair table.
+
+### Implementation task breakdown
+
+- [x] Mark Story 12.1a as Done after human acceptance.
+- [x] Move Story 12.2 to In Progress in board/status files.
+- [x] Add reusable transfer-pair review logic.
+- [x] Restrict single-transfer pairs to same-position swaps.
+- [x] Apply affordability using player sell price plus bank.
+- [x] Add upgrade score components and learned-rule evidence columns.
+- [x] Save `weekly_transfer_pair_review.csv`.
+- [x] Add notebook smoke coverage.
+- [x] Run validation checks.
+- [x] Update board/status files after checks.
 
 ### Checks
 
-- [ ] No impossible position swaps are recommended for single transfers.
-- [ ] Unaffordable transfers are flagged or excluded.
-- [ ] Upgrade score is interpretable.
+- [x] No impossible position swaps are recommended for single transfers.
+- [x] Unaffordable transfers are flagged or excluded.
+- [x] Upgrade score is interpretable.
 
 ### Definition of done
 
@@ -1941,7 +2010,7 @@ As a manager, I want each transfer candidate compared against realistic players 
 
 ## Story 12.3: Build transfer package and hit justification engine
 
-Status: Backlog  
+Status: In Review  
 Epic: Epic 11  
 Sprint: Sprint 12  
 Size: M  
@@ -1964,20 +2033,36 @@ As a manager, I want to know whether a `-4`, `-8`, or `-12` is justified, so tha
 
 ### Tasks
 
-- [ ] Generate feasible packages from top transfer pairs.
-- [ ] Avoid duplicate sold or bought players within a package.
-- [ ] Estimate total package upgrade score.
-- [ ] Calculate hit cost.
-- [ ] Calculate net package value after hit.
-- [ ] Add historical evidence modifier from transfer rule candidates if available.
-- [ ] Save `weekly_transfer_package_review.csv`.
+- [x] Generate feasible packages from top transfer pairs.
+- [x] Avoid duplicate sold or bought players within a package.
+- [x] Estimate total package upgrade score.
+- [x] Calculate hit cost.
+- [x] Calculate net package value after hit.
+- [x] Add historical evidence modifier from transfer rule candidates if available.
+- [x] Save `weekly_transfer_package_review.csv`.
+
+### Implementation task breakdown
+
+- [x] Mark Story 12.2 as Done after human acceptance.
+- [x] Move Story 12.3 to In Progress in board/status files.
+- [x] Add reusable transfer package review logic.
+- [x] Generate no-transfer, 1-transfer, 2-transfer, 3-transfer, and 4-transfer packages.
+- [x] Prevent duplicate sold or bought players within a package.
+- [x] Calculate hit cost from `free_transfers`.
+- [x] Add 1GW, 3GW, and 5GW payoff proxies after hit cost.
+- [x] Incorporate historical transfer package evidence where available.
+- [x] Save `weekly_transfer_package_review.csv`.
+- [x] Save `weekly_hit_payoff_curve.png`.
+- [x] Add notebook smoke coverage.
+- [x] Run validation checks.
+- [x] Update board/status files after checks.
 
 ### Checks
 
-- [ ] Package hit cost is correct for free transfer count.
-- [ ] No package has duplicate bought or sold players.
-- [ ] Package-level score is not just sum of individual rows without hit cost.
-- [ ] Output includes `-4`, `-8`, and `-12` scenarios where feasible.
+- [x] Package hit cost is correct for free transfer count.
+- [x] No package has duplicate bought or sold players.
+- [x] Package-level score is not just sum of individual rows without hit cost.
+- [x] Output includes `-4`, `-8`, and `-12` scenarios where feasible.
 
 ### Definition of done
 

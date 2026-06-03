@@ -16,6 +16,57 @@ Follow-up needed:
 
 ## Decisions
 
+### 2026-05-30: Evaluate hits only at package level
+
+Decision:  
+Story 12.3 generates transfer packages from valid pair rows, subtracts hit cost once at package level, and applies conservative historical package evidence from sampled-manager transfer packages before assigning hit recommendations.
+
+Reason:  
+The user explicitly called out that transfers made together can have structural intent. Hit decisions should therefore evaluate the combined package, not isolated transfer legs, and should account for `-4`, `-8`, and `-12` costs directly.
+
+Alternatives considered:  
+Recommend hits from the sum of individual pair scores, or defer hit evaluation entirely to later backtesting.
+
+Risk:  
+The current payoff values are proxies, not calibrated expected points. They are useful for comparing package shapes, but Sprint 14 still needs to backtest thresholds before treating recommendations as final next-season rules.
+
+Follow-up needed:  
+Story 14.2 should backtest hit thresholds and produce `learned_hit_threshold_rules.csv`.
+
+### 2026-05-30: Keep Story 12.2 transfer pairs to same-position single transfers
+
+Decision:  
+Story 12.2 builds only same-position buy/sell pairs for single-transfer review, flags affordability using sell price plus bank, and adds learned-rule evidence from candidate-shortlist and sell/hold calibration outputs.
+
+Reason:  
+Single-transfer recommendations must respect FPL position constraints. Cross-position upgrades usually require a multi-transfer package, formation check, or funding leg, which belongs in Story 12.3 rather than a one-row pair review.
+
+Alternatives considered:  
+Allow cross-position pairs immediately, or recommend only the highest buy candidate against the highest sell-risk player.
+
+Risk:  
+Some genuine structural upgrades are intentionally excluded from Story 12.2 and will only appear once package-level review is implemented.
+
+Follow-up needed:  
+Story 12.3 should combine pair rows into feasible packages, account for hit cost, and evaluate `-4`, `-8`, and `-12` scenarios conservatively.
+
+### 2026-05-30: Add sampled-cohort learned rules before transfer-pair scoring
+
+Decision:  
+Story 12.1a adds `learned_candidate_shortlist_rules.csv` and `learned_sell_hold_rules.csv` as required sampled-cohort calibration outputs before Story 12.2 can match buy candidates to sell candidates.
+
+Reason:  
+The Weekly Decision System is meant to be a next-season process learned from the 1000 sampled managers, not a retrospective optimiser for manager `816200`. The previous weekly shortlist and sell review were useful application-layer heuristics, but transfer-pair scoring needs sample-backed evidence and confidence fields.
+
+Alternatives considered:  
+Proceed directly to transfer-pair matching using the heuristic candidate and sell scores, or defer all calibration to Sprint 14.
+
+Risk:  
+The learned sell/hold rules infer sell evidence from transfer-out behaviour and compare sold players against held sampled-player baselines. That is sample-backed but still observational and affected by hidden manager intent, injuries, and unavailable team-news context.
+
+Follow-up needed:  
+Story 12.2 should consume these learned outputs when scoring buy/sell pairs, and later stories should add hit and captaincy learned-rule tables.
+
 ### 2026-05-30: Score sell candidates with current-player risk plus same-position opportunity cost
 
 Decision:  

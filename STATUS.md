@@ -4,7 +4,7 @@
 
 Current epic: Epic 11  
 Current sprint: Sprint 12  
-Current story: Story 12.1 - Build sell candidate review  
+Current story: Story 12.3 - Build transfer package and hit justification engine  
 Current mode: Story in review; waiting for human acceptance  
 Last updated: 2026-05-30
 
@@ -44,6 +44,9 @@ Story 10.2: Create final executive summary
 Story 11.1: Create weekly decision-system skeleton
 Story 11.2: Build current-squad context for a target gameweek
 Story 11.3: Build transfer candidate shortlist
+Story 12.1: Build sell candidate review
+Story 12.1a: Calibrate candidate and sell rules from sampled cohort
+Story 12.2: Match transfer candidates to sell candidates
 
 ## In-progress story
 
@@ -51,11 +54,11 @@ None.
 
 ## In-review story
 
-Story 12.1: Build sell candidate review
+Story 12.3: Build transfer package and hit justification engine
 
 ## Next ready story
 
-None. Story 12.2 depends on Story 12.1 being accepted as Done.
+None in the current sprint. Sprint 12 has no remaining unstarted stories.
 
 ## Blockers
 
@@ -75,7 +78,9 @@ None.
 - The Weekly Decision System phase is planned as Epic 11 across Sprints 11-14.
 - Weekly Decision System work must use pre-deadline information only and must not use current-GW actual points, future outcomes, final ranks, or future ownership in recommendation scoring.
 - Weekly hit recommendations must be conservative and package-level, not isolated individual transfer-leg decisions.
+- The Weekly Decision System must be a next-season decision process learned from the sampled manager cohort, not a retrospective optimiser for the completed season.
+- Story 12.1 is accepted only as a v1 application-layer sell review; Story 12.1a must add sampled-cohort calibration before transfer pair matching begins.
 
 ## Latest run summary
 
-Sprint 12 was prepared as the next dependency-valid sprint. Story 12.1 built `weekly_sell_candidate_review.csv` from current-squad context, sell-risk scoring, and same-position opportunity cost. Checks passed and the story is in review.
+Story 12.3 created `weekly_transfer_package_review.csv` and `weekly_hit_payoff_curve.png` from affordable transfer pairs and historical transfer package evidence. Checks passed and the story is in review. Sprint 13 has not been started.
