@@ -1,0 +1,47 @@
+gw,out_name,out_sell_price,actual_in_name,actual_in_price,rule_pick_name,rule_pick_price,rule_pick_form,actual_form,hold_gws,hold_end_gw,actual_pts,rule_pts,delta,agreement
+2,Bowen,8.00,Ekitiké,8.50,NO_CANDIDATE,,,2.75,4,5,21,21,0,False
+3,Palmer,10.50,Reijnders,5.60,Semenyo,8.00,5.25,3.00,7,9,21,52,31,False
+3,Wan-Bissaka,4.50,Pedro Porro,5.50,Spence,4.10,3.00,2.75,3,5,11,7,-4,False
+4,Strand Larsen,6.50,Mateta,7.50,Richarlison,6.50,4.75,2.00,2,5,8,10,2,False
+7,M.Salah,14.50,Saka,9.80,Gravenberch,5.40,7.00,0.75,6,12,37,18,-19,False
+8,Dewsbury-Hall,5.00,Minteh,6.00,Zubimendi,4.90,5.75,5.50,5,12,30,18,-12,False
+8,Foster,5.00,Bowen,7.70,Isidor,5.00,3.50,5.50,4,11,11,13,2,False
+9,Foden,8.00,Enzo,6.70,Semenyo,8.00,8.50,3.00,4,12,18,5,-13,False
+10,Senesi,4.90,Guéhi,4.90,Van de Ven,4.40,6.75,4.50,3,12,15,3,-12,False
+10,Reijnders,5.60,Ndiaye,6.50,Bentancur,5.20,6.50,3.75,3,12,15,2,-13,False
+10,Richarlison,6.60,Mateta,7.60,Welbeck,6.30,7.75,5.75,3,12,12,16,4,False
+12,Kudus,6.50,Mbeumo,8.40,Casemiro,5.80,8.00,8.25,1,12,1,0,-1,False
+12,Bowen,7.70,Kroupi.Jr,4.60,Thiago,7.20,7.00,5.25,1,12,2,4,2,False
+12,Gabriel,6.30,Senesi,5.00,O'Reilly,5.30,7.75,3.00,1,12,3,1,-2,False
+14,Minteh,6.10,B.Fernandes,8.90,Dewsbury-Hall,5.30,7.75,5.75,4,17,36,20,-16,False
+15,Enzo,6.70,Bruno G.,6.80,Merino,5.30,8.00,6.25,8,22,49,9,-40,False
+16,Mateta,7.80,Thiago,7.00,Calvert-Lewin,5.80,5.75,5.00,3,18,9,30,21,False
+16,Ndiaye,6.50,Wilson,5.30,Dewsbury-Hall,5.30,9.75,7.00,7,22,42,1,-41,False
+17,Mbeumo,8.20,Foden,8.80,Foden,8.00,13.75,13.75,6,22,13,13,0,True
+18,B.Fernandes,9.10,M.Fernandes,5.50,Rogers,7.30,9.50,5.00,3,20,7,7,0,False
+18,Kroupi.Jr,4.60,Ekitiké,8.80,NO_CANDIDATE,,,9.00,2,19,7,7,0,False
+19,Thiago,7.00,Woltemade,7.40,Calvert-Lewin,5.80,9.00,4.25,4,22,9,13,4,False
+19,Senesi,4.90,Dorgu,4.20,Lewis-Potter,4.80,7.50,6.00,4,22,23,13,-10,False
+19,Saka,10.00,Cunha,8.10,Cherki,6.50,8.75,6.00,3,21,13,10,-3,False
+20,Guéhi,5.10,Gabriel,6.40,Lewis-Potter,4.80,8.75,4.00,19,38,112,56,-56,False
+20,Ekitiké,8.90,Bowen,7.60,Calvert-Lewin,5.80,7.75,4.50,2,21,6,10,4,False
+21,M.Fernandes,5.50,Enzo,6.40,Janelt,4.90,7.25,5.50,12,32,38,25,-13,False
+22,Cunha,8.10,Saka,10.20,Schade,6.80,8.75,5.00,1,22,1,1,0,False
+22,Bowen,7.60,Thiago,7.10,Thiago,7.20,9.00,9.00,1,22,2,2,0,True
+27,Pickford,5.60,Kelleher,4.60,Martinez,5.00,6.50,3.50,7,33,26,15,-11,False
+27,Tarkowski,5.60,Mukiele,4.60,Hill,4.20,7.25,4.00,12,38,37,51,14,False
+27,Mbeumo,8.40,Palmer,10.60,Summerville,5.40,7.25,8.50,7,33,23,21,-2,False
+30,Chalobah,5.60,Senesi,5.00,O'Reilly,5.30,9.00,5.50,4,33,21,29,8,False
+30,Haaland,14.40,João Pedro,7.70,João Pedro,7.40,9.50,9.50,4,33,6,6,0,True
+31,Guéhi,5.20,Virgil,6.20,Truffert,4.80,7.25,5.25,2,32,12,8,-4,False
+31,Rice,7.40,Mbeumo,8.60,Mac Allister,6.10,8.00,2.75,3,33,6,3,-3,False
+31,Mané,4.50,Thiago,7.30,NO_CANDIDATE,,,4.00,3,33,19,19,0,False
+33,Virgil,6.20,O'Reilly,5.00,Mavropanos,4.50,9.25,4.00,1,33,13,6,-7,False
+33,Enzo,6.40,Cherki,6.30,Wieffer,4.80,7.00,4.00,1,33,13,2,-11,False
+36,J.Timber,6.00,Van Hecke,4.60,Mavropanos,4.50,7.50,4.75,3,38,9,15,6,False
+36,Palmer,10.40,Saka,9.80,Okafor,5.50,10.25,3.00,2,37,12,0,-12,False
+36,João Pedro,7.50,Gyökeres,8.90,Osula,5.50,7.00,5.75,2,37,3,15,12,False
+37,Mbeumo,8.30,Hinshelwood,5.20,Gibbs-White,7.60,9.25,6.25,2,38,5,16,11,False
+38,Gyökeres,9.00,Bowen,7.80,Watkins,8.70,6.75,4.00,1,38,12,13,1,False
+38,O'Reilly,5.10,Pedro Porro,5.20,Maguire,4.40,5.25,3.25,1,38,10,6,-4,False
+38,Saka,9.90,M.Salah,14.00,Anderson,5.70,8.50,0.50,1,38,6,2,-4,False
