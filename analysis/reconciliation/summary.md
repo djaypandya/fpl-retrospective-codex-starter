@@ -94,6 +94,8 @@ The notebook's separate captain comparison uses manager 816200's real squads ove
 
 The new computation adds a true no-transfer baseline to the bank-aware replay. For each scored transfer at GW `T`, the baseline keeps the outgoing player and sums that player's `total_points` over the actual incoming player's same inclusive holding window `[T, hold_end]`. Missing player-gameweek rows count as zero, matching the replay.
 
+Final verification also rebuilt the locked replay independently from the raw manager transfers, pre-deadline bank, squad state, and player-gameweek features. That rebuild reproduced 46 rows, 45 scored rows, human 784, rule 587, and 11 actual buys outside the rule pool. It wrote the row-level audit to `replay_reconciliation_detail.csv`. The prior replay source directory was no longer present at the final clean-run check, so `reconcile.py` now uses this independent rebuild and will also cross-check the prior CSV automatically if it is restored.
+
 All totals below use the same **45 candidate-available non-chip transfer rows**:
 
 | Approach | Total holding-window points | Mean per transfer window |
@@ -158,8 +160,8 @@ The simple rule is a strong, cheap **floor**. It improves on passivity and match
 
 | Claim | Status | Source |
 |---|---|---|
-| Replay human 784, rule 587 | Recomputed and matched | `replay_bank_results.csv` |
-| Replay no-transfer 534 | New computation | Raw manager transfers plus `player_gw_features.csv` |
+| Replay human 784, rule 587 | Recomputed and independently rebuilt | Raw transfers, manager timeline, squad state, and `player_gw_features.csv`; row audit in `replay_reconciliation_detail.csv` |
+| Replay no-transfer 534 | New computation | Same raw inputs and row audit |
 | Form 0.7899 to 0.2030 | Recomputed | `player_gw_features.csv`, engine-equivalent panel |
 | Form-bin means | Recomputed, matches display rounding | `player_gw_features.csv` |
 | Ranker 0.268, 0.163, 0.151, 0.132, 0.068 and ranges | Engine output matched | `v0_1_engine.py` |
@@ -167,6 +169,6 @@ The simple rule is a strong, cheap **floor**. It improves on passivity and match
 | Layer -33, -28, -23 and ranges | Full rerun matched | `v1_engine.py` |
 | Captain 183, 199, 204 | Full rerun matched | `v1_engine.py` |
 | Form-to-goals +0.19 and xGI-to-goals +0.35 | Reported prior study, not rerun here | Bank replay story |
-| Eleven actual buys outside rule pool | Recomputed | `replay_bank_results.csv` |
+| Eleven actual buys outside rule pool | Recomputed | Same independent locked replay rebuild |
 
 `weekly_decision_system.py`, `transfer_outcomes.py`, `evaluation.py`, `benchmark.py`, and `rules.py` support other retrospective and weekly decision workflows. They do not generate the notebook's hardcoded simulation headlines. `factor_screen.py` builds incremental ranking tests and cites the v1 Engine's 0.268 rank result, but it is not the source of the 40-start season totals.

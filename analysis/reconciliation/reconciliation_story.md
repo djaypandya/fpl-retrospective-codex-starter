@@ -109,7 +109,7 @@ Use the rule to protect the floor. Keep judgment for the ceiling.
 
 ## How we measured it
 
-For the replay, we used the 46 non-chip transfers in the bank-aware results. The rule had a candidate in 45 rows. We scored the actual incoming player, the rule pick, and the outgoing player over the same inclusive window from transfer GW `T` through the real incoming player's final holding GW. Missing rows counted as zero.
+For the replay, we rebuilt the 46 non-chip transfers from the raw transfer log, bank, squad, and player gameweek data. The rule had a candidate in 45 rows. We scored the actual incoming player, the rule pick, and the outgoing player over the same inclusive window from transfer GW `T` through the real incoming player's final holding GW. Missing rows counted as zero. The rebuild matched the locked replay totals of 784 for your buys and 587 for the rule.
 
 For the form test, we built one row for each player and decision GW from GW4 to GW34. Recent form used points from `t-3` through `t`. The target used points from `t+1` through `t+4`. We required all eight rows to exist. We then measured Spearman rank correlation for all rows and for the 180-minute trailing screen.
 

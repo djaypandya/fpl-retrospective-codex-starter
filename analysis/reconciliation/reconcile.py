@@ -22,7 +22,10 @@ REPO_ROOT = HERE.parents[1]
 REPLAY_PATH = REPO_ROOT / "analysis/transfer_rule_replay_bank/replay_bank_results.csv"
 TRANSFERS_PATH = REPO_ROOT / "data/raw/managers/transfers/manager_816200.json"
 FEATURES_PATH = REPO_ROOT / "data/processed/player_gw_features.csv"
+TIMELINE_PATH = REPO_ROOT / "data/processed/my_gameweek_timeline.csv"
+SQUAD_PATH = REPO_ROOT / "data/processed/my_squad_gameweek.csv"
 OUTPUT_PATH = HERE / "reconciliation_results.csv"
+REPLAY_DETAIL_OUTPUT = HERE / "replay_reconciliation_detail.csv"
 
 CHIP_GWS = {6, 13, 23, 34}
 SEASON_END_GW = 38
@@ -84,63 +87,165 @@ def points_over_window(
     return int(points.reindex(index).fillna(0).sum())
 
 
-def recompute_replay_yardstick(
-    replay: pd.DataFrame, features: pd.DataFrame, transfers: pd.DataFrame
+def reconstruct_replay_yardstick(
+    features: pd.DataFrame,
+    transfers: pd.DataFrame,
+    timeline: pd.DataFrame,
+    squad: pd.DataFrame,
 ) -> tuple[pd.DataFrame, dict[str, float]]:
-    """Add the outgoing-player hold baseline to the locked replay rows."""
-    require_columns(
-        replay,
-        {
-            "gw",
-            "out_name",
-            "actual_in_name",
-            "hold_end_gw",
-            "actual_pts",
-            "rule_pts",
-            "rule_pick_name",
-            "actual_in_pool",
-        },
-        "bank replay",
-    )
+    """Rebuild the locked replay and add an outgoing-player hold baseline.
+
+    This is deliberately independent of the prior replay results CSV. It uses
+    the same locked rule: same position, affordable at outgoing sale value plus
+    the bank entering the deadline, at least 180 minutes over the prior four
+    GWs, then highest prior-four-GW points. Ties use minutes, lower price, then
+    player ID. Players already in the pre-transfer squad are excluded.
+    """
     require_columns(
         features,
-        {"gameweek", "player_id", "web_name", "total_points", "minutes"},
+        {
+            "gameweek",
+            "player_id",
+            "web_name",
+            "position_short",
+            "price",
+            "total_points",
+            "minutes",
+        },
         "player GW features",
     )
-    assert len(replay) == EXPECTED_REPLAY_ROWS
+    require_columns(timeline, {"event", "bank_value"}, "manager timeline")
+    require_columns(squad, {"event", "element"}, "manager squad")
     assert not features.duplicated(["player_id", "gameweek"]).any()
 
     points = features.set_index(["player_id", "gameweek"])["total_points"]
     player_names = features.groupby("player_id")["web_name"].last().to_dict()
+    player_positions = (
+        features.groupby("player_id")["position_short"].last().to_dict()
+    )
+    bank_by_gw = timeline.set_index("event")["bank_value"]
     analyzed = transfers.loc[~transfers["event"].isin(CHIP_GWS)]
-    assert len(analyzed) == len(replay) == EXPECTED_REPLAY_ROWS
+    assert len(analyzed) == EXPECTED_REPLAY_ROWS
 
-    nothing_points: list[int] = []
-    outgoing_ids: list[int] = []
-    for replay_position, (transfer_index, transfer) in enumerate(analyzed.iterrows()):
-        replay_row = replay.iloc[replay_position]
+    rows: list[dict[str, object]] = []
+    for transfer_index, transfer in analyzed.iterrows():
         transfer_gw = int(transfer["event"])
         outgoing_id = int(transfer["element_out"])
         incoming_id = int(transfer["element_in"])
         end_gw = hold_end_gw(transfers, transfer_index, incoming_id)
 
-        assert transfer_gw == int(replay_row["gw"])
-        assert end_gw == int(replay_row["hold_end_gw"])
-        assert str(player_names[outgoing_id]) == str(replay_row["out_name"])
+        event_moves = analyzed.loc[analyzed["event"].eq(transfer_gw)]
+        pre_squad = set(
+            squad.loc[squad["event"].eq(transfer_gw), "element"].astype(int)
+        )
+        pre_squad.difference_update(event_moves["element_in"].astype(int))
+        pre_squad.update(event_moves["element_out"].astype(int))
 
-        outgoing_ids.append(outgoing_id)
-        nothing_points.append(
-            points_over_window(points, outgoing_id, transfer_gw, end_gw)
+        prior_bank = float(bank_by_gw.loc[transfer_gw - 1])
+        budget = float(transfer["element_out_cost"]) / 10.0 + prior_bank
+        current = features.loc[features["gameweek"].eq(transfer_gw)].copy()
+        history = (
+            features.loc[
+                features["gameweek"].between(transfer_gw - 4, transfer_gw - 1)
+            ]
+            .groupby("player_id", as_index=False)
+            .agg(form_points_4gw=("total_points", "sum"), minutes_4gw=("minutes", "sum"))
+        )
+        candidates = current.merge(history, on="player_id", how="left")
+        candidates[["form_points_4gw", "minutes_4gw"]] = candidates[
+            ["form_points_4gw", "minutes_4gw"]
+        ].fillna(0)
+        candidates = candidates.loc[
+            candidates["position_short"].eq(player_positions[outgoing_id])
+            & candidates["price"].le(budget)
+            & candidates["minutes_4gw"].ge(180)
+            & ~candidates["player_id"].isin(pre_squad)
+        ].sort_values(
+            ["form_points_4gw", "minutes_4gw", "price", "player_id"],
+            ascending=[False, False, True, True],
         )
 
-    detail = replay.copy()
-    detail["out_player_id"] = outgoing_ids
-    detail["nothing_pts"] = nothing_points
+        incoming_current = current.loc[current["player_id"].eq(incoming_id)].iloc[0]
+        incoming_history = history.loc[history["player_id"].eq(incoming_id)]
+        incoming_minutes = (
+            0.0
+            if incoming_history.empty
+            else float(incoming_history.iloc[0]["minutes_4gw"])
+        )
+        actual_in_pool = bool(
+            float(incoming_current["price"]) <= budget and incoming_minutes >= 180
+        )
+
+        if candidates.empty:
+            rule_pick_id: int | None = None
+            rule_pick_name = NO_CANDIDATE
+            rule_points = np.nan
+            rule_form = np.nan
+            rule_minutes = np.nan
+            rule_price = np.nan
+        else:
+            rule_pick = candidates.iloc[0]
+            rule_pick_id = int(rule_pick["player_id"])
+            rule_pick_name = str(rule_pick["web_name"])
+            rule_points = points_over_window(
+                points, rule_pick_id, transfer_gw, end_gw
+            )
+            rule_form = float(rule_pick["form_points_4gw"])
+            rule_minutes = float(rule_pick["minutes_4gw"])
+            rule_price = float(rule_pick["price"])
+
+        rows.append(
+            {
+                "gw": transfer_gw,
+                "out_player_id": outgoing_id,
+                "out_name": str(player_names[outgoing_id]),
+                "actual_in_player_id": incoming_id,
+                "actual_in_name": str(player_names[incoming_id]),
+                "hold_end_gw": end_gw,
+                "bank_before": prior_bank,
+                "out_sale_price": float(transfer["element_out_cost"]) / 10.0,
+                "budget_cap": budget,
+                "actual_in_pool": actual_in_pool,
+                "rule_pick_player_id": rule_pick_id,
+                "rule_pick_name": rule_pick_name,
+                "rule_form_points_4gw": rule_form,
+                "rule_minutes_4gw": rule_minutes,
+                "rule_price": rule_price,
+                "actual_pts": points_over_window(
+                    points, incoming_id, transfer_gw, end_gw
+                ),
+                "rule_pts": rule_points,
+                "nothing_pts": points_over_window(
+                    points, outgoing_id, transfer_gw, end_gw
+                ),
+            }
+        )
+
+    detail = pd.DataFrame(rows)
     scored = detail.loc[detail["rule_pick_name"].ne(NO_CANDIDATE)].copy()
 
+    assert len(detail) == EXPECTED_REPLAY_ROWS
     assert len(scored) == EXPECTED_SCORED_ROWS
     assert int(scored["actual_pts"].sum()) == EXPECTED_HUMAN_TOTAL
     assert int(scored["rule_pts"].sum()) == EXPECTED_RULE_TOTAL
+    assert int(scored["nothing_pts"].sum()) == 534
+    assert int((~detail["actual_in_pool"]).sum()) == 11
+
+    if REPLAY_PATH.exists():
+        locked = pd.read_csv(REPLAY_PATH)
+        require_columns(
+            locked,
+            {"actual_pts", "rule_pts", "rule_pick_name", "actual_in_pool"},
+            "prior bank replay",
+        )
+        locked_scored = locked.loc[locked["rule_pick_name"].ne(NO_CANDIDATE)]
+        assert len(locked) == len(detail)
+        assert int(locked_scored["actual_pts"].sum()) == int(
+            scored["actual_pts"].sum()
+        )
+        assert int(locked_scored["rule_pts"].sum()) == int(
+            scored["rule_pts"].sum()
+        )
 
     totals = {
         "sample_n": float(len(scored)),
@@ -270,7 +375,7 @@ def build_results(
     form: dict[str, object],
 ) -> pd.DataFrame:
     """Build a long, traceable results table for charts and writeups."""
-    replay_source = "recomputed from replay_bank_results.csv + raw transfers + player_gw_features.csv"
+    replay_source = "independently reconstructed from raw transfers + timeline + squad + player_gw_features.csv"
     replay_definition = (
         "45 candidate-available non-chip transfers; inclusive actual incoming holding window [T, hold_end]"
     )
@@ -284,7 +389,7 @@ def build_results(
         result_row("replay", "human_minus_rule", int(replay_totals["human_minus_rule"]), "points", 45, replay_source, "recomputed", "human total minus simple-rule total on the replay metric"),
         result_row("replay", "rule_minus_nothing", int(replay_totals["rule_minus_nothing"]), "points", 45, replay_source, "recomputed", "simple-rule total minus outgoing-player hold total on the replay metric"),
         result_row("replay", "human_minus_nothing", int(replay_totals["human_minus_nothing"]), "points", 45, replay_source, "recomputed", "human total minus outgoing-player hold total on the replay metric"),
-        result_row("replay", "actual_buys_outside_rule_pool", int((~replay["actual_in_pool"].astype(bool)).sum()), "transfers", 46, "recomputed from replay_bank_results.csv", "recomputed", "actual incoming player failed at least one locked candidate filter"),
+        result_row("replay", "actual_buys_outside_rule_pool", int((~replay["actual_in_pool"].astype(bool)).sum()), "transfers", 46, replay_source, "recomputed", "actual incoming player failed at least one locked candidate filter"),
     ]
 
     form_source = "recomputed from data/processed/player_gw_features.csv"
@@ -316,7 +421,7 @@ def build_results(
     rows.extend(
         [
             result_row("convergence", "replay_form_to_goals_spearman", 0.19, "Spearman rho", "prior study", "analysis/transfer_rule_replay_bank/transfer_rule_bank_story.md", "reported prior finding", "trailing form versus next-4-GW goals; a different target from notebook next-4-GW points"),
-            result_row("convergence", "currency_guard", "do not compare 159 with 197", "text", "two experiments", "v1_engine.py + replay_bank_results.csv", "verified", "159 is a paired mean full-strategy simulated-season gap across 40 starts; 197 is a summed incoming-player holding-window gap across 45 replay rows"),
+            result_row("convergence", "currency_guard", "do not compare 159 with 197", "text", "two experiments", "v1_engine.py + independent locked replay rebuild", "verified", "159 is a paired mean full-strategy simulated-season gap across 40 starts; 197 is a summed incoming-player holding-window gap across 45 replay rows"),
             result_row("model_replay_placement", "status", "not scored", "text", "not applicable", "src/fpl_retro/v0_1_engine.py and v1_engine.py", "skipped", "published prediction window cannot provide a clean pre-deadline model score for every one of the 46 replay transfers; model stays qualitative on the hierarchy"),
         ]
     )
@@ -348,23 +453,38 @@ def print_verification(
     )
     print("- model replay placement: skipped; no complete clean score for all 46 transfers")
     print("- currency guard: 159 is a 40-start simulated season gap; 197 is a 45-window replay gap")
+    print(
+        "- prior replay CSV cross-check: "
+        + ("available and matched" if REPLAY_PATH.exists() else "source absent; independent locked-rule rebuild used")
+    )
     print("\nFULL RESULTS")
     print(results.to_string(index=False))
+    print(f"\nWrote: {REPLAY_DETAIL_OUTPUT}")
     print(f"\nWrote: {OUTPUT_PATH}")
 
 
 def main() -> None:
-    replay = pd.read_csv(REPLAY_PATH)
     features = pd.read_csv(
         FEATURES_PATH,
-        usecols=["gameweek", "player_id", "web_name", "total_points", "minutes"],
+        usecols=[
+            "gameweek",
+            "player_id",
+            "web_name",
+            "position_short",
+            "price",
+            "total_points",
+            "minutes",
+        ],
     )
     transfers = load_transfers()
-    replay_detail, replay_totals = recompute_replay_yardstick(
-        replay, features, transfers
+    timeline = pd.read_csv(TIMELINE_PATH, usecols=["event", "bank_value"])
+    squad = pd.read_csv(SQUAD_PATH, usecols=["event", "element"])
+    replay_detail, replay_totals = reconstruct_replay_yardstick(
+        features, transfers, timeline, squad
     )
     form = recompute_form_collapse(features)
     results = build_results(replay_detail, replay_totals, form)
+    replay_detail.to_csv(REPLAY_DETAIL_OUTPUT, index=False)
     results.to_csv(OUTPUT_PATH, index=False)
     print_verification(replay_totals, form, results)
 
