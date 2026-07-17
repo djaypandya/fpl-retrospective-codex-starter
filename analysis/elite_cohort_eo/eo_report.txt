@@ -1,0 +1,34 @@
+When Can You Start Copying the Top Managers? And Does It Even Help?
+
+Short answer: The top managers become a trustworthy group surprisingly early -- around Gameweek 6 to 8. But copying who they own does not actually help you pick players any better than much simpler, free information. So the honest answer to "when can I start using this?" is: you can trust the group early, but tracking their ownership was never worth the effort.
+
+We tested two separate things.
+
+Part 1: When is a "top manager" really a top manager, and not just lucky?
+
+Early in a season, rank is almost pure luck. At Gameweek 1, the managers in our data were spread from rank 2,000 to over 9 million. One good or bad week throws you around wildly. So a "top 10K" manager in Gameweek 3 might just be riding a hot streak.
+
+We checked how well a manager's rank at one point predicted their rank a month later. It settles fast. By about Gameweek 6 to 8, the ordering is steady: managers who are near the top tend to stay near the top over the next four games. So from roughly Gameweek 6 to 8, a group of currently strong managers really is a group of skilled managers, not lucky ones. (Over an eight-game window it firms up a bit later, around Gameweek 15.)
+
+So far, so good. The reference group is real.
+
+Part 2: Does copying that group's ownership help you pick players?
+
+This is where the idea falls down. We took the top 10% of managers by their rank at each week, worked out which players they owned, and asked a simple question: if you shortlist players by how many of these elite managers own them, do those players score more over the next four to eight games?
+
+They do score a bit more -- but no better than if you had used two things you can get for free:
+
+- Just how many of ALL the managers own a player (plain popularity). This actually worked slightly BETTER than elite ownership, every single time we tested it.
+- Just who scored the most points recently. Elite ownership barely edged this out over four games, and the edge disappeared over eight games.
+
+Here is the surprising part: the MORE exclusive we made the elite group, the WORSE it got. A top-3% or top-10K group gave a weaker signal than a broader one. Tightening the group just narrows you onto the same handful of "template" players everyone already owns, while adding noise. Even when we cheated and picked the group using end-of-season results -- knowing for certain who finished on top -- their ownership still did not beat plain popularity.
+
+The reason is simple. Great managers mostly own the same popular, in-form players everyone else owns. So their ownership tells you almost nothing you could not already see from the general crowd or from recent scoring.
+
+The honest caveat
+
+Our data only includes managers who finished in roughly the top 1%. That should have made copying them look GOOD, yet it still did not beat simple methods. Also, our "popularity" measure is popularity among these strong managers, not the whole game.
+
+Bottom line
+
+Trust that strong managers are genuinely strong from about Gameweek 6 to 8. But do not build your player shortlist around their ownership. Plain popularity and recent points do the same job for free, and chasing the "most elite" owners actively makes your signal worse.
