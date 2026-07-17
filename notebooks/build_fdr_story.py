@@ -147,7 +147,7 @@ axes[1].set_title('Points actually scored\n(next 4 GW, same players)', fontsize=
 axes[1].set_xlabel('points per gameweek'); axes[1].legend(fontsize=9)
 fig.suptitle('Fixture difficulty clusters near the middle; points are right-skewed as usual',
              fontsize=12.5, fontweight='bold', y=1.03)
-plt.tight_layout(); plt.savefig('outputs/charts/01_distribution_shapes.png', bbox_inches='tight'); plt.show()
+plt.tight_layout(); plt.savefig('outputs/charts/fdr_01_distribution_shapes.png', bbox_inches='tight'); plt.show()
 print(f"adj_fdr: mean={panel4['adj_fdr'].mean():.2f} std={panel4['adj_fdr'].std():.2f} range=[{panel4['adj_fdr'].min():.2f},{panel4['adj_fdr'].max():.2f}]")
 print(f"fwd_mean: mean={panel4['fwd_mean'].mean():.2f} std={panel4['fwd_mean'].std():.2f}")
 """)
@@ -178,7 +178,7 @@ corr = panel4[['raw_fdr','adj_fdr']].corr().iloc[0,1]
 gap = (panel4['raw_fdr'] - panel4['adj_fdr']).abs().mean()
 ax.set_title(f'Raw vs. adjusted FDR: correlation {corr:.4f}, average gap {gap:.3f} points',
              loc='left', fontsize=11.5)
-plt.tight_layout(); plt.savefig('outputs/charts/02_raw_vs_adjusted_fdr.png', bbox_inches='tight'); plt.show()
+plt.tight_layout(); plt.savefig('outputs/charts/fdr_02_raw_vs_adjusted_fdr.png', bbox_inches='tight'); plt.show()
 """)
 
 md(r"""
@@ -220,7 +220,7 @@ for i, v in enumerate(qmeans.values):
 
 fig.suptitle('Players with easier upcoming fixtures score more, on average — a real but noisy link',
              fontsize=12.5, fontweight='bold', y=1.04)
-plt.tight_layout(); plt.savefig('outputs/charts/03_bivariate_scatter.png', bbox_inches='tight'); plt.show()
+plt.tight_layout(); plt.savefig('outputs/charts/fdr_03_bivariate_scatter.png', bbox_inches='tight'); plt.show()
 print(qmeans)
 """)
 
@@ -258,7 +258,7 @@ ax.set_xlabel('forward window N (gameweeks)')
 ax.set_ylabel('points/GW per 1.0 FDR-unit\n(negative = harder fixtures cost points, as expected)')
 ax.set_title('The fixture effect is negative and clearly non-zero at every N you use (4–8)', loc='left', fontsize=11.5)
 ax.set_xticks(Ns)
-plt.tight_layout(); plt.savefig('outputs/charts/04_association_by_N.png', bbox_inches='tight'); plt.show()
+plt.tight_layout(); plt.savefig('outputs/charts/fdr_04_association_by_N.png', bbox_inches='tight'); plt.show()
 """)
 
 md(r"""
@@ -292,7 +292,7 @@ ax.errorbar(x, pcoef, yerr=[np.array(pcoef)-np.array(plo), np.array(phi)-np.arra
 ax.set_xticks(x); ax.set_xticklabels(pos_names)
 ax.set_ylabel('points/GW per 1.0 FDR-unit')
 ax.set_title('Fixture difficulty bites hardest on defenders and keepers', loc='left', fontsize=11.5)
-plt.tight_layout(); plt.savefig('outputs/charts/05_position_breakdown.png', bbox_inches='tight'); plt.show()
+plt.tight_layout(); plt.savefig('outputs/charts/fdr_05_position_breakdown.png', bbox_inches='tight'); plt.show()
 """)
 
 md(r"""
@@ -341,7 +341,7 @@ ax2.set_title("Tested on its own, home advantage\nisn't distinguishable from zer
 ax2.text(0, home_hi + 0.12, 'CI crosses zero → not significant', ha='center', fontsize=9.5, color=HARD_C)
 
 fig.suptitle('The home/away tweak changes almost nothing, and adds no effect of its own', fontsize=12.5, fontweight='bold', y=1.04)
-plt.tight_layout(); plt.savefig('outputs/charts/06_mechanism_home_away.png', bbox_inches='tight'); plt.show()
+plt.tight_layout(); plt.savefig('outputs/charts/fdr_06_mechanism_home_away.png', bbox_inches='tight'); plt.show()
 """)
 
 md(r"""
