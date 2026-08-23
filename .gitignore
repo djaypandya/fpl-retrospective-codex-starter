@@ -6,3 +6,4 @@ data/raw/*.json
 data/processed/*.csv
 outputs/tables/*.csv
 outputs/charts/*.png
+outputs/league_*/raw/

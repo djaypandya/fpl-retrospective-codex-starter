@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import ssl
 import urllib.request
 from dataclasses import dataclass, field
 from datetime import date
@@ -64,8 +65,16 @@ HORIZON = 5  # gameweeks of fixtures used for the tilt
 # --------------------------------------------------------------------------
 # 1. Data loading
 # --------------------------------------------------------------------------
+def _ssl_context() -> ssl.SSLContext:
+    """Python.org builds ship without linked root certificates, so use certifi."""
+    try:
+        import certifi
+        return ssl.create_default_context(cafile=certifi.where())
+    except ImportError:
+        return ssl.create_default_context()
+
 def _download(url: str, dest: Path) -> dict:
-    with urllib.request.urlopen(url, timeout=90) as resp:
+    with urllib.request.urlopen(url, timeout=90, context=_ssl_context()) as resp:
         payload = json.load(resp)
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_text(json.dumps(payload))
@@ -467,7 +476,9 @@ class Solution:
 
 def optimise(pool: pd.DataFrame, bootstrap: dict, *, objective_col: str = "xp",
              bench_weight: float = 0.12, allow_unknown_starters: bool = False,
-             label: str = "primary", forced_out: list[int] | None = None) -> Solution:
+             label: str = "primary", forced_out: list[int] | None = None,
+             forced_in: list[int] | None = None,
+             bench_plan: list[dict] | None = None) -> Solution:
     """Select 15 players, a starting XI, and a captain by maximising expected points.
 
     Formation, budget, club limits and squad size all come from the API's own
@@ -512,6 +523,30 @@ def optimise(pool: pd.DataFrame, bootstrap: dict, *, objective_col: str = "xp",
     for club in p.club_id.unique():
         members = [i for i in idx if p.at[i, "club_id"] == club]
         prob += pulp.lpSum(squad[i] for i in members) <= club_limit
+
+    for code in forced_in or []:
+        members = [i for i in idx if p.at[i, "code"] == code]
+        if not members:
+            raise ValueError(f"forced_in player {code} is not in the available pool")
+        prob += pulp.lpSum(squad[i] for i in members) == 1
+
+    # Optional bench-fodder strategy: pin some bench slots to a price, so the
+    # money saved there can be spent on the eleven players who actually score.
+    # Each rule is {"price": 4.0, "count": 2, "min_ownership": 10.0, "exact": True}.
+    for rule in bench_plan or []:
+        members = [
+            i for i in idx
+            if abs(p.at[i, "price"] - rule["price"]) < 1e-6
+            and p.at[i, "ownership"] >= rule.get("min_ownership", 0.0)
+            and (rule.get("position") is None or p.at[i, "position"] == rule["position"])
+        ]
+        if not members:
+            raise ValueError(f"no players satisfy bench rule {rule}")
+        on_bench = pulp.lpSum(squad[i] - start[i] for i in members)
+        if rule.get("exact", True):
+            prob += on_bench == rule["count"]
+        else:
+            prob += on_bench >= rule["count"]
 
     for i in idx:
         prob += start[i] <= squad[i]
