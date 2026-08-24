@@ -1,184 +1,148 @@
 # Buy-in Baller League — Gameweek 1 Report
 
 **Your team:** Numbers Don't Lie (Dhananjay Pandya) · **League:** 22 managers
-**You are 6th on 32 points.** The leaders have 55.
+**You are 5th on 48 points, up from 6th on 32 last night.**
 
-> **Read this first.** Gameweek 1 is only part-played. Six of the ten matches are done. Four have not kicked off: Man City, Liverpool, Chelsea and Brighton all still play. Those four games hold most of what happens next, so treat every score below as a snapshot, not a result.
+> **Where the gameweek stands.** Nine of the ten matches are done. Only Fulham against Chelsea is left. Scores are provisional until bonus points are confirmed.
 
 Re-run this report any week: `python3.12 scripts/league_report.py --league 14074 --entry 46116 --gw 1`
+Visual version: [`LEAGUE_GW1_DATA_STORY.pdf`](LEAGUE_GW1_DATA_STORY.pdf)
 
 ---
 
-## 1. The template team in your league
+## 1. What changed overnight
 
-These are the players the most managers own. I call this the template. If you own them, you move with the pack. If you don't, you either gain or lose ground fast.
+You gained 16 points and moved up a place. But the table above you shuffled hard.
 
-| Pos | Player | Club | Owned by | Effective | GW1 pts | You? |
-|-----|--------|------|----------|-----------|---------|------|
-| GK | **Raya** | Arsenal | 41% | 41% | 6 | ✅ |
-| GK | **Kinsky** | Spurs | 36% | 27% | 2 | ✅ |
-| DEF | **Calafiori** | Arsenal | 59% | 59% | 9 | ✅ |
-| DEF | Gabriel | Arsenal | 41% | 41% | 5 | ❌ |
-| DEF | Shaw | Man Utd | 41% | 32% | 1 | ❌ |
-| DEF | Diop | Ipswich | 32% | 9% | 2 | ❌ |
-| DEF | Maguire | Man Utd | 32% | 27% | 1 | ❌ |
-| MID | B.Fernandes | Man Utd | 64% | **86%** | 2 | ❌ |
-| MID | **Groß** | Brighton | 50% | 32% | — | ✅ |
-| MID | Mbeumo | Man Utd | 41% | 41% | 2 | ❌ |
-| MID | Tzolis | Arsenal | 41% | 41% | 6 | ❌ |
-| MID | Wirtz | Liverpool | 32% | 32% | — | ❌ |
-| FWD | **Haaland** | Man City | 77% | **141%** | — | ✅ |
-| FWD | **João Pedro** | Chelsea | 73% | 68% | — | ✅ |
-| FWD | Calvert-Lewin | Leeds | 50% | 36% | 1 | ❌ |
+| # | Manager | Points | Overnight | Chip |
+|---|---------|--------|-----------|------|
+| 1 | Aparajit Roy | 69 | **+37** | Bench Boost |
+| 2 | Vishal Perera | 63 | +8 | Bench Boost |
+| 3 | Oziandy Towner | 59 | +4 | — |
+| 4 | Will Kenji | 54 | +12 | Bench Boost |
+| **5** | **Dhananjay Pandya** | **48** | **+16** | — |
+| 6 | Patrick Le | 47 | +4 | — |
+| 6 | ashik Kavanakudy | 47 | +4 | — |
 
-"Effective" ownership counts a captain twice, because a captain scores double. Haaland sits at 141%. That is the number that matters most in this league.
+**Last night's call held.** I told you that you could not lose ground to the leader, because every player he had left was also in your team and you captained Haaland while he did not. **The gap closed from 23 points to 11.**
 
-**You own 6 of these 15.** That puts you joint 14th out of 22 for template coverage. You are one of the more contrarian managers here. That cuts both ways: you fall behind slower when the template blanks, and you climb slower when it hauls.
+One note on names: the manager who led last night was called "Andy Mcgoonface" and is now called "Oziandy Towner". Same team, same manager. I track people by their team number, not their name, so nothing broke.
 
-Three players are yours alone in this league: **Vuskovic, Ampadu and Mitchell.** Nobody else has them.
+**But someone jumped you both.** Aparajit Roy played a Bench Boost, scored 37 points overnight, and went from sixth to first.
 
 ---
 
-## 2. How you spend your money
+## 2. The template blanked
 
-This is the spend on your **starting eleven only**, split by position. Three managers played Bench Boost, so I scored everyone on slots 1–11 to keep the comparison fair.
+The template is the group of players most managers own. This week it failed nearly everyone.
 
-| | You | League average | Difference |
+**Eleven of the fifteen most-owned players scored 2 points or fewer.** The average was 2.9 points.
+
+| Player | Club | Owned by | Points | You own? |
+|--------|------|----------|--------|----------|
+| Calafiori | Arsenal | 59% | **9** | ✅ |
+| Raya | Arsenal | 41% | **6** | ✅ |
+| Tzolis | Arsenal | 41% | **6** | ❌ |
+| Gabriel | Arsenal | 41% | **5** | ❌ |
+| Haaland | Man City | 77% | 2 | ✅ |
+| B.Fernandes | Man Utd | 64% | 2 | ❌ |
+| Groß | Brighton | 50% | 2 | ✅ |
+| Mbeumo | Man Utd | 41% | 2 | ❌ |
+| Wirtz | Liverpool | 32% | 2 | ❌ |
+| Kinsky | Spurs | 36% | 2 | ✅ |
+| Diop | Ipswich | 32% | 2 | ❌ |
+| Shaw | Man Utd | 41% | 1 | ❌ |
+| Maguire | Man Utd | 32% | 1 | ❌ |
+| Calvert-Lewin | Leeds | 50% | 1 | ❌ |
+| João Pedro | Chelsea | 73% | yet to play | ✅ |
+
+**Look at who did deliver.** All four template players who beat 2 points play for Arsenal. Arsenal beat Coventry 3-0. If you did not own Arsenal players this week, you had a bad week. You owned two of them.
+
+### Your captain
+
+**Haaland was captained by 14 of the 22 managers, including you. He returned 2 points.**
+
+Because you doubled him, he gave you 4. That hurts. But it hurt almost everyone else the same way, so it cost you very little in the league table. Every single captain pick in the league blanked: Bruno Fernandes returned 2, Isak returned 2, and Igor Thiago returned 0.
+
+---
+
+## 3. Your own team
+
+| Player | Role | Scored | Counted for you |
+|--------|------|--------|-----------------|
+| Calafiori | Started | 9 | 9 |
+| Ndiaye | Started | 9 | 9 |
+| Szoboszlai | Started | 8 | 8 |
+| Raya | Started | 6 | 6 |
+| Tarkowski | Started | 6 | 6 |
+| Vuskovic | **Bench** | 6 | 0 |
+| Ampadu | **Bench** | 5 | 0 |
+| Haaland | **Captain** | 2 | 4 |
+| Virgil | Started | 2 | 2 |
+| Le Fée | Started | 2 | 2 |
+| Groß | Started | 2 | 2 |
+| Kinsky | **Bench** | 2 | 0 |
+| Mitchell | **Bench** | 1 | 0 |
+| Igor Thiago | Started | 0 | 0 |
+| João Pedro | Started | yet to play | — |
+
+Your climb came from the middle of your squad, not the top. Your two most expensive attackers, Haaland and Igor Thiago, cost £23.5m together and scored 2 points between them.
+
+**Your bench scored 14 points you could not use.** Vuskovic got 6 and Ampadu got 5. Had you played your Bench Boost this week, you would be on 62 points and sitting third.
+
+---
+
+## 4. The chip decided the top, not the team
+
+Three of the top four managers played their Bench Boost. The best manager who did not use a chip is Oziandy Towner in third.
+
+**Read this carefully.** Everyone gets the same chips. Playing one early is a bet that the week will be high-scoring, and this week it paid off. It does not make those managers better than you. It means they have one fewer chip left, and you still hold yours.
+
+---
+
+## 5. What the best managers did
+
+I ranked every manager by their median finish over the last five seasons. The median rewards being good every year, not one lucky season.
+
+| # | Manager | Median finish | Rank this week | Points |
+|---|---------|---------------|----------------|--------|
+| 1 | Will Kenji | 151k | 4th | 54 |
+| 2 | harrison white | 152k | **21st** | 26 |
+| 3 | Kieren Khatri | 193k | 9th | 43 |
+| 4 | Wes Towner | 344k | 14th | 35 |
+| 5 | Vishal Perera | 361k | 2nd | 63 |
+| 6 | **You** | 458k | **5th** | 48 |
+
+Look at the right-hand columns. **The five most consistent managers finished 2nd, 4th, 9th, 14th and 21st.** They are scattered all over the table.
+
+**One gameweek tells you almost nothing about who is good.** That is exactly why you should not tear up your plan because of this week.
+
+### The pattern that has not moved
+
+| | You | Top 5 | Gap |
 |---|---|---|---|
-| Goalkeeper | £6.0m | £5.2m | **+£0.8m** |
-| Defence | £18.0m | £19.5m | −£1.5m |
-| Midfield | **£24.5m** | £31.9m | **−£7.4m** |
-| Attack | **£31.0m** | £24.1m | **+£6.9m** |
-| Starting XI | £79.5m | £80.7m | −£1.2m |
-| Bench | £19.5m | £18.8m | +£0.7m |
+| Goalkeeper | £6.0m | £5.1m | +£0.9m |
+| Defence | £18.0m | £15.6m | +£2.4m |
+| Midfield | **£24.5m** | **£34.2m** | **−£9.7m** |
+| Attack | £31.0m | £27.1m | +£3.9m |
 
-**You are built differently from almost everyone.** You have the second-lowest midfield spend in the league and the second-highest attack spend. Only Karan Yohannan spends less on midfield. Only Kieren Khatri spends more on attack.
+All five of the best managers keep defence between £14.5m and £16.5m. Every one. The rest of the league averages £20.8m. They then put between £30.5m and £42.5m into midfield.
 
-That is not an accident. It is the direct result of buying Haaland at £15.5m. He alone is half your attack budget, and paying for him is why your midfield is thin.
+You spend £18.0m on defence and £24.5m on midfield. **That is a £9.7m midfield gap against the managers who win most often, and this week did not change it.**
 
-Your bench is also slightly more expensive than average. You carry £19.5m there.
+Five players show up in three or more of their teams that you do not own: Bruno Fernandes, Mbeumo, Wirtz, Schade and Calvert-Lewin. Four of those five play in midfield. Worth noting that all five of those blanked this week too, so the gap cost you nothing in Gameweek 1.
 
 ---
 
-## 3. What the best managers do differently
+## 6. What is left, and what to do
 
-I ranked all 22 managers by their **median overall finish across the last five seasons**. I used the median because it rewards being good every year, not one lucky spike. I needed at least four seasons of history, which 18 managers have.
+**The finishing order is already settled.** Every manager in the top six owns João Pedro and nobody in the top six has anyone else left. Whatever he scores, everyone above and below you gets the same. You will finish 5th.
 
-| Rank | Manager | Median finish | Last five seasons |
-|------|---------|---------------|-------------------|
-| 1 | Will Kenji | 151k | 73k, 77k, 509k, 151k, 204k |
-| 2 | harrison white | 152k | 369k, 151k, 47k, 41k, 452k |
-| 3 | **Kieren Khatri** | 193k | 1009k, 192k, 316k, 167k, 83k |
-| 4 | Wes Towner | 344k | 5648k, 2065k, 343k, 284k, 332k |
-| 5 | Vishal Perera | 361k | 539k, 532k, 116k, 360k, 261k |
-| 6 | **You** | 458k | 104k, 502k, **49k**, 804k, 457k |
+**Do nothing this week.** Your position is locked.
 
-Kieren Khatri lands 3rd, which matches the example you gave me. That is a good sign the measure is picking up what you meant by "best."
+**Watch two numbers from here.**
 
-You sit 6th, just outside. Your best season was a 49k finish. Your problem is not your ceiling. It is that your results bounce around a lot.
+1. **Your midfield spend against the £34m the best managers carry.** You are £9.7m short. If the pattern holds once real data builds up, moving money from defence into midfield is the single change most likely to move you up.
+2. **Your chips.** You still hold your Bench Boost. This week showed exactly what it is worth in a high-scoring gameweek, and three of the four managers above you have now spent theirs.
 
-### The one clear pattern
-
-Here is how the top five split their starting eleven, next to you.
-
-| | Top 5 | You | Your gap |
-|---|---|---|---|
-| Goalkeeper | £5.1m | £6.0m | +£0.9m |
-| Defence | **£15.6m** | £18.0m | +£2.4m |
-| Midfield | **£34.2m** | £24.5m | **−£9.7m** |
-| Attack | £27.1m | £31.0m | +£3.9m |
-| Starting XI | £82.0m | £79.5m | −£2.5m |
-
-**All five of the best managers spend between £14.5m and £16.5m on defence.** Every single one. The rest of the league averages £20.8m. That is a tight, deliberate habit, not a coincidence.
-
-**All five spend heavily on midfield**, from £30.5m up to £42.5m. You are below every one of them, by nearly £10m.
-
-So the pattern is simple: **the best managers buy cheap defenders and expensive midfielders.** You do close to the opposite. You pay up in defence and in attack, and starve the middle.
-
-They also put more of their money on the pitch. Their starting elevens cost £82.0m against your £79.5m. They waste less on the bench.
-
-Five players show up in three or more of their teams that you do not own: **B.Fernandes, Mbeumo, Wirtz, Schade and Calvert-Lewin.** Four of those five are midfielders.
-
-**One honest warning.** This is one gameweek. I checked whether spending more on any position actually links to more points so far. Nothing is statistically solid yet — every result could easily be chance, and the biggest attackers have not played. Come back to this after ten weeks. That is when the pattern will mean something.
-
----
-
-## 4. Your biggest risks
-
-A player hurts you when your rivals own him and you do not. I measured this by asking: for every point this player scores, how much ground do I lose to the average rival?
-
-### Risks that already played out
-
-| Player | Owned by rivals | GW1 points | What happened |
-|--------|-----------------|------------|---------------|
-| **B.Fernandes** | 64% (5 captained him) | **2** | Your single biggest exposure. He blanked. This was a big win for you. |
-| Tzolis | 41% | 6 | Cost you a little. |
-| Gabriel | 41% | 5 | Cost you a little. |
-| Ødegaard | 18% | **11** | Hurt the most per player owned. |
-| Mbeumo | 41% | 2 | Barely moved. |
-
-You got lucky in the best possible way. The most-owned midfield captain in the league returned 2 points.
-
-### Risks still live
-
-These players have not kicked a ball yet. They are the real danger. I sorted them by how much ground each one costs you per point he scores, which counts captains twice.
-
-| Player | Club | How many rivals hold him | You |
-|--------|------|--------------------------|-----|
-| **Isak** | Liverpool | owned by 27%, 2 captained him | none |
-| **Wirtz** | Liverpool | owned by 32% | none |
-| Verbruggen | Brighton | owned by 32%, many bench him | none |
-| Semenyo | Man City | owned by 23% | none |
-| O'Reilly | Man City | owned by 18% | none |
-| Rogers | Chelsea | owned by 18% | none |
-| Kerkez | Liverpool | owned by 14% | none |
-
-**Newcastle vs Liverpool is your danger game.** Isak, Wirtz and Kerkez all play in it, and you own none of them. You do own Virgil and Szoboszlai, so a Liverpool clean sheet still helps you.
-
-### The captain picture
-
-| Captain | Managers |
-|---------|----------|
-| **Haaland** | 14 of 22 (64%) — including you |
-| B.Fernandes | 5 (already played, 2 pts) |
-| Isak | 2 |
-| Igor Thiago | 1 |
-
-You captained Haaland along with 13 rivals. That means a Haaland haul **protects** you more than it promotes you. You keep pace with two-thirds of the league. Your gains have to come from somewhere else.
-
----
-
-## 5. Where you actually stand
-
-Here is the good news, and it is better than the table suggests.
-
-**Half your score is still to come.** You have 6 scoring units left out of 12. The two leaders have only 3 of 12 and 3 of 16.
-
-Your remaining players: **Virgil, Groß, Szoboszlai, João Pedro, and Haaland (captain, counts double).**
-
-**Against Andy Mcgoonface, the joint leader, you cannot lose ground from here.** Everything he has left — Groß, Haaland, João Pedro — you also own. And you captain Haaland while he does not. Barring a red card, every remaining point either helps you both equally or helps you more.
-
-The same holds against Vishal Perera, the other leader, except he also has Gomez.
-
-Here is how the gap moves:
-
-| If the rest of the gameweek goes... | You finish | Leaders finish | Gap |
-|---|---|---|---|
-| Quietly (everyone 2 pts) | 44 | 61 | 17 (from 23) |
-| Normally (everyone ~5, Haaland 6) | 64 | 71 | 7 |
-| Haaland hauls 13 | 74 | 76 | **2** |
-| Haaland blanks | 54 | 66 | 12 |
-
-You close the gap in every case. You probably do not catch them this week. A 23-point hole is deep. But you climb, and if Haaland delivers you finish within touching distance.
-
----
-
-## What to take from this
-
-**Good news.** You dodged the biggest bullet in the league when B.Fernandes blanked for the 64% who own him. Half your team is still to play while the leaders are nearly done. You captained the right player.
-
-**The real lesson.** Your budget shape is the outlier here, and not in the direction the winners lean. The five best managers in this league all keep defence cheap, around £15–16m, and pour money into midfield, around £34m. You spend £18m on defence and £24.5m on midfield. That is a £10m midfield gap against the people who win most often.
-
-**What to watch.** Track your midfield spend against that £34m mark over the next few weeks. If the pattern holds once we have real data, that is the single change most likely to move you up. Do not act on one gameweek — but do start counting.
-
-*Data pulled live during Gameweek 1, with 6 of 10 matches played and none finalised. Bonus points and scores can still change.*
+*Data refreshed this morning from the official Fantasy Premier League API, with nine of ten matches played. Bonus points are not final, so small changes are still possible.*
