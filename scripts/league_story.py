@@ -112,7 +112,7 @@ def slide_standings(b, me, *, highlight=None, label=None):
                     xlabel=label or "Points in Gameweek 1"))
 
 
-def slide_gap_closed(b, prev, me, rival):
+def slide_gap_closed(b, prev, me, rival, left_label="First look", right_label="Final"):
     """Slope chart: two points in time is exactly what a slope chart is for."""
     now = b.set_index("entry"); was = prev.set_index("entry")
     fig, ax = plt.subplots(figsize=(8.6, 5.0))
@@ -128,7 +128,7 @@ def slide_gap_closed(b, prev, me, rival):
         ax.text(1.06, y1, f"{int(y1)}", ha="left", va="center", fontsize=12.5,
                 color=INK if colour == YOU else INK_2,
                 fontweight="bold" if colour == YOU else "normal")
-    for x, lab in [(0, "Last night"), (1, "This morning")]:
+    for x, lab in [(0, left_label), (1, right_label)]:
         ax.text(x, ax.get_ylim()[1], lab, ha="center", va="bottom",
                 fontsize=12.5, fontweight="bold", color=INK)
     gap_before = was.at[rival, "live_pts"] - was.at[me, "live_pts"]
@@ -301,24 +301,32 @@ def main() -> None:
     top5_ranks = sorted(int(r) for r in b[b.grp == "top5"]["rank"])
     played = sum(f["started"] for f in fixtures)
     remaining = [f for f in fixtures if not f["started"]]
+    complete = not remaining
+    verb = "finished" if complete else "climbed to"
+    when = "the early leader" if complete else "last night's leader"
 
-    foot = (f"Gameweek {args.gw}: {played} of {len(fixtures)} matches played. "
+    foot = (f"Gameweek {args.gw} complete: all {len(fixtures)} matches played. "
+            "Bonus points are provisional until the league confirms them."
+            if complete else
+            f"Gameweek {args.gw}: {played} of {len(fixtures)} matches played. "
             "Scores are provisional until bonus points are confirmed.")
 
     def ordinal(k):
         return f"{k}{'th' if 10 <= k % 100 <= 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(k % 10, 'th')}"
 
     slides = [
-        (f"You climbed to {ordinal(int(my['rank']))} of {n}, {int(leader.live_pts - my.live_pts)} points off the lead",
+        (f"You {verb} {ordinal(int(my['rank']))} of {n}, {int(leader.live_pts - my.live_pts)} points off the lead",
          slide_standings(b, me), foot),
-        (f"You cut the gap to last night's leader from {gap_before} points to {gap_now}",
+        (f"You cut the gap to {when} from {gap_before} points to {gap_now}",
          slide_gap_closed(b, prev, me, old_leader), foot),
         (f"{my_cap} was captained by {cap_n} of {n} managers and returned {cap_pts} points",
          slide_captains(df, me), foot),
         (f"{blanks} of the 15 most-owned players scored 2 points or fewer",
          slide_template_returns(tmpl, set(df[df.entry == me].element)),
          foot + " Orange marks a return of 2 points or fewer."),
-        (f"{bb_top4} of the top four played their Bench Boost",
+(f"The {int(b.chip.eq('bboost').sum())} managers who played Bench Boost finished "
+         + ", ".join(ordinal(int(r)) for r in sorted(b[b.chip == 'bboost']['rank'])[:-1])
+         + f" and {ordinal(int(sorted(b[b.chip == 'bboost']['rank'])[-1]))}",
          slide_standings(b, me, highlight=lambda r: r.chip == "bboost"),
          foot + " Orange marks the managers who played Bench Boost."),
         (f"Your bench scored {bench_pts} points you could not use",
@@ -419,16 +427,19 @@ def build_appendix(b, df, hist, tmpl, prev, me, old_leader, gap_before, gap_now,
                   'their name.')
 
     text = f"""
-<h2>What changed overnight</h2>
-<p>You moved from {int(my_prev['rank'])}th to {int(my['rank'])}th. Your score went from
-{int(my_prev.live_pts)} to <span class="k">{int(my.live_pts)}</span>. Three more matches finished,
-so nine of the ten are now done. Only {remaining[0]['id'] and 'Fulham against Chelsea' if remaining else 'nothing'} is left.</p>
-<p>Last night I told you that you could not lose ground to the leader, because every player he had
-left was also in your team and you captained Haaland while he did not. That held.
+<h2>How Gameweek 1 finished</h2>
+<p>You finished <span class="k">{int(my['rank'])}th of {n} on {int(my.live_pts)} points</span>. The
+league averaged {b.live_pts.mean():.1f}, so you beat it by {my.live_pts - b.live_pts.mean():.1f}. You
+started the week sixth on {int(my_prev.live_pts)} points.</p>
+<p>At my first look I told you that you could not lose ground to the leader, because every player he
+had left was also in your team and you captained Haaland while he did not. That held.
 <span class="k">The gap closed from {gap_before} points to {gap_now}.</span>{rename}</p>
-<p>But someone else jumped both of you. {leader.manager} played a Bench Boost, gained
-{int(leader.live_pts - prev_pts.get(leader.entry, 0))} points overnight, and went from sixth to
-first.</p>
+<p>I also told you the finishing order was settled. That was half right. You did finish
+{int(my['rank'])}th, but I only checked the managers immediately around you. Karan Yohannan still had
+several Chelsea and Fulham players to come, gained 25 points in the last match, and climbed from
+fifteenth to join you on {int(my.live_pts)}. The lesson is to check the whole table for players still
+to play, not just the managers nearest you.</p>
+<p>{leader.manager} won the week with {int(leader.live_pts)} after playing a Bench Boost.</p>
 {standings}
 
 <h2>The template blanked</h2>
@@ -474,12 +485,16 @@ about who is good.</span> That is exactly why you should not change your plan ba
 £{my.MID:.1f}m on midfield. That is a <span class="k">£{mid_gap:.1f}m midfield gap</span> against the
 managers who win most often, and it has not moved.</p>
 
-<h2>What to do next</h2>
-<p>Nothing this week. You still have {'a player' if left else 'nothing'} to come{f': {left}' if left else ''},
-and everyone in the top six owns him too, so the finishing order is already settled.</p>
-<p>Watch two numbers from here. First, your midfield spend against the £34m the best managers carry.
-Second, your chips. You still hold your Bench Boost, and this week showed what it is worth in a
-high-scoring gameweek.</p>
+<h2>What to carry into Gameweek 2</h2>
+<p>Two numbers matter from here.</p>
+<p>First, <span class="k">your midfield spend against the £34m the best managers carry</span>. You are
+£{mid_gap:.1f}m short, and one bad week for those midfielders does not change the pattern. It is the
+one structural difference between you and the managers who finish well every year.</p>
+<p>Second, <span class="k">your chips</span>. You still hold your Bench Boost. Three of the four
+managers who finished above you have now spent theirs. In a week where your bench scored
+{bench_pts} points, that chip was worth roughly two league places, and you still have it.</p>
+<p>Do not chase this week. The template blanked, your captain blanked, and you still finished fifth
+and above average. That is a reasonable place to start a season.</p>
 
 <h2>Where the numbers come from</h2>
 <p>Everything here comes from the official Fantasy Premier League API, refreshed this morning with

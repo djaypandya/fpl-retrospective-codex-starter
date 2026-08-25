@@ -1,45 +1,47 @@
-# Buy-in Baller League — Gameweek 1 Report
+# Buy-in Baller League — Gameweek 1 Final Report
 
 **Your team:** Numbers Don't Lie (Dhananjay Pandya) · **League:** 22 managers
-**You are 5th on 48 points, up from 6th on 32 last night.**
+**You finished 5th of 22 on 59 points.** The league averaged 51.5.
 
-> **Where the gameweek stands.** Nine of the ten matches are done. Only Fulham against Chelsea is left. Scores are provisional until bonus points are confirmed.
+> All ten matches are played. Bonus points are provisional until the league confirms them, so small changes are still possible.
 
-Re-run this report any week: `python3.12 scripts/league_report.py --league 14074 --entry 46116 --gw 1`
+Re-run: `python3.12 scripts/league_report.py --league 14074 --entry 46116 --gw 1`
 Visual version: [`LEAGUE_GW1_DATA_STORY.pdf`](LEAGUE_GW1_DATA_STORY.pdf)
 
 ---
 
-## 1. What changed overnight
+## 1. The final table
 
-You gained 16 points and moved up a place. But the table above you shuffled hard.
+| # | Manager | Points | Chip |
+|---|---------|--------|------|
+| 1 | Aparajit Roy | 80 | Bench Boost |
+| 2 | Vishal Perera | 74 | Bench Boost |
+| 3 | Andy Tlostabet | 70 | — |
+| 4 | Will Kenji | 65 | Bench Boost |
+| **5** | **Dhananjay Pandya** | **59** | — |
+| 5 | Karan Yohannan | 59 | — |
+| 7 | Patrick Le | 58 | — |
+| 8 | Karan Panat | 56 | — |
 
-| # | Manager | Points | Overnight | Chip |
-|---|---------|--------|-----------|------|
-| 1 | Aparajit Roy | 69 | **+37** | Bench Boost |
-| 2 | Vishal Perera | 63 | +8 | Bench Boost |
-| 3 | Oziandy Towner | 59 | +4 | — |
-| 4 | Will Kenji | 54 | +12 | Bench Boost |
-| **5** | **Dhananjay Pandya** | **48** | **+16** | — |
-| 6 | Patrick Le | 47 | +4 | — |
-| 6 | ashik Kavanakudy | 47 | +4 | — |
+You climbed from 6th to 5th across the week and beat the league average by 7.5 points.
 
-**Last night's call held.** I told you that you could not lose ground to the leader, because every player he had left was also in your team and you captained Haaland while he did not. **The gap closed from 23 points to 11.**
+### Two calls I made, and how they turned out
 
-One note on names: the manager who led last night was called "Andy Mcgoonface" and is now called "Oziandy Towner". Same team, same manager. I track people by their team number, not their name, so nothing broke.
+**The first was right.** I told you that you could not lose ground to the early leader, because every player he had left was also in your team and you captained Haaland while he did not. **The gap closed from 23 points to 11.**
 
-**But someone jumped you both.** Aparajit Roy played a Bench Boost, scored 37 points overnight, and went from sixth to first.
+**The second was only half right.** I told you the finishing order was settled. You did finish 5th, but my reasoning was incomplete. I checked only the managers immediately around you. Karan Yohannan still had several Chelsea and Fulham players to come, gained 25 points in the last match, and climbed from 15th to join you on 59. Next time I will check the whole table for players still to play, not just your neighbours.
+
+One housekeeping note: the manager in 3rd changed his name twice during the week, from "Andy Mcgoonface" to "Oziandy Towner" to "Andy Tlostabet". The report tracks people by team number, so nothing broke.
 
 ---
 
 ## 2. The template blanked
 
-The template is the group of players most managers own. This week it failed nearly everyone.
-
-**Eleven of the fifteen most-owned players scored 2 points or fewer.** The average was 2.9 points.
+**Ten of the fifteen most-owned players scored 2 points or fewer.** The average was 3.6.
 
 | Player | Club | Owned by | Points | You own? |
 |--------|------|----------|--------|----------|
+| João Pedro | Chelsea | 73% | **11** | ✅ |
 | Calafiori | Arsenal | 59% | **9** | ✅ |
 | Raya | Arsenal | 41% | **6** | ✅ |
 | Tzolis | Arsenal | 41% | **6** | ❌ |
@@ -54,22 +56,22 @@ The template is the group of players most managers own. This week it failed near
 | Shaw | Man Utd | 41% | 1 | ❌ |
 | Maguire | Man Utd | 32% | 1 | ❌ |
 | Calvert-Lewin | Leeds | 50% | 1 | ❌ |
-| João Pedro | Chelsea | 73% | yet to play | ✅ |
 
-**Look at who did deliver.** All four template players who beat 2 points play for Arsenal. Arsenal beat Coventry 3-0. If you did not own Arsenal players this week, you had a bad week. You owned two of them.
+Four of the five players who beat 2 points play for Arsenal, who won 3-0. The fifth was João Pedro, who scored 11 in the final match. You owned three of those five.
 
-### Your captain
+### Every captain in the league blanked
 
 **Haaland was captained by 14 of the 22 managers, including you. He returned 2 points.**
 
-Because you doubled him, he gave you 4. That hurts. But it hurt almost everyone else the same way, so it cost you very little in the league table. Every single captain pick in the league blanked: Bruno Fernandes returned 2, Isak returned 2, and Igor Thiago returned 0.
+The other captain picks did no better: Bruno Fernandes 2, Isak 2, Igor Thiago 0. **Not one manager in this league got a good captain score.** So while your armband cost you points on paper, it cost you almost nothing against your rivals.
 
 ---
 
 ## 3. Your own team
 
-| Player | Role | Scored | Counted for you |
-|--------|------|--------|-----------------|
+| Player | Role | Scored | Counted |
+|--------|------|--------|---------|
+| João Pedro | Started | 11 | 11 |
 | Calafiori | Started | 9 | 9 |
 | Ndiaye | Started | 9 | 9 |
 | Szoboszlai | Started | 8 | 8 |
@@ -84,40 +86,37 @@ Because you doubled him, he gave you 4. That hurts. But it hurt almost everyone 
 | Kinsky | **Bench** | 2 | 0 |
 | Mitchell | **Bench** | 1 | 0 |
 | Igor Thiago | Started | 0 | 0 |
-| João Pedro | Started | yet to play | — |
 
-Your climb came from the middle of your squad, not the top. Your two most expensive attackers, Haaland and Igor Thiago, cost £23.5m together and scored 2 points between them.
+Your points came from the middle of the squad. Your two most expensive attackers, Haaland and Igor Thiago, cost £23.5m together and scored 2 points between them.
 
-**Your bench scored 14 points you could not use.** Vuskovic got 6 and Ampadu got 5. Had you played your Bench Boost this week, you would be on 62 points and sitting third.
+**Your bench scored 14 points you could not use.** With a Bench Boost you would have finished on 73, in 3rd.
 
 ---
 
-## 4. The chip decided the top, not the team
+## 4. The chip decided the top
 
-Three of the top four managers played their Bench Boost. The best manager who did not use a chip is Oziandy Towner in third.
+**All three managers who played Bench Boost finished 1st, 2nd and 4th.** The best manager who kept his chips is Andy Tlostabet in 3rd.
 
-**Read this carefully.** Everyone gets the same chips. Playing one early is a bet that the week will be high-scoring, and this week it paid off. It does not make those managers better than you. It means they have one fewer chip left, and you still hold yours.
+Read this properly. Everyone gets the same chips. Playing one in the opening week is a bet that the week will be high-scoring, and it paid off. It does not make those managers better. It means they have one fewer chip for the rest of the season, and **you still hold yours.**
 
 ---
 
 ## 5. What the best managers did
 
-I ranked every manager by their median finish over the last five seasons. The median rewards being good every year, not one lucky season.
+| # | Manager | Median finish (5 seasons) | GW1 rank | GW1 points |
+|---|---------|---------------------------|----------|------------|
+| 1 | Will Kenji | 151k | 4th | 65 |
+| 2 | harrison white | 152k | **20th** | 37 |
+| 3 | Kieren Khatri | 193k | 9th | 54 |
+| 4 | Wes Towner | 344k | 15th | 46 |
+| 5 | Vishal Perera | 361k | 2nd | 74 |
+| 6 | **You** | 458k | **5th** | 59 |
 
-| # | Manager | Median finish | Rank this week | Points |
-|---|---------|---------------|----------------|--------|
-| 1 | Will Kenji | 151k | 4th | 54 |
-| 2 | harrison white | 152k | **21st** | 26 |
-| 3 | Kieren Khatri | 193k | 9th | 43 |
-| 4 | Wes Towner | 344k | 14th | 35 |
-| 5 | Vishal Perera | 361k | 2nd | 63 |
-| 6 | **You** | 458k | **5th** | 48 |
+**The five most consistent managers finished 2nd, 4th, 9th, 15th and 20th.** They are spread right across the table.
 
-Look at the right-hand columns. **The five most consistent managers finished 2nd, 4th, 9th, 14th and 21st.** They are scattered all over the table.
+**One gameweek tells you almost nothing about who is good.** You finished above three of the five best managers in your league this week. That is worth very little on its own.
 
-**One gameweek tells you almost nothing about who is good.** That is exactly why you should not tear up your plan because of this week.
-
-### The pattern that has not moved
+### The pattern that did not move
 
 | | You | Top 5 | Gap |
 |---|---|---|---|
@@ -126,23 +125,19 @@ Look at the right-hand columns. **The five most consistent managers finished 2nd
 | Midfield | **£24.5m** | **£34.2m** | **−£9.7m** |
 | Attack | £31.0m | £27.1m | +£3.9m |
 
-All five of the best managers keep defence between £14.5m and £16.5m. Every one. The rest of the league averages £20.8m. They then put between £30.5m and £42.5m into midfield.
+All five keep defence between £14.5m and £16.5m. Every one. The rest of the league averages £20.8m. They then put £30.5m to £42.5m into midfield.
 
-You spend £18.0m on defence and £24.5m on midfield. **That is a £9.7m midfield gap against the managers who win most often, and this week did not change it.**
-
-Five players show up in three or more of their teams that you do not own: Bruno Fernandes, Mbeumo, Wirtz, Schade and Calvert-Lewin. Four of those five play in midfield. Worth noting that all five of those blanked this week too, so the gap cost you nothing in Gameweek 1.
+You spend £18.0m on defence and £24.5m on midfield. **That £9.7m midfield gap is the one structural difference between you and the managers who finish well every year.** A single bad week for their midfielders does not change it.
 
 ---
 
-## 6. What is left, and what to do
+## 6. What to carry into Gameweek 2
 
-**The finishing order is already settled.** Every manager in the top six owns João Pedro and nobody in the top six has anyone else left. Whatever he scores, everyone above and below you gets the same. You will finish 5th.
+**Do not chase this week.** The template blanked, your captain blanked, and you still finished 5th and above average. That is a fine start.
 
-**Do nothing this week.** Your position is locked.
+**Watch two numbers.**
 
-**Watch two numbers from here.**
+1. **Your midfield spend against the £34m the best managers carry.** You are £9.7m short. If the pattern holds as real data builds up, moving money from defence into midfield is the single change most likely to move you up the table.
+2. **Your chips.** You still hold your Bench Boost. Three of the four managers above you have spent theirs. In a week where your bench scored 14 points, that chip was worth about two league places.
 
-1. **Your midfield spend against the £34m the best managers carry.** You are £9.7m short. If the pattern holds once real data builds up, moving money from defence into midfield is the single change most likely to move you up.
-2. **Your chips.** You still hold your Bench Boost. This week showed exactly what it is worth in a high-scoring gameweek, and three of the four managers above you have now spent theirs.
-
-*Data refreshed this morning from the official Fantasy Premier League API, with nine of ten matches played. Bonus points are not final, so small changes are still possible.*
+*Data pulled from the official Fantasy Premier League API after all ten matches. Bonus points are provisional.*
