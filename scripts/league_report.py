@@ -92,7 +92,11 @@ def build_picks(data: dict) -> pd.DataFrame:
                 slot=p["position"], multiplier=p["multiplier"],
                 is_captain=p["is_captain"], gw_points=e["event_points"],
                 played=e["team"] in played))
-    return pd.DataFrame(rows)
+    # Deterministic order: these CSVs are committed, so a re-run should only
+    # diff where the data actually changed, not where dict order happened to.
+    return (pd.DataFrame(rows)
+            .sort_values(["rank", "entry", "slot"])
+            .reset_index(drop=True))
 
 
 def league_template(df: pd.DataFrame) -> pd.DataFrame:
