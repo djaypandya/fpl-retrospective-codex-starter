@@ -185,6 +185,58 @@ def slide_my_bench(df, me):
     return svg(fig)
 
 
+def slide_transfer_activity(tx_pm, me):
+    """Only the managers who actually moved; the title carries how many did not."""
+    d = tx_pm[tx_pm.transfers > 0].sort_values("transfers", ascending=False)
+    colours = [YOU if e == me else (TOP if c else REST)
+               for e, c in zip(d.entry, d.chip.fillna(""))]
+    labels = [f"{m}{'  (wildcard)' if c else ''}" for m, c in zip(d.manager, d.chip.fillna(""))]
+    fig = bars(labels, d.transfers.tolist(), colours, figsize=(9.6, 4.0),
+               xlabel="Transfers made this gameweek")
+    ax = fig.axes[0]
+    for i, (_, r) in enumerate(d.iterrows()):
+        if r.hit_cost:
+            ax.text(r.transfers + 1.5, i, f"paid {int(r.hit_cost)} points",
+                    va="center", fontsize=11, color=INK_2)
+    ax.set_xlim(0, max(d.transfers) * 1.45)
+    return svg(fig)
+
+
+def slide_bandwagon(bootstrap, df, n, next_gw):
+    """What the whole game bought, against what this league actually bought.
+
+    Two different measures, so only one goes on the axis. The league count sits
+    beside each bar as a direct label rather than on a second scale.
+    """
+    el = {e["id"]: e for e in bootstrap["elements"]}
+    club = {t["id"]: t["short_name"] for t in bootstrap["teams"]}
+    top = sorted(bootstrap["elements"], key=lambda e: -e["transfers_in_event"])[:8]
+    owners = df.groupby("element").entry.nunique()
+    labels, values, league_counts = [], [], []
+    for e in top:
+        labels.append(f"{e['web_name']}  ({club[e['team']]})")
+        values.append(e["transfers_in_event"] / 1000)
+        league_counts.append(int(owners.get(e["id"], 0)))
+    colours = [TOP if "Sangar" in l else REST for l in labels]
+    fig = bars(labels, values, colours, fmt="{:.0f}k", figsize=(10.2, 4.8),
+               xlabel=f"Transfers in across the whole game, for Gameweek {next_gw}")
+    ax = fig.axes[0]
+    for i, c in enumerate(league_counts):
+        ax.text(max(values) * 1.16, i, f"{c} of {n} own him here",
+                va="center", fontsize=11.5, color=INK_2)
+    ax.set_xlim(0, max(values) * 1.62)
+    return svg(fig)
+
+
+def slide_squad_value(b, me):
+    """Where every manager's money sits, so the shape difference is visible."""
+    d = b.sort_values("MID", ascending=False)
+    colours = [YOU if e == me else (TOP if g == "top5" else REST)
+               for e, g in zip(d.entry, d.grp)]
+    return svg(bars(d.manager.tolist(), d.MID.tolist(), colours, fmt="£{:.1f}m",
+                    xlabel="Spend on midfielders in the starting eleven"))
+
+
 def slide_allocation(b, me):
     """Grouped bars: two series, so a legend is present and both are labelled."""
     pos = ["FWD", "MID", "DEF", "GKP"]
@@ -260,6 +312,48 @@ def build_html(slides, cover, appendix) -> str:
     return f"<style>{CSS}</style>" + "".join(body)
 
 
+def review_slides(ns: dict):
+    """The eight-slide arc used once every match in the gameweek has been played."""
+    (b, df, tmpl, prev, me, n, my, leader, foot, verb, when, gap_before, gap_now,
+     my_cap, cap_n, cap_pts, blanks, bench_pts, mid_gap, ordinal, old_leader) = (
+        ns["b"], ns["df"], ns["tmpl"], ns["prev"], ns["me"], ns["n"], ns["my"],
+        ns["leader"], ns["foot"], ns["verb"], ns["when"], ns["gap_before"],
+        ns["gap_now"], ns["my_cap"], ns["cap_n"], ns["cap_pts"], ns["blanks"],
+        ns["bench_pts"], ns["mid_gap"], ns["ordinal"], ns["old_leader"])
+    top5_ranks = sorted(int(r) for r in b[b.grp == "top5"]["rank"])
+    bb = sorted(int(r) for r in b[b.chip == "bboost"]["rank"])
+    out = [
+        (f"You {verb} {ordinal(int(my['rank']))} of {n}, "
+         f"{int(leader.live_pts - my.live_pts)} points off the lead",
+         slide_standings(b, me), foot),
+    ]
+    if prev is not None:
+        out.append((f"You cut the gap to {when} from {gap_before} points to {gap_now}",
+                    slide_gap_closed(b, prev, me, old_leader), foot))
+    out += [
+        (f"{my_cap} was captained by {cap_n} of {n} managers and returned {cap_pts} points",
+         slide_captains(df, me), foot),
+        (f"{blanks} of the 15 most-owned players scored 2 points or fewer",
+         slide_template_returns(tmpl, set(df[df.entry == me].element)),
+         foot + " Orange marks a return of 2 points or fewer."),
+        (f"Your bench scored {bench_pts} points you could not use",
+         slide_my_bench(df, me), foot),
+        ("The five most consistent managers finished " +
+         ", ".join(ordinal(r) for r in top5_ranks[:-1]) + f" and {ordinal(top5_ranks[-1])}",
+         slide_standings(b, me, highlight=lambda r: r.grp == "top5"),
+         foot + " Orange marks the five most consistent managers."),
+        (f"They still put £{mid_gap:.0f}m more than you into midfield",
+         slide_allocation(b, me), foot),
+    ]
+    if bb:
+        out.insert(4, (
+            f"The {len(bb)} managers who played Bench Boost finished "
+            + ", ".join(ordinal(r) for r in bb[:-1]) + f" and {ordinal(bb[-1])}",
+            slide_standings(b, me, highlight=lambda r: r.chip == "bboost"),
+            foot + " Orange marks the managers who played Bench Boost."))
+    return out
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--league", type=int, default=14074)
@@ -273,8 +367,11 @@ def main() -> None:
     b = pd.read_csv(src / "budget.csv")
     hist = pd.read_csv(src / "history.csv")
     tmpl = pd.read_csv(src / "template.csv")
-    prev = pd.read_csv(src / "standings_previous.csv")
+    prev_path = src / "standings_previous.csv"
+    prev = pd.read_csv(prev_path) if prev_path.exists() else None
+    tx_pm = pd.read_csv(src / "transfers_by_manager.csv")
     fixtures = json.loads((src / "raw" / f"fixtures_gw{args.gw}.json").read_text())
+    bootstrap = json.loads((src / "raw" / "bootstrap.json").read_text())
     me = args.entry
     n = len(b)
 
@@ -282,13 +379,16 @@ def main() -> None:
     b["grp"] = b.entry.map(lambda e: "me" if e == me else
                            ("top5" if e in set(top5.entry) else "rest"))
     my = b[b.entry == me].iloc[0]
-    my_prev = prev[prev.entry == me].iloc[0]
-
     leader = b.nsmallest(1, "rank").iloc[0]
-    # The manager who led last night, tracked by entry id: one has since renamed.
-    old_leader = int(prev.nsmallest(1, "rank").iloc[0].entry)
-    gap_before = int(prev[prev.entry == old_leader].live_pts.iloc[0] - my_prev.live_pts)
-    gap_now = int(b[b.entry == old_leader].live_pts.iloc[0] - my.live_pts)
+
+    # Only a gameweek with an earlier snapshot can show how the gap moved.
+    my_prev = old_leader = gap_before = gap_now = None
+    if prev is not None:
+        my_prev = prev[prev.entry == me].iloc[0]
+        # Track the earlier leader by entry id: managers rename mid-week.
+        old_leader = int(prev.nsmallest(1, "rank").iloc[0].entry)
+        gap_before = int(prev[prev.entry == old_leader].live_pts.iloc[0] - my_prev.live_pts)
+        gap_now = int(b[b.entry == old_leader].live_pts.iloc[0] - my.live_pts)
 
     caps = df[df.is_captain]
     my_cap = caps[caps.entry == me].name.iloc[0]
@@ -314,30 +414,43 @@ def main() -> None:
     def ordinal(k):
         return f"{k}{'th' if 10 <= k % 100 <= 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(k % 10, 'th')}"
 
-    slides = [
-        (f"You {verb} {ordinal(int(my['rank']))} of {n}, {int(leader.live_pts - my.live_pts)} points off the lead",
-         slide_standings(b, me), foot),
-        (f"You cut the gap to {when} from {gap_before} points to {gap_now}",
-         slide_gap_closed(b, prev, me, old_leader), foot),
-        (f"{my_cap} was captained by {cap_n} of {n} managers and returned {cap_pts} points",
-         slide_captains(df, me), foot),
-        (f"{blanks} of the 15 most-owned players scored 2 points or fewer",
-         slide_template_returns(tmpl, set(df[df.entry == me].element)),
-         foot + " Orange marks a return of 2 points or fewer."),
-(f"The {int(b.chip.eq('bboost').sum())} managers who played Bench Boost finished "
-         + ", ".join(ordinal(int(r)) for r in sorted(b[b.chip == 'bboost']['rank'])[:-1])
-         + f" and {ordinal(int(sorted(b[b.chip == 'bboost']['rank'])[-1]))}",
-         slide_standings(b, me, highlight=lambda r: r.chip == "bboost"),
-         foot + " Orange marks the managers who played Bench Boost."),
-        (f"Your bench scored {bench_pts} points you could not use",
-         slide_my_bench(df, me), foot + " Bench Boost would have banked all of it."),
-        ("The five most consistent managers finished " +
-         ", ".join(ordinal(r) for r in top5_ranks[:-1]) + f" and {ordinal(top5_ranks[-1])}",
-         slide_standings(b, me, highlight=lambda r: r.grp == "top5"),
-         foot + " Orange marks the five most consistent managers."),
-        (f"They still put £{mid_gap:.0f}m more than you into midfield",
-         slide_allocation(b, me), foot),
-    ]
+    if complete:
+        slides = review_slides(locals())
+    else:
+        # Early in a gameweek the result says nothing yet, so the story is what
+        # managers DID: who moved, who stood still, and who followed the crowd.
+        n_moved = int((tx_pm.transfers > 0).sum())
+        quiet = int((tx_pm.transfers == 0).sum())
+        hits = tx_pm[tx_pm.hit_cost > 0]
+        cap_lead = caps.groupby("name").entry.nunique().sort_values(ascending=False)
+        top_cap, top_cap_n = cap_lead.index[0], int(cap_lead.iloc[0])
+        sangare = next((e for e in bootstrap["elements"]
+                        if e["web_name"].startswith("M.Sangar")), None)
+        s_owners = int(df[df.element == sangare["id"]].entry.nunique()) if sangare else 0
+        next_gw = next((e["id"] for e in bootstrap["events"] if e["is_next"]), args.gw + 1)
+        cherki = max(bootstrap["elements"], key=lambda e: e["transfers_in_event"])["web_name"]
+        top5_ranks = sorted(int(r) for r in b[b.grp == "top5"]["rank"])
+        in_top4 = sum(1 for r in top5_ranks if r <= 4)
+
+        slides = [
+            (f"You sit {ordinal(int(my['rank']))} of {n} with {int(my.live_pts)} points",
+             slide_standings(b, me, label="Total points so far this season"), foot),
+            (f"{quiet} of the {n} managers made no transfer at all this week",
+             slide_transfer_activity(tx_pm, me),
+             foot + (f" {len(hits)} paid a points hit." if len(hits) else "")),
+            (f"The Sangaré bandwagon has already cooled, and {cherki} is the new one",
+             slide_bandwagon(bootstrap, df, n, next_gw),
+             foot + f" Orange marks Sangaré. Only {s_owners} of {n} here owns him."),
+            (f"{top_cap} is captain for {top_cap_n} of the {n} managers",
+             slide_captains(df, me), foot),
+            (f"{in_top4} of the five most consistent managers are already in the top four",
+             slide_standings(b, me, highlight=lambda r: r.grp == "top5",
+                             label="Total points so far this season"),
+             foot + " Orange marks the five most consistent managers."),
+            (f"They still put £{mid_gap:.0f}m more than you into midfield",
+             slide_allocation(b, me), foot),
+        ]
+
     cover = {
         "eyebrow": f"Gameweek {args.gw} &middot; Buy-in Baller League &middot; Updated",
         "title": "How your team stacks up",
@@ -345,9 +458,13 @@ def main() -> None:
                 "played. Read the titles alone and you have the whole story. "
                 "The appendix holds the detail."),
     }
-    appendix = build_appendix(b, df, hist, tmpl, prev, me, old_leader, gap_before,
-                              gap_now, mid_gap, top5, my_cap, cap_n, cap_pts,
-                              blanks, bench_pts, remaining)
+    if complete:
+        appendix = build_appendix(b, df, hist, tmpl, prev, me, old_leader, gap_before,
+                                  gap_now, mid_gap, top5, my_cap, cap_n, cap_pts,
+                                  blanks, bench_pts, remaining)
+    else:
+        appendix = build_early_appendix(b, df, hist, tmpl, tx_pm, bootstrap, me,
+                                        mid_gap, top5, args.gw, played, len(fixtures))
 
     html = src / "story.html"
     html.write_text(build_html(slides, cover, appendix))
@@ -356,14 +473,144 @@ def main() -> None:
                     f"--print-to-pdf={pdf}", f"file://{html}"],
                    check=True, capture_output=True, timeout=180)
     print(f"wrote {pdf} ({pdf.stat().st_size/1024:.0f} KB)")
-    print(f"  rank {int(my_prev['rank'])} -> {int(my['rank'])}, "
-          f"{int(my_prev.live_pts)} -> {int(my.live_pts)} points")
+    if my_prev is not None:
+        print(f"  rank {int(my_prev['rank'])} -> {int(my['rank'])}, "
+              f"{int(my_prev.live_pts)} -> {int(my.live_pts)} points")
+    else:
+        print(f"  rank {int(my['rank'])} of {n}, {int(my.live_pts)} points, "
+              f"{played}/{len(fixtures)} matches played")
 
 
 def ordinal_word(k: int) -> str:
     words = {1: "first", 2: "second", 3: "third", 4: "fourth", 5: "fifth",
              6: "sixth", 7: "seventh", 8: "eighth", 9: "ninth", 10: "tenth"}
     return words.get(k, f"{k}th")
+
+
+def build_early_appendix(b, df, hist, tmpl, tx_pm, bootstrap, me, mid_gap, top5,
+                         gw, played, total_matches) -> str:
+    next_gw = next((e["id"] for e in bootstrap["events"] if e["is_next"]), gw + 1)
+    """Appendix for a gameweek still in progress: what managers did, not what scored."""
+    my = b[b.entry == me].iloc[0]
+    n = len(b)
+    tx_pm = tx_pm.copy()
+    tx_pm["chip"] = tx_pm.chip.fillna("").astype(str)
+    quiet = int((tx_pm.transfers == 0).sum())
+    movers = tx_pm[tx_pm.transfers > 0].sort_values("transfers", ascending=False)
+    hits = movers[movers.hit_cost > 0]
+    chips = movers[movers.chip != ""]
+    el = {e["id"]: e for e in bootstrap["elements"]}
+    club = {t["id"]: t["short_name"] for t in bootstrap["teams"]}
+    owners = df.groupby("element").entry.nunique()
+    sangare = next((e for e in bootstrap["elements"]
+                    if e["web_name"].startswith("M.Sangar")), None)
+    s_owners = int(owners.get(sangare["id"], 0)) if sangare else 0
+
+    def table(rows, head):
+        h = "".join(f"<th>{c}</th>" for c in head)
+        out = []
+        for r in rows:
+            cls = " class='me'" if r.get("me") else ""
+            out.append(f"<tr{cls}>" + "".join(f"<td>{v}</td>" for v in r["cells"]) + "</tr>")
+        return f"<table><thead><tr>{h}</tr></thead><tbody>{''.join(out)}</tbody></table>"
+
+    standings = table([
+        {"cells": [int(r["rank"]), r.manager, int(r.live_pts),
+                   int(tx_pm[tx_pm.entry == r.entry].transfers.iloc[0]),
+                   f"&minus;{int(tx_pm[tx_pm.entry == r.entry].hit_cost.iloc[0])}"
+                   if tx_pm[tx_pm.entry == r.entry].hit_cost.iloc[0] else "&mdash;",
+                   f"£{r.DEF:.1f}m", f"£{r.MID:.1f}m", f"£{r.FWD:.1f}m"],
+         "me": r.entry == me}
+        for _, r in b.sort_values("rank").iterrows()],
+        ["#", "Manager", "Points", "Transfers", "Hit", "Defence", "Midfield", "Attack"])
+
+    moves = table([
+        {"cells": [r.manager, r.transfers,
+                   f"&minus;{int(r.hit_cost)}" if r.hit_cost else "&mdash;",
+                   r.chip.title() if r.chip else "&mdash;", r["in"], r["out"]],
+         "me": r.entry == me}
+        for _, r in movers.iterrows()],
+        ["Manager", "Moves", "Hit", "Chip", "In", "Out"])
+
+    top_global = sorted(bootstrap["elements"], key=lambda e: -e["transfers_in_event"])[:8]
+    band = table([
+        {"cells": [e["web_name"], club[e["team"]], f"£{e['now_cost']/10:.1f}m",
+                   f"{e['transfers_in_event']:,}", f"{int(owners.get(e['id'], 0))} of {n}"],
+         "me": int(owners.get(e["id"], 0)) > 0 and e["id"] in set(df[df.entry == me].element)}
+        for e in top_global],
+        ["Player", "Club", "Price", "Bought across the game", "Owned in your league"])
+
+    top_rows = table([
+        {"cells": [i + 1, r.manager, f"{int(r.median_rank):,}",
+                   int(b[b.entry == r.entry]["rank"].iloc[0]),
+                   int(b[b.entry == r.entry].live_pts.iloc[0])],
+         "me": r.entry == me}
+        for i, (_, r) in enumerate(hist[hist.seasons >= 4].nsmallest(6, "median_rank").iterrows())],
+        ["#", "Manager", "Median finish", "Rank now", "Points"])
+
+    text = f"""
+<h2>Where things stand</h2>
+<p>Only <span class="k">{played} of the {total_matches} matches</span> in Gameweek {gw} have been
+played, so nothing here is a result yet. Treat every score as a snapshot. What <em>is</em> settled is
+what each manager chose to do, and that is what this report is about.</p>
+<p>You are {int(my['rank'])}th of {n} on {int(my.live_pts)} points. You made no transfer, which was
+your plan.</p>
+{standings}
+
+<h2>The league mostly stood still</h2>
+<p><span class="k">{quiet} of the {n} managers made no transfer at all.</span> Only
+{len(movers)} moved. You were in the larger group.</p>
+{moves}
+<p>{len(hits)} manager{'s' if len(hits) != 1 else ''} paid a points hit to make an extra move, costing
+{int(hits.hit_cost.sum())} points between them. A hit means giving up 4 points for a transfer beyond
+the free one, so it only pays if the new player beats the old one by more than 4.</p>
+{"<p>" + ", ".join(f"{r.manager} played a {r.chip.title()} and made {int(r.transfers)} moves" for _, r in chips.iterrows()) + ". A wildcard allows unlimited free transfers, so it does not cost points, but it is one of only two available all season.</p>" if len(chips) else ""}
+<p>A note on how this was counted. FPL reports a manager's transfer count as zero when they play a
+wildcard, even if they rebuilt the whole squad. Counting that field alone would have missed
+{int(chips.transfers.sum()) if len(chips) else 0} moves, so these numbers come from each manager's
+full transfer log instead.</p>
+
+<h2>The bandwagon, and who actually got on it</h2>
+<p>These are the most-bought players across the entire game right now. One thing to be careful about:
+this counter resets at every deadline, so with Gameweek {gw} under way it is already counting moves
+being made for Gameweek {next_gw}, not the ones made for this week. The last column is what matters to
+you: how many of your {n} rivals actually own each player.</p>
+{band}
+<p>Two things stand out, and both support the decision you made.</p>
+<p><span class="k">The Sangaré bandwagon has already cooled.</span> Before the Gameweek {gw} deadline
+he was being bought by about 176,000 managers. He is now down to
+{sangare['transfers_in_event']:,}, and the crowd has moved to {top_global[0]['web_name']}, who is on
+{top_global[0]['transfers_in_event']:,} after scoring {top_global[0]['event_points']} points. Bandwagons
+move faster than a transfer can pay for itself.</p>
+<p><span class="k">And the national number was never your number.</span> Sangaré is owned by
+{s_owners} of your {n} rivals. A move that looks enormous across the game can be almost invisible in a
+22-manager league, and your rank depends only on these 22 people.</p>
+
+<h2>What the best managers are doing</h2>
+{top_rows}
+<p>The five most consistent managers are already spreading out again, which is the same pattern as
+last week. Two of them sit near the top and two near the bottom. It stays too early to read anything
+into it.</p>
+<p>The structural difference has not moved, because you did not move. Those five carry about
+£{b[b.grp == 'top5'].MID.mean():.1f}m in midfield against your £{my.MID:.1f}m, a gap of
+<span class="k">£{mid_gap:.1f}m</span>. They keep defence near £{b[b.grp == 'top5'].DEF.mean():.1f}m
+against your £{my.DEF:.1f}m.</p>
+
+<h2>What to watch</h2>
+<p>Your own plan was to wait for more information rather than spend a transfer, and this week's
+data supports that. Fifteen managers did the same, the biggest national bandwagon reached one team
+in your league, and nine of ten matches are still to play.</p>
+<p>The question worth answering over the next three or four weeks is whether Sangaré's points come
+from goals and assists or from defensive contributions, because those repeat at very different
+rates. Defensive returns are the more repeatable of the two.</p>
+
+<h2>Where the numbers come from</h2>
+<p>The official Fantasy Premier League API, pulled during Gameweek {gw} with {played} of
+{total_matches} matches played. Transfer counts come from each manager's transfer log rather than
+the summary field, for the wildcard reason above. Rebuild everything with
+<code>scripts/league_report.py</code> then <code>scripts/league_story.py</code>.</p>
+"""
+    return f'<div class="appendix"><h1>Appendix</h1>{textwrap.dedent(text)}</div>'
 
 
 def build_appendix(b, df, hist, tmpl, prev, me, old_leader, gap_before, gap_now,

@@ -62,8 +62,10 @@ def load(league: int, gw: int, cache_dir: Path) -> dict:
              for e in entries}
     history = {e: get(f"{API}/entry/{e}/history/", cache_dir / "history" / f"{e}.json")
                for e in entries}
+    transfers = {e: get(f"{API}/entry/{e}/transfers/", cache_dir / "transfers" / f"{e}.json")
+                 for e in entries}
     return dict(bootstrap=bootstrap, fixtures=fixtures, standings=standings,
-                picks=picks, history=history)
+                picks=picks, history=history, transfers=transfers)
 
 
 def build_picks(data: dict) -> pd.DataFrame:
@@ -163,6 +165,65 @@ def exposure(df: pd.DataFrame, me: int) -> pd.DataFrame:
     return r.sort_values("net")
 
 
+def transfer_activity(data: dict, gw: int, me: int) -> dict:
+    """Who the league bought and sold for this gameweek, and at what cost.
+
+    A transfer is a manager spending their one free move, or paying 4 points for
+    an extra one. Both say something about conviction, so hits are tracked apart
+    from free moves.
+    """
+    bs = data["bootstrap"]
+    el = {e["id"]: e for e in bs["elements"]}
+    club = {t["id"]: t["short_name"] for t in bs["teams"]}
+    meta = {r["entry"]: r for r in data["standings"]["standings"]["results"]}
+
+    moves, per_manager = [], []
+    for eid, log in data["transfers"].items():
+        this_gw = [t for t in log if t["event"] == gw]
+        hist = data["picks"][eid]["entry_history"]
+        chip = data["picks"][eid].get("active_chip")
+        # Count from the transfer log, not entry_history: FPL reports
+        # event_transfers as 0 for a wildcard or free hit even when the manager
+        # rebuilt the whole squad, so the header field undercounts activity.
+        per_manager.append({
+            "entry": eid, "manager": meta[eid]["player_name"],
+            "transfers": len(this_gw),
+            "free_transfers_used": hist["event_transfers"],
+            "hit_cost": hist["event_transfers_cost"],
+            "chip": chip or "",
+            "in": ", ".join(el[t["element_in"]]["web_name"] for t in this_gw) or "-",
+            "out": ", ".join(el[t["element_out"]]["web_name"] for t in this_gw) or "-",
+        })
+        for t in this_gw:
+            for direction, key in [("in", "element_in"), ("out", "element_out")]:
+                e = el[t[key]]
+                moves.append({
+                    "entry": eid, "manager": meta[eid]["player_name"],
+                    "direction": direction, "element": e["id"], "name": e["web_name"],
+                    "pos": POS[e["element_type"]], "club": club[e["team"]],
+                    "price": t[f"{key}_cost"] / 10, "gw_points": e["event_points"],
+                })
+
+    mv = pd.DataFrame(moves)
+    flow = pd.DataFrame(columns=["name", "pos", "club", "in", "out", "net"])
+    if not mv.empty:
+        counts = (mv.groupby(["name", "pos", "club", "direction"]).entry.nunique()
+                  .unstack(fill_value=0).reset_index())
+        for c in ("in", "out"):
+            if c not in counts:
+                counts[c] = 0
+        counts["net"] = counts["in"] - counts["out"]
+        flow = counts.sort_values("net", ascending=False)
+
+    pm = pd.DataFrame(per_manager).sort_values(["transfers", "hit_cost"], ascending=False)
+    return {"moves": mv, "flow": flow, "per_manager": pm,
+            "active": int((pm.transfers > 0).sum()), "total": int(pm.transfers.sum()),
+            "hits": int((pm.hit_cost > 0).sum()), "hit_points": int(pm.hit_cost.sum()),
+            "chips": pm[pm.chip != ""][["manager", "chip", "transfers"]].to_dict("records"),
+            "quiet": int((pm.transfers == 0).sum()),
+            "i_moved": bool(pm[pm.entry == me].transfers.iloc[0])}
+
+
 def head_to_head(df: pd.DataFrame, me: int, rival: int) -> dict:
     """What is left to play that only one of us owns."""
     mine = set(df[(df.entry == me) & (df.multiplier > 0)].element)
@@ -195,6 +256,7 @@ def main() -> None:
     budget = budget_split(df)
     hist = rank_managers(data, df)
     risk = exposure(df, args.entry)
+    tx = transfer_activity(data, args.gw, args.entry)
 
     top5 = hist[hist.qualified].nsmallest(args.top, "median_rank")
     cols = list(TEMPLATE_SLOTS) + ["XI_spend", "bench"]
@@ -214,6 +276,9 @@ def main() -> None:
     budget.to_csv(out / "budget.csv", index=False)
     hist.to_csv(out / "history.csv", index=False)
     risk.to_csv(out / "exposure.csv", index=False)
+    tx["flow"].to_csv(out / "transfer_flow.csv", index=False)
+    tx["per_manager"].to_csv(out / "transfers_by_manager.csv", index=False)
+    tx["moves"].to_csv(out / "transfer_moves.csv", index=False)
     compare.to_csv(out / "budget_vs_top.csv")
 
     fx = data["fixtures"]
@@ -228,6 +293,13 @@ def main() -> None:
     print("\nBIGGEST RISKS STILL TO PLAY\n",
           risk[~risk.played].head(8)[["name", "club", "my_mult", "rival_avg_mult", "net"]]
           .round(2).to_string(index=False))
+    print(f"\nTRANSFERS: {tx['active']} of {n} managers made {tx['total']} moves "
+          f"({tx['quiet']} stood still); {tx['hits']} took hits costing "
+          f"{tx['hit_points']} points; you moved: {tx['i_moved']}")
+    for c in tx["chips"]:
+        print(f"  chip: {c['manager']} played {c['chip']} ({c['transfers']} moves)")
+    if not tx["flow"].empty:
+        print(tx["flow"].head(8).to_string(index=False))
     print(f"\nshare of my score still to play: {remaining.get(args.entry, 0):.0f}%")
     for rival in budget[budget.entry != args.entry].head(2).entry:
         print(" ", head_to_head(df, args.entry, rival))
