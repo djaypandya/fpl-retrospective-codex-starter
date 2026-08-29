@@ -237,6 +237,52 @@ def slide_squad_value(b, me):
                     xlabel="Spend on midfielders in the starting eleven"))
 
 
+def slide_projection(b, me, ppu):
+    """Points banked against points still to come, so the real race is visible.
+
+    A raw table mid-gameweek flatters whoever has played more of their squad.
+    The lighter segment is every remaining player scoring the league average,
+    which is a levelling assumption, not a forecast.
+    """
+    d = b.nlargest(10, "projected").sort_values("projected")
+    fig, ax = plt.subplots(figsize=(10.2, 5.0))
+    y = range(len(d))
+    banked = d.live_pts.tolist()
+    to_come = (d.projected - d.live_pts).tolist()
+    colours = [YOU if e == me else REST for e in d.entry]
+    ax.barh(list(y), banked, height=0.62, color=colours, zorder=3, label="Points banked")
+    # 2px surface gap keeps the two segments from reading as one bar.
+    ax.barh(list(y), to_come, height=0.62, left=[v + 0.9 for v in banked],
+            color=[TOP if e == me else "#efe7e0" for e in d.entry], zorder=3,
+            label="Still to come, at the league average")
+    ax.set_yticks(list(y)); ax.set_yticklabels(d.manager.tolist(), fontsize=11.5)
+    for tick, e in zip(ax.get_yticklabels(), d.entry):
+        if e == me:
+            tick.set_color(INK); tick.set_fontweight("bold")
+    for i, (bk, tot) in enumerate(zip(banked, d.projected)):
+        ax.text(tot + 3, i, f"{int(tot)}", va="center", fontsize=11.5,
+                color=INK, fontweight="bold" if d.entry.iloc[i] == me else "normal")
+        ax.text(bk / 2, i, f"{int(bk)}", va="center", ha="center", fontsize=10.5,
+                color="white" if d.entry.iloc[i] == me else INK_2)
+    ax.set_xticks([]); ax.set_xlim(0, max(d.projected) * 1.13)
+    ax.set_ylim(-1.15, len(d) - 0.4)
+    ax.legend(frameon=False, fontsize=11.5, loc="lower right", ncols=2,
+              bbox_to_anchor=(1.0, -0.11))
+    return svg(fig)
+
+
+def slide_contributors(df, me):
+    d = df[(df.entry == me) & (df.multiplier > 0)].copy()
+    d["scored"] = d.multiplier * d.gw_points
+    d = d[d.played].sort_values("scored", ascending=False)
+    labels = [f"{r['name']}{' (C)' if r.is_captain else ''}  ({r.club})" for _, r in d.iterrows()]
+    colours = [YOU if r.scored >= 10 else REST for _, r in d.iterrows()]
+    fig = bars(labels, d.scored.tolist(), colours, figsize=(9.4, 3.9),
+               xlabel="Points each has given you in Gameweek 2")
+    fig.axes[0].set_xlim(0, max(d.scored) * 1.2)
+    return svg(fig)
+
+
 def slide_allocation(b, me):
     """Grouped bars: two series, so a legend is present and both are labelled."""
     pos = ["FWD", "MID", "DEF", "GKP"]
@@ -432,17 +478,44 @@ def main() -> None:
         top5_ranks = sorted(int(r) for r in b[b.grp == "top5"]["rank"])
         in_top4 = sum(1 for r in top5_ranks if r <= 4)
 
-        slides = [
-            (f"You sit {ordinal(int(my['rank']))} of {n} with {int(my.live_pts)} points",
-             slide_standings(b, me, label="Total points so far this season"), foot),
+        # Once matches have been played, a raw table flatters whoever has played
+        # more of their squad, so project every squad out to the same point.
+        scored = df[df.played & (df.multiplier > 0)]
+        ppu = float((scored.multiplier * scored.gw_points).sum() / scored.multiplier.sum())
+        units_left = df[~df.played & (df.multiplier > 0)].groupby("entry").multiplier.sum()
+        b["units_left"] = b.entry.map(units_left).fillna(0)
+        b["projected"] = (b.live_pts + b.units_left * ppu).round(0)
+        b["proj_rank"] = b.projected.rank(ascending=False, method="min").astype(int)
+        my = b[b.entry == me].iloc[0]
+        my_contrib = df[(df.entry == me) & (df.multiplier > 0) & df.played].copy()
+        my_contrib["scored"] = my_contrib.multiplier * my_contrib.gw_points
+        top2 = my_contrib.nlargest(2, "scored")
+
+        slides = []
+        if played:
+            moved = ""
+            if prev is not None:
+                pr = int(prev[prev.entry == me]["rank"].iloc[0])
+                moved = f" from {ordinal(pr)}" if pr != int(my["rank"]) else ""
+            slides += [
+                (f"You have climbed{moved} to {ordinal(int(my['rank']))} of {n}",
+                 slide_standings(b, me, label="Total points so far this season"), foot),
+                (f"But you are {ordinal(int(my.proj_rank))} once you count who still has "
+                 f"players to play",
+                 slide_projection(b, me, ppu),
+                 foot + " The lighter bar assumes every remaining player scores the "
+                        "league average. It levels the comparison; it is not a forecast."),
+                (f"{' and '.join(top2['name'])} have given you "
+                 f"{int(top2.scored.sum())} of your {int(my_contrib.scored.sum())} points",
+                 slide_contributors(df, me), foot),
+            ]
+        slides += [
             (f"{quiet} of the {n} managers made no transfer at all this week",
              slide_transfer_activity(tx_pm, me),
              foot + (f" {len(hits)} paid a points hit." if len(hits) else "")),
             (f"The Sangaré bandwagon has already cooled, and {cherki} is the new one",
              slide_bandwagon(bootstrap, df, n, next_gw),
              foot + f" Orange marks Sangaré. Only {s_owners} of {n} here owns him."),
-            (f"{top_cap} is captain for {top_cap_n} of the {n} managers",
-             slide_captains(df, me), foot),
             (f"{in_top4} of the five most consistent managers are already in the top four",
              slide_standings(b, me, highlight=lambda r: r.grp == "top5",
                              label="Total points so far this season"),
@@ -464,7 +537,7 @@ def main() -> None:
                                   blanks, bench_pts, remaining)
     else:
         appendix = build_early_appendix(b, df, hist, tmpl, tx_pm, bootstrap, me,
-                                        mid_gap, top5, args.gw, played, len(fixtures))
+                                        mid_gap, top5, args.gw, played, len(fixtures), prev)
 
     html = src / "story.html"
     html.write_text(build_html(slides, cover, appendix))
@@ -488,7 +561,7 @@ def ordinal_word(k: int) -> str:
 
 
 def build_early_appendix(b, df, hist, tmpl, tx_pm, bootstrap, me, mid_gap, top5,
-                         gw, played, total_matches) -> str:
+                         gw, played, total_matches, prev=None) -> str:
     next_gw = next((e["id"] for e in bootstrap["events"] if e["is_next"]), gw + 1)
     """Appendix for a gameweek still in progress: what managers did, not what scored."""
     my = b[b.entry == me].iloc[0]
@@ -513,6 +586,30 @@ def build_early_appendix(b, df, hist, tmpl, tx_pm, bootstrap, me, mid_gap, top5,
             cls = " class='me'" if r.get("me") else ""
             out.append(f"<tr{cls}>" + "".join(f"<td>{v}</td>" for v in r["cells"]) + "</tr>")
         return f"<table><thead><tr>{h}</tr></thead><tbody>{''.join(out)}</tbody></table>"
+
+    scored = df[df.played & (df.multiplier > 0)]
+    ppu = float((scored.multiplier * scored.gw_points).sum() / scored.multiplier.sum()) \
+        if len(scored) else 0.0
+    prev_line = ""
+    if prev is not None:
+        pr = int(prev[prev.entry == me]["rank"].iloc[0])
+        pp = int(prev[prev.entry == me].live_pts.iloc[0])
+        prev_line = (f", up from {ordinal_word(pr)} on {pp}" if pr != int(my["rank"])
+                     else f", from {pp} points")
+    starters = df[df.multiplier > 0]
+    played_by = starters[starters.played].groupby("entry").size()
+    my_played = int(played_by.get(me, 0))
+    my_total = int((starters.entry == me).sum())
+    counts = starters.groupby("entry").size().to_frame("total")
+    counts["played"] = played_by.reindex(counts.index).fillna(0).astype(int)
+    fewest = counts.played.idxmin()
+    least_played_name = b[b.entry == fewest].manager.iloc[0]
+    least_played_n = int(counts.at[fewest, "played"])
+    proj_table = table([
+        {"cells": [int(r.proj_rank), r.manager, int(r.live_pts), int(r.units_left),
+                   int(r.projected)], "me": r.entry == me}
+        for _, r in b.nlargest(10, "projected").iterrows()],
+        ["Projected", "Manager", "Points now", "Players still to play", "Projected total"])
 
     standings = table([
         {"cells": [int(r["rank"]), r.manager, int(r.live_pts),
@@ -550,12 +647,24 @@ def build_early_appendix(b, df, hist, tmpl, tx_pm, bootstrap, me, mid_gap, top5,
 
     text = f"""
 <h2>Where things stand</h2>
-<p>Only <span class="k">{played} of the {total_matches} matches</span> in Gameweek {gw} have been
-played, so nothing here is a result yet. Treat every score as a snapshot. What <em>is</em> settled is
-what each manager chose to do, and that is what this report is about.</p>
-<p>You are {int(my['rank'])}th of {n} on {int(my.live_pts)} points. You made no transfer, which was
-your plan.</p>
+<p><span class="k">{played} of the {total_matches} matches</span> in Gameweek {gw} have been played.
+You are {ordinal_word(int(my['rank']))} of {n} on {int(my.live_pts)} points{prev_line}. You made no
+transfer, which was your plan.</p>
 {standings}
+
+<h2>Why second place is not really second place</h2>
+<p>A mid-gameweek table flatters whoever happens to have played more of their squad. You have had
+{my_played} of your {my_total} starters play. {least_played_name} has had {least_played_n}.</p>
+<p>To compare fairly, give every manager's remaining players the league average of
+{ppu:.1f} points each and see where the table lands. On that basis you are
+<span class="k">{ordinal_word(int(my.proj_rank))}</span>, not {ordinal_word(int(my['rank']))}.</p>
+{proj_table}
+<p>This is a levelling assumption, not a forecast. It does not know which players are left or who
+they face. Its only job is to stop you reading a lead that is really just a scheduling accident.</p>
+<p>This is the same trap I fell into in Gameweek 1, when I told you the finishing order was settled
+after checking only the managers nearest you. Karan Yohannan then gained 25 points in the final
+match and climbed from fifteenth to join you. The fix is to always count what is still to come
+across the whole table.</p>
 
 <h2>The league mostly stood still</h2>
 <p><span class="k">{quiet} of the {n} managers made no transfer at all.</span> Only
