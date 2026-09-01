@@ -139,8 +139,12 @@ def slide_gap_closed(b, prev, me, rival, left_label="First look", right_label="F
             f"{int(gap_now)} points", fontsize=12.5, color=YOU, fontweight="bold", va="center")
     ax.annotate("", xy=(-0.02, was.at[rival, "live_pts"]), xytext=(-0.02, was.at[me, "live_pts"]),
                 arrowprops=dict(arrowstyle="<->", color=MUTED, linewidth=1.5))
-    ax.text(-0.08, (was.at[rival, "live_pts"] + was.at[me, "live_pts"]) / 2,
-            f"{int(gap_before)} points", fontsize=12.5, color=MUTED, va="center", ha="right")
+    span = abs(now.at[rival, "live_pts"] - now.at[me, "live_pts"]) or 1
+    close = abs(was.at[rival, "live_pts"] - was.at[me, "live_pts"]) < span * 0.35
+    ax.text(-0.02 if close else -0.08,
+            (was.at[rival, "live_pts"] + was.at[me, "live_pts"]) / 2 - (span * 0.10 if close else 0),
+            f"{int(gap_before)} points", fontsize=12.5, color=MUTED,
+            va="top" if close else "center", ha="left" if close else "right")
     ax.set_xlim(-0.62, 1.62); ax.set_xticks([]); ax.set_yticks([])
     return svg(fig)
 
@@ -358,6 +362,20 @@ def build_html(slides, cover, appendix) -> str:
     return f"<style>{CSS}</style>" + "".join(body)
 
 
+def template_headline(tmpl, blanks, df, me) -> str:
+    """Headline whichever way the template actually went this week.
+
+    When most of the popular players deliver, a contrarian squad loses ground
+    even in a good week, and that is the story worth leading with.
+    """
+    delivered = len(tmpl) - blanks
+    owned = sum(1 for e in tmpl.element if e in set(df[df.entry == me].element))
+    if delivered > blanks:
+        return (f"The template delivered: {delivered} of the 15 beat 2 points, "
+                f"and you own {owned}")
+    return f"{blanks} of the 15 most-owned players scored 2 points or fewer"
+
+
 def review_slides(ns: dict):
     """The eight-slide arc used once every match in the gameweek has been played."""
     (b, df, tmpl, prev, me, n, my, leader, foot, verb, when, gap_before, gap_now,
@@ -373,13 +391,15 @@ def review_slides(ns: dict):
          f"{int(leader.live_pts - my.live_pts)} points off the lead",
          slide_standings(b, me), foot),
     ]
-    if prev is not None:
-        out.append((f"You cut the gap to {when} from {gap_before} points to {gap_now}",
+    if prev is not None and gap_before is not None:
+        verb = ("cut the gap to" if gap_now < gap_before else
+                "lost ground to" if gap_now > gap_before else "held the gap to")
+        out.append((f"You {verb} {when}: {gap_before} points became {gap_now}",
                     slide_gap_closed(b, prev, me, old_leader), foot))
     out += [
         (f"{my_cap} was captained by {cap_n} of {n} managers and returned {cap_pts} points",
          slide_captains(df, me), foot),
-        (f"{blanks} of the 15 most-owned players scored 2 points or fewer",
+        (template_headline(tmpl, blanks, df, me),
          slide_template_returns(tmpl, set(df[df.entry == me].element)),
          foot + " Orange marks a return of 2 points or fewer."),
         (f"Your bench scored {bench_pts} points you could not use",
@@ -534,7 +554,7 @@ def main() -> None:
     if complete:
         appendix = build_appendix(b, df, hist, tmpl, prev, me, old_leader, gap_before,
                                   gap_now, mid_gap, top5, my_cap, cap_n, cap_pts,
-                                  blanks, bench_pts, remaining)
+                                  blanks, bench_pts, remaining, args.gw)
     else:
         appendix = build_early_appendix(b, df, hist, tmpl, tx_pm, bootstrap, me,
                                         mid_gap, top5, args.gw, played, len(fixtures), prev)
@@ -724,14 +744,16 @@ the summary field, for the wildcard reason above. Rebuild everything with
 
 def build_appendix(b, df, hist, tmpl, prev, me, old_leader, gap_before, gap_now,
                    mid_gap, top5, my_cap, cap_n, cap_pts, blanks, bench_pts,
-                   remaining) -> str:
+                   remaining, gw=None) -> str:
+    """Appendix for a completed gameweek. Every claim is computed, not written
+    by hand, so it cannot carry last week's facts into this week's report."""
     my = b[b.entry == me].iloc[0]
-    my_prev = prev[prev.entry == me].iloc[0]
     n = len(b)
     leader = b.nsmallest(1, "rank").iloc[0]
-    old_name_now = b[b.entry == old_leader].manager.iloc[0]
-    old_name_then = prev[prev.entry == old_leader].manager.iloc[0]
-    left = ", ".join(sorted(set(df[(df.entry == me) & (df.multiplier > 0) & (~df.played)].name)))
+    avg = b.live_pts.mean()
+    delta = my.live_pts - avg
+    versus_avg = (f"above it by {delta:.1f}" if delta >= 0
+                  else f"below it by {abs(delta):.1f}")
 
     def table(rows, head):
         h = "".join(f"<th>{c}</th>" for c in head)
@@ -741,16 +763,43 @@ def build_appendix(b, df, hist, tmpl, prev, me, old_leader, gap_before, gap_now,
             out.append(f"<tr{cls}>" + "".join(f"<td>{v}</td>" for v in r["cells"]) + "</tr>")
         return f"<table><thead><tr>{h}</tr></thead><tbody>{''.join(out)}</tbody></table>"
 
-    prev_pts = dict(zip(prev.entry, prev.live_pts))
+    # --- what changed since the previous snapshot -------------------------
+    movement = ""
+    if prev is not None and (prev.entry == me).any():
+        pr = int(prev[prev.entry == me]["rank"].iloc[0])
+        pp = int(prev[prev.entry == me].live_pts.iloc[0])
+        direction = ("climbed from" if int(my["rank"]) < pr else
+                     "slipped from" if int(my["rank"]) > pr else "held")
+        movement = (f" You {direction} {ordinal_word(pr)} on {pp} points at my previous look."
+                    if direction != "held"
+                    else f" You held {ordinal_word(pr)}, from {pp} points.")
+    gap_note = ""
+    if gap_before is not None and old_leader is not None:
+        old_name = b[b.entry == old_leader].manager.iloc[0]
+        verb = ("closed" if gap_now < gap_before else
+                "widened" if gap_now > gap_before else "held")
+        gap_note = (f"<p>Against {old_name}, who led at my previous look, the gap "
+                    f"<span class=\"k\">{verb} from {gap_before} points to {gap_now}"
+                    f"</span>.</p>")
+
+    prev_pts = dict(zip(prev.entry, prev.live_pts)) if prev is not None else {}
     standings = table([
         {"cells": [int(r["rank"]), r.manager, int(r.live_pts),
-                   f"+{int(r.live_pts - prev_pts.get(r.entry, r.live_pts))}",
-                   "Bench Boost" if r.chip == "bboost" else "&mdash;",
-                   f"£{r.DEF:.1f}m", f"£{r.MID:.1f}m", f"£{r.FWD:.1f}m"],
+                   f"+{int(r.live_pts - prev_pts[r.entry])}" if r.entry in prev_pts else "&mdash;",
+                   (r.chip or "&mdash;").replace("bboost", "Bench Boost").replace(
+                       "wildcard", "Wildcard").replace("freehit", "Free Hit").replace(
+                       "3xc", "Triple Captain") if isinstance(r.chip, str) else "&mdash;"],
          "me": r.entry == me}
         for _, r in b.sort_values("rank").iterrows()],
-        ["#", "Manager", "Points", "Overnight", "Chip", "Defence", "Midfield", "Attack"])
+        ["#", "Manager", "Season points", "This gameweek", "Chip"])
 
+    # --- the template -----------------------------------------------------
+    delivered = tmpl[tmpl.gw_points > 2].sort_values("gw_points", ascending=False)
+    club_note = ""
+    if len(delivered) and delivered.club.nunique() <= 2:
+        clubs = " and ".join(sorted(delivered.club.unique()))
+        club_note = (f" Every one of them plays for {clubs}. If you did not own "
+                     f"{clubs} players this week, you had a bad week.")
     tmpl_rows = table([
         {"cells": [r["name"], r.pos, r.club, f"{r.own_pct:.0f}%", f"{r.eo_pct:.0f}%",
                    int(r.gw_points),
@@ -759,104 +808,97 @@ def build_appendix(b, df, hist, tmpl, prev, me, old_leader, gap_before, gap_now,
         for _, r in tmpl.sort_values("gw_points", ascending=False).iterrows()],
         ["Player", "Position", "Club", "Owned by", "Counting captains", "Points", "You own?"])
 
+    # --- my squad ---------------------------------------------------------
+    squad = df[df.entry == me].copy()
+    squad["counted"] = squad.multiplier * squad.gw_points
+    squad = squad.sort_values("gw_points", ascending=False)
+    started = squad[squad.multiplier > 0]
+    top_scorers = started.nlargest(3, "gw_points")
+    scorer_line = ", ".join(f"{r['name']} {int(r.gw_points)}" for _, r in top_scorers.iterrows())
+    dearest = started.nlargest(2, "price")
+    dear_line = (f"Your two most expensive starters, {' and '.join(dearest['name'])}, cost "
+                 f"£{dearest.price.sum():.1f}m together and scored "
+                 f"{int(dearest.gw_points.sum())} points between them.")
+    bench = squad[squad.multiplier == 0].nlargest(2, "gw_points")
+    bench_line = ", ".join(f"{r['name']} got {int(r.gw_points)}" for _, r in bench.iterrows())
+    would_be = int(my.live_pts) + bench_pts
+    bb_rank = int((b.live_pts > would_be).sum()) + 1
+    squad_rows = table([
+        {"cells": [r["name"], r.pos, r.club, f"£{r.price:.1f}m",
+                   "Captain" if r.is_captain else ("Started" if r.multiplier else "Bench"),
+                   int(r.gw_points), int(r.counted)],
+         "me": bool(r.multiplier)}
+        for _, r in squad.iterrows()],
+        ["Player", "Position", "Club", "Price", "Role", "Scored", "Counted for you"])
+
+    # --- chips ------------------------------------------------------------
+    chip_section = ""
+    played_chips = b[b.chip.notna() & (b.chip != "")]
+    if len(played_chips):
+        rows = ", ".join(f"{r.manager} ({r.chip})" for _, r in played_chips.iterrows())
+        best_no_chip = b[b.chip.isna()].nsmallest(1, "rank").iloc[0]
+        chip_section = f"""
+<h2>Chips</h2>
+<p>{len(played_chips)} manager{'s' if len(played_chips) != 1 else ''} played a chip this week:
+{rows}. The best manager who kept theirs is {best_no_chip.manager} in
+{ordinal_word(int(best_no_chip['rank']))}.</p>
+<p>Everyone gets the same chips. Playing one early is a bet on a high-scoring week. It does not make
+those managers better, it means they have one fewer left, and you still hold yours.</p>
+"""
+
     top_rows = table([
         {"cells": [i + 1, r.manager, f"{int(r.median_rank):,}",
                    int(b[b.entry == r.entry]["rank"].iloc[0]),
                    int(b[b.entry == r.entry].live_pts.iloc[0])],
          "me": r.entry == me}
         for i, (_, r) in enumerate(hist[hist.seasons >= 4].nsmallest(6, "median_rank").iterrows())],
-        ["#", "Manager", "Median finish", "Rank this week", "Points this week"])
+        ["#", "Manager", "Median finish", "Rank now", "Season points"])
+    t5 = sorted(int(b[b.entry == e]["rank"].iloc[0]) for e in top5.entry)
+    t5_line = ", ".join(ordinal_word(r) for r in t5[:-1]) + f" and {ordinal_word(t5[-1])}"
 
-    squad = df[df.entry == me].sort_values("gw_points", ascending=False)
-    squad_rows = table([
-        {"cells": [r["name"], r.pos, r.club, f"£{r.price:.1f}m",
-                   "Captain" if r.is_captain else ("Started" if r.multiplier else "Bench"),
-                   int(r.gw_points), int(r.multiplier * r.gw_points)],
-         "me": bool(r.multiplier)}
-        for _, r in squad.iterrows()],
-        ["Player", "Position", "Club", "Price", "Role", "Scored", "Counted for you"])
-
-    rename = ""
-    if old_name_now != old_name_then:
-        rename = (f' That manager has since renamed from &ldquo;{old_name_then}&rdquo; to '
-                  f'&ldquo;{old_name_now}&rdquo;, so I tracked them by their team id rather than '
-                  'their name.')
-
+    gw_label = f"Gameweek {gw}" if gw else "the gameweek"
     text = f"""
-<h2>How Gameweek 1 finished</h2>
-<p>You finished <span class="k">{int(my['rank'])}th of {n} on {int(my.live_pts)} points</span>. The
-league averaged {b.live_pts.mean():.1f}, so you beat it by {my.live_pts - b.live_pts.mean():.1f}. You
-started the week sixth on {int(my_prev.live_pts)} points.</p>
-<p>At my first look I told you that you could not lose ground to the leader, because every player he
-had left was also in your team and you captained Haaland while he did not. That held.
-<span class="k">The gap closed from {gap_before} points to {gap_now}.</span>{rename}</p>
-<p>I also told you the finishing order was settled. That was half right. You did finish
-{int(my['rank'])}th, but I only checked the managers immediately around you. Karan Yohannan still had
-several Chelsea and Fulham players to come, gained 25 points in the last match, and climbed from
-fifteenth to join you on {int(my.live_pts)}. The lesson is to check the whole table for players still
-to play, not just the managers nearest you.</p>
-<p>{leader.manager} won the week with {int(leader.live_pts)} after playing a Bench Boost.</p>
+<h2>How {gw_label} finished</h2>
+<p>You finished <span class="k">{ordinal_word(int(my['rank']))} of {n} on
+{int(my.live_pts)} season points</span>. The league averaged {avg:.1f}, so you are
+{versus_avg}.{movement}</p>
+{gap_note}
+<p>{leader.manager} leads on {int(leader.live_pts)}.</p>
 {standings}
 
-<h2>The template blanked</h2>
-<p>The template is the group of players most managers own. This week it failed almost everyone.
-<span class="k">{blanks} of the 15 most-owned players scored 2 points or fewer.</span> The average
-was {tmpl.gw_points.mean():.1f} points.</p>
+<h2>What the template did</h2>
+<p>The template is the group of players most managers own.
+<span class="k">{blanks} of the 15 most-owned players scored 2 points or fewer</span>, and the
+average was {tmpl.gw_points.mean():.1f}.</p>
 {tmpl_rows}
-<p>Notice who did deliver. Every one of the four template players who beat 2 points plays for
-Arsenal: Calafiori, Raya, Tzolis and Gabriel. Arsenal beat Coventry 3-0. If you did not own Arsenal
-players this week, you had a bad week.</p>
-<p>The clearest example of the blank is your own captain. {my_cap} was owned by {tmpl[tmpl.name == my_cap].own_pct.iloc[0]:.0f}%
-of the league and captained by {cap_n} of {n} managers. He returned <span class="k">{cap_pts} points</span>.
-Because you doubled him, he gave you {cap_pts * 2}.</p>
-<p>That sounds bad, and it was. But it hurt your rivals just as much. When a player that popular
-fails, owning him costs you nothing in the league table. It only costs you against managers who
-picked someone else, and almost nobody did.</p>
+<p>{len(delivered)} of them beat 2 points.{club_note}</p>
+<p>Your own captain, {my_cap}, was owned by {tmpl[tmpl.name == my_cap].own_pct.iloc[0]:.0f}% of the
+league and captained by {cap_n} of {n} managers. He returned
+<span class="k">{cap_pts} points</span>, which the armband turned into {cap_pts * 2} for you.</p>
 
 <h2>Your own team</h2>
 {squad_rows}
-<p>Your climb came from the middle of your squad, not the top. Calafiori and Ndiaye scored 9 each,
-and Szoboszlai scored 8. Your two most expensive attackers, Haaland and Igor Thiago, cost
-£23.5m together and scored 2 points between them, which the armband turned into 4.</p>
-<p><span class="k">Your bench scored {bench_pts} points you could not use.</span> Vuskovic got 6 and
-Ampadu got 5. Had you played your Bench Boost this week, you would be on
-{int(my.live_pts) + bench_pts} points and sitting {ordinal_word(int((b.live_pts > my.live_pts + bench_pts).sum()) + 1)}.</p>
-
-<h2>The chip, not the picks, decided the top</h2>
-<p>Three of the top four managers played their Bench Boost this week. The best manager who did not
-use a chip is {b[b.chip.isna()].nsmallest(1, 'rank').iloc[0].manager} in third.</p>
-<p>Be careful how you read this. Everyone gets the same chips. Playing one early is a gamble on a
-high-scoring week, and this week paid off. It does not make those managers better. It means they
-have one fewer chip to use later, and you still hold yours.</p>
-
+<p>Your points came mostly from {scorer_line}. {dear_line}</p>
+<p><span class="k">Your bench scored {bench_pts} points you could not use.</span> {bench_line}. Had
+you played a Bench Boost this week you would be on {would_be} points and
+{ordinal_word(bb_rank)}.</p>
+{chip_section}
 <h2>What the best managers did</h2>
 <p>I ranked every manager by their median finish over the last five seasons, because the median
 rewards being good every year rather than one lucky season.</p>
 {top_rows}
-<p>Look at the right-hand columns. The five most consistent managers finished all over the table
-this week, from second down to twenty-first. <span class="k">One gameweek tells you almost nothing
-about who is good.</span> That is exactly why you should not change your plan based on this week.</p>
-<p>The durable pattern is still the money. Those five managers keep defence between £14.5m and
-£16.5m and put between £30.5m and £42.5m into midfield. You spend £{my.DEF:.1f}m on defence and
-£{my.MID:.1f}m on midfield. That is a <span class="k">£{mid_gap:.1f}m midfield gap</span> against the
-managers who win most often, and it has not moved.</p>
-
-<h2>What to carry into Gameweek 2</h2>
-<p>Two numbers matter from here.</p>
-<p>First, <span class="k">your midfield spend against the £34m the best managers carry</span>. You are
-£{mid_gap:.1f}m short, and one bad week for those midfielders does not change the pattern. It is the
-one structural difference between you and the managers who finish well every year.</p>
-<p>Second, <span class="k">your chips</span>. You still hold your Bench Boost. Three of the four
-managers who finished above you have now spent theirs. In a week where your bench scored
-{bench_pts} points, that chip was worth roughly two league places, and you still have it.</p>
-<p>Do not chase this week. The template blanked, your captain blanked, and you still finished fifth
-and above average. That is a reasonable place to start a season.</p>
+<p>The five most consistent managers sit {t5_line}. <span class="k">A single gameweek tells you
+almost nothing about who is good.</span></p>
+<p>The durable pattern is the money. Those five carry about
+£{b[b.entry.isin(top5.entry)].MID.mean():.1f}m in midfield against your £{my.MID:.1f}m, a gap of
+<span class="k">£{mid_gap:.1f}m</span>, and keep defence near
+£{b[b.entry.isin(top5.entry)].DEF.mean():.1f}m against your £{my.DEF:.1f}m.</p>
 
 <h2>Where the numbers come from</h2>
-<p>Everything here comes from the official Fantasy Premier League API, refreshed this morning with
-nine of ten matches played. Bonus points are not yet final, so small changes are still possible.
-Rebuild every number by running <code>scripts/league_report.py</code> and then
-<code>scripts/league_story.py</code>.</p>
+<p>The official Fantasy Premier League API, pulled after every match in {gw_label} finished. Rebuild
+them with <code>scripts/league_report.py</code> then <code>scripts/league_story.py</code>. The raw
+responses are archived under <code>data/snapshots/</code>, because the API deletes them when the
+season rolls over.</p>
 """
     return f'<div class="appendix"><h1>Appendix</h1>{textwrap.dedent(text)}</div>'
 
