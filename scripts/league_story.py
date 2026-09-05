@@ -161,8 +161,14 @@ def slide_captains(df, me):
     fig = bars(labels, cap.managers.tolist(), colours, figsize=(10.2, 4.4),
                xlabel="Managers who captained him")
     ax = fig.axes[0]
+    tripled = (df[df.multiplier == 3].groupby("name").entry.nunique()
+               if (df.multiplier == 3).any() else {})
     for i, (_, r) in enumerate(cap.iterrows()):
-        ax.text(r.managers + 1.6, i, f"returned {int(r.gw_points)} points",
+        extra = ""
+        t = int(tripled.get(r["name"], 0)) if len(tripled) else 0
+        if t:
+            extra = f", {t} of them tripled him"
+        ax.text(r.managers + 1.6, i, f"returned {int(r.gw_points)} points{extra}",
                 va="center", fontsize=11.5, color=INK_2)
     ax.set_xlim(0, n * 1.15)
     return svg(fig)
@@ -189,12 +195,17 @@ def slide_my_bench(df, me):
     return svg(fig)
 
 
+CHIP_NAMES = {"wildcard": "wildcard", "freehit": "free hit",
+              "3xc": "triple captain", "bboost": "bench boost"}
+
+
 def slide_transfer_activity(tx_pm, me):
     """Only the managers who actually moved; the title carries how many did not."""
     d = tx_pm[tx_pm.transfers > 0].sort_values("transfers", ascending=False)
     colours = [YOU if e == me else (TOP if c else REST)
                for e, c in zip(d.entry, d.chip.fillna(""))]
-    labels = [f"{m}{'  (wildcard)' if c else ''}" for m, c in zip(d.manager, d.chip.fillna(""))]
+    labels = [f"{m}  ({CHIP_NAMES.get(c, c)})" if c else m
+              for m, c in zip(d.manager, d.chip.fillna(""))]
     fig = bars(labels, d.transfers.tolist(), colours, figsize=(9.6, 4.0),
                xlabel="Transfers made this gameweek")
     ax = fig.axes[0]
@@ -206,7 +217,7 @@ def slide_transfer_activity(tx_pm, me):
     return svg(fig)
 
 
-def slide_bandwagon(bootstrap, df, n, next_gw):
+def slide_bandwagon(bootstrap, df, n, next_gw, highlight_name=None):
     """What the whole game bought, against what this league actually bought.
 
     Two different measures, so only one goes on the axis. The league count sits
@@ -221,7 +232,8 @@ def slide_bandwagon(bootstrap, df, n, next_gw):
         labels.append(f"{e['web_name']}  ({club[e['team']]})")
         values.append(e["transfers_in_event"] / 1000)
         league_counts.append(int(owners.get(e["id"], 0)))
-    colours = [TOP if "Sangar" in l else REST for l in labels]
+    key = highlight_name or "Sangar"
+    colours = [TOP if key in l else REST for l in labels]
     fig = bars(labels, values, colours, fmt="{:.0f}k", figsize=(10.2, 4.8),
                xlabel=f"Transfers in across the whole game, for Gameweek {next_gw}")
     ax = fig.axes[0]
@@ -436,6 +448,13 @@ def main() -> None:
     prev_path = src / "standings_previous.csv"
     prev = pd.read_csv(prev_path) if prev_path.exists() else None
     tx_pm = pd.read_csv(src / "transfers_by_manager.csv")
+    prev_src = REPO / "outputs" / f"league_{args.league}_gw{args.gw - 1}"
+    prev_picks = prev_src / "picks_long.csv"
+    if prev_picks.exists():
+        before = pd.read_csv(prev_picks).groupby("entry").element.apply(set)
+        after = df.groupby("entry").element.apply(set)
+        net = {e: len(after[e] - before.get(e, set())) for e in after.index}
+        tx_pm["transfers"] = tx_pm.entry.map(net).fillna(tx_pm.transfers).astype(int)
     fixtures = json.loads((src / "raw" / f"fixtures_gw{args.gw}.json").read_text())
     bootstrap = json.loads((src / "raw" / "bootstrap.json").read_text())
     me = args.entry
@@ -494,7 +513,9 @@ def main() -> None:
                         if e["web_name"].startswith("M.Sangar")), None)
         s_owners = int(df[df.element == sangare["id"]].entry.nunique()) if sangare else 0
         next_gw = next((e["id"] for e in bootstrap["events"] if e["is_next"]), args.gw + 1)
-        cherki = max(bootstrap["elements"], key=lambda e: e["transfers_in_event"])["web_name"]
+        _top = max(bootstrap["elements"], key=lambda e: e["transfers_in_event"])
+        top_buy = _top["web_name"]
+        top_buy_owners = int(df[df.element == _top["id"]].entry.nunique())
         top5_ranks = sorted(int(r) for r in b[b.grp == "top5"]["rank"])
         in_top4 = sum(1 for r in top5_ranks if r <= 4)
 
@@ -529,13 +550,18 @@ def main() -> None:
                  f"{int(top2.scored.sum())} of your {int(my_contrib.scored.sum())} points",
                  slide_contributors(df, me), foot),
             ]
+        tripled = int((df.multiplier == 3).sum())
+        cap_title = (f"{tripled} of the {n} managers played a Triple Captain, all on {top_cap}"
+                     if tripled >= 3 else
+                     f"{top_cap} is captain for {top_cap_n} of the {n} managers")
         slides += [
-            (f"{quiet} of the {n} managers made no transfer at all this week",
+            (cap_title, slide_captains(df, me), foot),
+            (f"{quiet} of the {n} managers made no change to their squad",
              slide_transfer_activity(tx_pm, me),
-             foot + (f" {len(hits)} paid a points hit." if len(hits) else "")),
-            (f"The Sangaré bandwagon has already cooled, and {cherki} is the new one",
-             slide_bandwagon(bootstrap, df, n, next_gw),
-             foot + f" Orange marks Sangaré. Only {s_owners} of {n} here owns him."),
+             foot + " Counted as net squad changes, not transfer-log entries."),
+            (f"The game is buying {top_buy}, and {top_buy_owners} of the {n} here own him",
+             slide_bandwagon(bootstrap, df, n, next_gw, top_buy),
+             foot + f" Orange marks {top_buy}, the most-bought player in the game."),
             (f"{in_top4} of the five most consistent managers are already in the top four",
              slide_standings(b, me, highlight=lambda r: r.grp == "top5",
                              label="Total points so far this season"),
@@ -543,6 +569,11 @@ def main() -> None:
             (f"They still put £{mid_gap:.0f}m more than you into midfield",
              slide_allocation(b, me), foot),
         ]
+        my_bench_pts = int(df[(df.entry == me) & (df.multiplier == 0)].gw_points.sum())
+        if my_bench_pts >= 8:
+            slides.insert(3, (
+                f"Your bench has scored {my_bench_pts} points you cannot use",
+                slide_my_bench(df, me), foot))
 
     cover = {
         "eyebrow": f"Gameweek {args.gw} &middot; Buy-in Baller League &middot; Updated",
@@ -625,6 +656,18 @@ def build_early_appendix(b, df, hist, tmpl, tx_pm, bootstrap, me, mid_gap, top5,
     fewest = counts.played.idxmin()
     least_played_name = b[b.entry == fewest].manager.iloc[0]
     least_played_n = int(counts.at[fewest, "played"])
+    my_tx = int(tx_pm[tx_pm.entry == me].transfers.iloc[0])
+    my_chip = tx_pm[tx_pm.entry == me].chip.iloc[0]
+    if my_tx == 0:
+        my_moves_line = "You made no change to your squad."
+        my_group_line = "You were in the larger group if that is the majority, and stood still."
+    else:
+        ins = tx_pm[tx_pm.entry == me]["in"].iloc[0]
+        outs = tx_pm[tx_pm.entry == me]["out"].iloc[0]
+        chip_bit = f" You played your {CHIP_NAMES.get(my_chip, my_chip)}." if my_chip else ""
+        my_moves_line = (f"You made {my_tx} change{'s' if my_tx != 1 else ''}: "
+                         f"{ins} in, {outs} out.{chip_bit}")
+        my_group_line = "You were among those who moved."
     proj_table = table([
         {"cells": [int(r.proj_rank), r.manager, int(r.live_pts), int(r.units_left),
                    int(r.projected)], "me": r.entry == me}
@@ -668,8 +711,7 @@ def build_early_appendix(b, df, hist, tmpl, tx_pm, bootstrap, me, mid_gap, top5,
     text = f"""
 <h2>Where things stand</h2>
 <p><span class="k">{played} of the {total_matches} matches</span> in Gameweek {gw} have been played.
-You are {ordinal_word(int(my['rank']))} of {n} on {int(my.live_pts)} points{prev_line}. You made no
-transfer, which was your plan.</p>
+You are {ordinal_word(int(my['rank']))} of {n} on {int(my.live_pts)} points{prev_line}. {my_moves_line}</p>
 {standings}
 
 <h2>Why second place is not really second place</h2>
@@ -687,8 +729,8 @@ match and climbed from fifteenth to join you. The fix is to always count what is
 across the whole table.</p>
 
 <h2>The league mostly stood still</h2>
-<p><span class="k">{quiet} of the {n} managers made no transfer at all.</span> Only
-{len(movers)} moved. You were in the larger group.</p>
+<p><span class="k">{quiet} of the {n} managers made no change to their squad.</span>
+{len(movers)} moved. {my_group_line}</p>
 {moves}
 <p>{len(hits)} manager{'s' if len(hits) != 1 else ''} paid a points hit to make an extra move, costing
 {int(hits.hit_cost.sum())} points between them. A hit means giving up 4 points for a transfer beyond
@@ -706,14 +748,14 @@ being made for Gameweek {next_gw}, not the ones made for this week. The last col
 you: how many of your {n} rivals actually own each player.</p>
 {band}
 <p>Two things stand out, and both support the decision you made.</p>
-<p><span class="k">The Sangaré bandwagon has already cooled.</span> Before the Gameweek {gw} deadline
-he was being bought by about 176,000 managers. He is now down to
-{sangare['transfers_in_event']:,}, and the crowd has moved to {top_global[0]['web_name']}, who is on
-{top_global[0]['transfers_in_event']:,} after scoring {top_global[0]['event_points']} points. Bandwagons
-move faster than a transfer can pay for itself.</p>
-<p><span class="k">And the national number was never your number.</span> Sangaré is owned by
-{s_owners} of your {n} rivals. A move that looks enormous across the game can be almost invisible in a
-22-manager league, and your rank depends only on these 22 people.</p>
+<p><span class="k">{top_global[0]['web_name']} is the most-bought player in the game right now</span>,
+on {top_global[0]['transfers_in_event']:,} transfers in after scoring
+{top_global[0]['event_points']} points this gameweek. In your league he is owned by
+{int(owners.get(top_global[0]['id'], 0))} of the {n} managers.</p>
+<p><span class="k">The national number is never your number.</span> Your rank depends only on these 22
+people, so a move that looks enormous across the whole game can be almost invisible here. Bandwagons
+also move faster than a transfer can pay for itself: Sangaré led this list two weeks ago on about
+176,000 buyers and is now on {sangare['transfers_in_event']:,}, owned by {s_owners} of your {n}.</p>
 
 <h2>What the best managers are doing</h2>
 {top_rows}
