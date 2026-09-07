@@ -1,0 +1,6 @@
+method,spearman_vs_h2_points,mean_h2_points_of_top20,rho_DEF,rho_FWD,rho_GKP,rho_MID
+assembled projection,0.52,76.0,0.503,0.598,0.408,0.532
+baseline: H1 total points,0.475,67.8,0.442,0.54,0.368,0.514
+baseline: H1 points per 90,0.181,58.0,0.169,0.014,0.263,0.233
+baseline: H1 minutes,0.447,67.4,0.491,0.59,0.483,0.459
+baseline: price,0.288,75.7,0.353,0.32,0.411,0.33

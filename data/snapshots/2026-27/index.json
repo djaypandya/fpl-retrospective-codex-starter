@@ -1,0 +1,41 @@
+{
+  "season": "2026-27",
+  "captures": [
+    {
+      "gameweek": 1,
+      "captured_at": "2026-08-25T00:32:02+00:00",
+      "path": "2026-27/gw01/2026-08-25T0031Z",
+      "matches": "0/10 finished",
+      "finished": false,
+      "data_checked": false,
+      "entries": 22,
+      "files": 92,
+      "bytes_stored": 196945,
+      "note": "GW1 final, all matches played"
+    },
+    {
+      "gameweek": 2,
+      "captured_at": "2026-09-01T12:14:06+00:00",
+      "path": "2026-27/gw02/2026-09-01T1213Z",
+      "matches": "10/10 finished",
+      "finished": false,
+      "data_checked": false,
+      "entries": 22,
+      "files": 92,
+      "bytes_stored": 224013,
+      "note": "GW2 final, all 10 matches finished"
+    },
+    {
+      "gameweek": 3,
+      "captured_at": "2026-09-07T05:47:03+00:00",
+      "path": "2026-27/gw03/2026-09-07T0546Z",
+      "matches": "0/10 finished",
+      "finished": false,
+      "data_checked": false,
+      "entries": 22,
+      "files": 92,
+      "bytes_stored": 238684,
+      "note": "GW3 final, all 10 matches played"
+    }
+  ]
+}
