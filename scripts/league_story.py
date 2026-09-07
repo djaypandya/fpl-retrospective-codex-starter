@@ -409,7 +409,10 @@ def review_slides(ns: dict):
         out.append((f"You {verb} {when}: {gap_before} points became {gap_now}",
                     slide_gap_closed(b, prev, me, old_leader), foot))
     out += [
-        (f"{my_cap} was captained by {cap_n} of {n} managers and returned {cap_pts} points",
+        ((f"{int((df.multiplier == 3).sum())} of the {n} managers tripled {my_cap}, "
+          f"and he returned {cap_pts} points"
+          if (df.multiplier == 3).sum() >= 3 else
+          f"{my_cap} was captained by {cap_n} of {n} managers and returned {cap_pts} points"),
          slide_captains(df, me), foot),
         (template_headline(tmpl, blanks, df, me),
          slide_template_returns(tmpl, set(df[df.entry == me].element)),
@@ -423,12 +426,20 @@ def review_slides(ns: dict):
         (f"They still put £{mid_gap:.0f}m more than you into midfield",
          slide_allocation(b, me), foot),
     ]
-    if bb:
+    counts = b[b.chip.notna() & (b.chip != "")].chip.value_counts()
+    if len(counts) and counts.iloc[0] >= 3:
+        chip = counts.index[0]
+        label = CHIP_NAMES.get(chip, chip).title()
+        ranks = sorted(int(r) for r in b[b.chip == chip]["rank"])
+        if len(ranks) > 5:
+            # Listing eleven positions is unreadable; the spread is the point.
+            head = f"everywhere from {ordinal(ranks[0])} to {ordinal(ranks[-1])}"
+        else:
+            head = ", ".join(ordinal(r) for r in ranks[:-1]) + f" and {ordinal(ranks[-1])}"
         out.insert(4, (
-            f"The {len(bb)} managers who played Bench Boost finished "
-            + ", ".join(ordinal(r) for r in bb[:-1]) + f" and {ordinal(bb[-1])}",
-            slide_standings(b, me, highlight=lambda r: r.chip == "bboost"),
-            foot + " Orange marks the managers who played Bench Boost."))
+            f"The {len(ranks)} managers who played a {label} finished {head}",
+            slide_standings(b, me, highlight=lambda r, c=chip: r.chip == c),
+            foot + f" Orange marks the managers who played a {label}."))
     return out
 
 
@@ -877,7 +888,8 @@ def build_appendix(b, df, hist, tmpl, prev, me, old_leader, gap_before, gap_now,
     chip_section = ""
     played_chips = b[b.chip.notna() & (b.chip != "")]
     if len(played_chips):
-        rows = ", ".join(f"{r.manager} ({r.chip})" for _, r in played_chips.iterrows())
+        rows = ", ".join(f"{r.manager} ({CHIP_NAMES.get(r.chip, r.chip)})"
+                         for _, r in played_chips.iterrows())
         best_no_chip = b[b.chip.isna()].nsmallest(1, "rank").iloc[0]
         chip_section = f"""
 <h2>Chips</h2>
