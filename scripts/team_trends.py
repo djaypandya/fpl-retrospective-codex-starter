@@ -83,6 +83,38 @@ def load(gws: list[int]) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+DEFCON_THRESHOLD = {"DEF": 10, "MID": 12, "FWD": 12}   # goalkeepers cannot earn it
+POSNAME = {1: "GKP", 2: "DEF", 3: "MID", 4: "FWD"}
+
+
+def load_defcon(gws: list[int]) -> pd.DataFrame:
+    """One row per player per gameweek, with whether he cleared his threshold.
+
+    Defensive actions and DEFCON points are different things. A club can rack
+    up actions across eleven players and have nobody reach a threshold, which
+    earns nothing. Both are returned so the gap can be shown.
+    """
+    bs = json.load(gzip.open(sorted(SNAP.glob("gw03/*/bootstrap-static.json.gz"))[-1]))
+    meta = {e["id"]: (e["team"], e["element_type"], e["web_name"]) for e in bs["elements"]}
+    name = {t["id"]: t["name"] for t in bs["teams"]}
+    short = {t["id"]: t["short_name"] for t in bs["teams"]}
+    rows = []
+    for gw in gws:
+        live = json.load(gzip.open(sorted(SNAP.glob(f"gw{gw:02d}/*/event-{gw:02d}-live.json.gz"))[-1]))
+        for x in live["elements"]:
+            m = meta.get(x["id"])
+            if not m:
+                continue
+            team, et, who = m
+            pos = POSNAME[et]
+            st = x["stats"]
+            dc = st.get("defensive_contribution", 0)
+            rows.append(dict(gw=gw, player=who, team=name[team], short=short[team], pos=pos,
+                             mins=st["minutes"], dc=dc,
+                             hit=int(dc >= DEFCON_THRESHOLD.get(pos, 10 ** 9))))
+    return pd.DataFrame(rows)
+
+
 def summarise(d: pd.DataFrame) -> pd.DataFrame:
     a = d.groupby(["team", "short"]).agg(
         xg=("xg", "sum"), xgc=("xgc", "sum"), gf=("gf", "sum"), ga=("ga", "sum"),
@@ -174,6 +206,109 @@ def chart_gap(a: pd.DataFrame, col: str, xlabel: str, top_label: str, bottom_lab
     return svg(fig)
 
 
+def chart_defcon_teams(t: pd.DataFrame, mine: set[str]) -> str:
+    """Ranked by the measure that actually pays, with raw actions alongside."""
+    d = t.sort_values("hits", ascending=True)
+    fig, ax = plt.subplots(figsize=(10.0, 6.3))
+    colours = [YOU if r.short in mine else REST for _, r in d.iterrows()]
+    ax.barh(range(len(d)), d.hits, color=colours, height=0.68, zorder=3)
+    ax.set_yticks(range(len(d)))
+    ax.set_yticklabels(d.team, fontsize=10.5)
+    for tick, sc in zip(ax.get_yticklabels(), d.short):
+        if sc in mine:
+            tick.set_color(INK); tick.set_fontweight("bold")
+    for i, (_, r) in enumerate(d.iterrows()):
+        ax.text(r.hits + 0.15, i, f"{int(r.hits)}", va="center", fontsize=10.5, color=INK)
+        ax.text(r.hits + 0.85, i, f"from {int(r.actions)} defensive actions",
+                va="center", fontsize=9.5, color=MUTED)
+    ax.set_xticks([]); ax.tick_params(axis="y", length=0)
+    ax.set_xlim(0, d.hits.max() * 2.6)
+    ax.set_xlabel("Times a player cleared his DEFCON threshold, Gameweeks 1 to 3",
+                  fontsize=11, color=MUTED, labelpad=10)
+    ax.spines["left"].set_visible(False)
+    return svg(fig)
+
+
+def chart_defcon_positions(t: pd.DataFrame, mine_players: pd.DataFrame) -> str:
+    """Where each club's DEFCON points come from, with your own earners named."""
+    d = t.sort_values("hits", ascending=True)
+    fig, ax = plt.subplots(figsize=(10.6, 6.3))
+    y = range(len(d))
+    ax.barh(list(y), d.def_hits, color=YOU, height=0.66, zorder=3, label="from defenders")
+    ax.barh(list(y), d.mid_hits, left=[v + 0.06 for v in d.def_hits], color=TOP,
+            height=0.66, zorder=3, label="from midfielders")
+    ax.set_yticks(list(y)); ax.set_yticklabels(d.team, fontsize=10.5)
+    owned = set(mine_players.team)
+    for tick, name in zip(ax.get_yticklabels(), d.team):
+        if name in owned:
+            tick.set_color(INK); tick.set_fontweight("bold")
+    for i, (_, r) in enumerate(d.iterrows()):
+        yours = mine_players[(mine_players.team == r.team) & (mine_players.hits > 0)]
+        if len(yours):
+            label = ", ".join(f"{x.player} {int(x.hits)}" for _, x in yours.iterrows())
+            ax.text(r.hits + 0.3, i, f"you own {label}", va="center", fontsize=9.5,
+                    color=INK, fontweight="bold")
+        elif r.team in owned:
+            ax.text(r.hits + 0.3, i, "you own nobody earning it here", va="center",
+                    fontsize=9.5, color=MUTED)
+    ax.set_xticks([]); ax.tick_params(axis="y", length=0)
+    ax.set_xlim(0, d.hits.max() * 3.0)
+    ax.set_xlabel("DEFCON threshold hits, split by position", fontsize=11, color=MUTED, labelpad=10)
+    ax.set_ylim(-0.8, len(d) + 1.4)
+    ax.legend(frameon=False, fontsize=11, loc="upper right", ncols=2,
+              bbox_to_anchor=(1.0, 1.06))
+    ax.spines["left"].set_visible(False)
+    return svg(fig)
+
+
+def chart_xgc_vs_defcon(a: pd.DataFrame, t: pd.DataFrame, mine: set[str]):
+    """Does defending more mean defending badly? Returns the svg and the correlation."""
+    m = a.merge(t[["short", "hits", "actions"]], on="short")
+    m["hits_pg"] = m.hits / m.games
+    r = m.xgc_pg.corr(m.hits_pg)
+    fig, ax = plt.subplots(figsize=(10.6, 5.8))
+    mx, my = m.xgc_pg.mean(), m.hits_pg.mean()
+    ax.axvline(mx, color="#e6e4de", lw=1.2, zorder=1)
+    ax.axhline(my, color="#e6e4de", lw=1.2, zorder=1)
+    # Give every label a free slot: try offsets in turn and take the first that
+    # does not land on a label already drawn. A single fixed nudge sends two
+    # colliding labels to the same place, which is how BOU and HUL ended up
+    # printed on top of each other.
+    xr = m.xgc_pg.max() - m.xgc_pg.min()
+    yr = m.hits_pg.max() - m.hits_pg.min()
+    xu, yu = xr / 640, yr / 330          # roughly one point, in data units
+    candidates = [(9, -3), (-11, -3), (9, 14), (-11, 14), (9, -20), (-11, -20)]
+    placed: list[tuple[float, float]] = []
+    for _, row in m.sort_values(["xgc_pg", "hits_pg"]).iterrows():
+        c = YOU if row.short in mine else REST
+        ax.scatter(row.xgc_pg, row.hits_pg, s=120, color=c, zorder=3)
+        dx, dy = candidates[0]
+        for cx, cy in candidates:
+            lx, ly = row.xgc_pg + cx * xu, row.hits_pg + cy * yu
+            if all(abs(px - lx) > xr * 0.045 or abs(py - ly) > yr * 0.030
+                   for px, py in placed):
+                dx, dy = cx, cy
+                break
+        ax.annotate(row.short, (row.xgc_pg, row.hits_pg), textcoords="offset points",
+                    xytext=(dx, dy), fontsize=10.5, ha="right" if dx < 0 else "left",
+                    color=INK if row.short in mine else INK_2,
+                    fontweight="bold" if row.short in mine else "normal")
+        placed.append((row.xgc_pg + dx * xu, row.hits_pg + dy * yu))
+    ax.set_xlabel("Expected goals conceded per game  \u2192  worse defence",
+                  fontsize=11, color=MUTED, labelpad=9)
+    ax.set_ylabel("DEFCON hits per game  \u2191  more defensive points",
+                  fontsize=11, color=MUTED, labelpad=9)
+    ax.annotate("the corner you want:\nsolid defence, plenty of DEFCON",
+                (m.xgc_pg.min(), m.hits_pg.max()), textcoords="offset points",
+                xytext=(-6, 26), ha="left", va="top", fontsize=10.5,
+                color=INK_2, fontweight="bold", linespacing=1.4)
+    ax.scatter([], [], s=120, color=YOU, label="clubs you own players from")
+    ax.scatter([], [], s=120, color=REST, label="everyone else")
+    ax.legend(frameon=False, fontsize=11, loc="upper center",
+              bbox_to_anchor=(0.5, -0.13), ncols=2)
+    return svg(fig), r, m
+
+
 CSS = """
 @page { size: 297mm 210mm; margin: 0; }
 * { box-sizing: border-box; }
@@ -217,6 +352,35 @@ def main() -> None:
     unluckiest = a.nsmallest(1, "finishing").iloc[0]
     keeper = a.nlargest(1, "keeping").iloc[0]
 
+    # --- DEFCON -----------------------------------------------------------
+    dc = load_defcon(args.gws)
+    played = dc[dc.mins > 0]
+    t = played.groupby(["team", "short"], as_index=False).agg(
+        actions=("dc", "sum"), hits=("hit", "sum"))
+    bypos = played.pivot_table(index="team", columns="pos", values="hit",
+                               aggfunc="sum").fillna(0).reset_index()
+    for c in ("DEF", "MID"):
+        if c not in bypos:
+            bypos[c] = 0
+    t = t.merge(bypos[["team", "DEF", "MID"]], on="team").rename(
+        columns={"DEF": "def_hits", "MID": "mid_hits"})
+
+    squad = pd.read_csv(REPO / "outputs/gw4_wildcard/squad_locked.csv")
+    owned = set(zip(squad.player, squad.club))
+    mine_players = played.groupby(["player", "team", "pos"], as_index=False).agg(
+        mins=("mins", "sum"), dc=("dc", "sum"), hits=("hit", "sum"))
+    mine_players = mine_players[[(r.player, r.team) in owned for _, r in mine_players.iterrows()]]
+    mine_players["dc90"] = (mine_players.dc / mine_players.mins * 90).round(2)
+
+    top_dc = t.nlargest(1, "hits").iloc[0]
+    most_actions = t.nlargest(1, "actions").iloc[0]
+    fwd_hits = int(played[played.pos == "FWD"].hit.sum())
+    def_hits = int(played[played.pos == "DEF"].hit.sum())
+    mid_hits = int(played[played.pos == "MID"].hit.sum())
+    my_earners = mine_players[mine_players.hits > 0].sort_values("hits", ascending=False)
+    scatter_dc, corr, merged = chart_xgc_vs_defcon(a, t, mine)
+    tidy = merged.nsmallest(3, "xgc_pg").nlargest(1, "hits_pg").iloc[0]
+
     pages = [
         (f"{best.team} and {second.team} create the most and concede the least",
          chart_map(a, mine),
@@ -231,6 +395,26 @@ def main() -> None:
          chart_gap(a, "keeping", "Expected goals conceded minus goals actually conceded",
                    "conceding fewer than the chances merit", "conceding more than the chances merit"),
          foot),
+        (f"{top_dc.team} turn defending into points more often than anyone",
+         chart_defcon_teams(t, mine),
+         f"{span}. A player earns 2 DEFCON points when he clears his threshold in a match: "
+         f"10 defensive actions for a defender, 12 for a midfielder or forward. "
+         f"{most_actions.team} make the most defensive actions at {int(most_actions.actions)}, "
+         f"but that is not the same as earning points for them."),
+        (f"Defenders earn DEFCON {def_hits / max(mid_hits, 1):.1f} times as often as midfielders, "
+         f"and forwards never do",
+         chart_defcon_positions(t, mine_players),
+         f"{span}. Across the whole league defenders cleared their threshold {def_hits} times, "
+         f"midfielders {mid_hits} times and forwards {fwd_hits}. Your own players are named "
+         f"beside their club."),
+        (("Defending more does not mean defending badly" if abs(corr) < 0.3 else
+          ("The clubs that earn most DEFCON are the ones under most pressure" if corr > 0 else
+           "The best defences also earn the most DEFCON")),
+         scatter_dc,
+         f"{span}. The link between conceding chances and earning DEFCON is "
+         f"{'weak' if abs(corr) < 0.3 else 'moderate' if abs(corr) < 0.6 else 'strong'} "
+         f"(correlation {corr:+.2f} across 20 clubs). {tidy.team} sit closest to the corner "
+         f"you want: a tight defence that still banks defensive points."),
     ]
 
     body = []
@@ -254,6 +438,13 @@ def main() -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     d.to_csv(out_dir / "team_gameweek.csv", index=False)
     a.to_csv(out_dir / "team_summary.csv", index=False)
+    t.to_csv(out_dir / "defcon_by_team.csv", index=False)
+    played.to_csv(out_dir / "defcon_player_gameweek.csv", index=False)
+    mine_players.sort_values(["pos", "hits"], ascending=[True, False]).to_csv(
+        out_dir / "defcon_my_squad.csv", index=False)
+    print("\nyour squad's DEFCON record:")
+    print(mine_players.sort_values(["pos", "dc90"], ascending=[True, False])[
+        ["player", "pos", "team", "mins", "dc90", "hits"]].to_string(index=False))
     html = out_dir / "team_trends.html"
     html.write_text(f"<style>{CSS}</style>" + "".join(body))
     pdf = REPO / args.out
