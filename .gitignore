@@ -8,3 +8,16 @@ outputs/tables/*.csv
 outputs/charts/*.png
 outputs/league_*/raw/
 .DS_Store
+
+# OneDrive conflict copies. OneDrive Sync Service runs on this Mac and writes a
+# duplicate named "<file> 2.ext" (or "<dir> 2") whenever it sees a concurrent
+# change — two of these reached a commit before this rule existed.
+#
+# No tracked file in this repo uses a space in its name, so these patterns can
+# only match a conflict copy. If you ever want such a filename, `git add -f` it.
+#
+# This only stops git from seeing the copies. It does NOT stop OneDrive creating
+# them — for that, exclude this folder from OneDrive sync or move the repo out
+# of ~/Documents.
+* [0-9].*
+* [0-9]
