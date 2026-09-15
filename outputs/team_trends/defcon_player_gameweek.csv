@@ -1,0 +1,930 @@
+gw,player,team,short,pos,mins,dc,hit
+1,Raya,Arsenal,ARS,GKP,90,0,0
+1,Gabriel,Arsenal,ARS,DEF,90,4,0
+1,Lewis-Skelly,Arsenal,ARS,MID,90,7,0
+1,Calafiori,Arsenal,ARS,DEF,80,5,0
+1,Hincapie,Arsenal,ARS,DEF,9,0,0
+1,White,Arsenal,ARS,DEF,90,5,0
+1,Mosquera,Arsenal,ARS,DEF,90,6,0
+1,Saka,Arsenal,ARS,MID,67,7,0
+1,Rice,Arsenal,ARS,MID,67,6,0
+1,Eze,Arsenal,ARS,MID,14,2,0
+1,Ødegaard,Arsenal,ARS,MID,75,8,0
+1,Madueke,Arsenal,ARS,MID,22,2,0
+1,Merino,Arsenal,ARS,MID,14,2,0
+1,Zubimendi,Arsenal,ARS,MID,22,3,0
+1,Havertz,Arsenal,ARS,FWD,90,2,0
+1,M.Bizot,Aston Villa,AVL,GKP,90,0,0
+1,Cash,Aston Villa,AVL,DEF,90,7,0
+1,Mings,Aston Villa,AVL,DEF,16,1,0
+1,Pau,Aston Villa,AVL,DEF,73,5,0
+1,Bogarde,Aston Villa,AVL,MID,16,1,0
+1,Maatsen,Aston Villa,AVL,DEF,81,9,0
+1,Lindelöf,Aston Villa,AVL,DEF,90,3,0
+1,Rogers,Chelsea,CHE,MID,81,7,0
+1,Buendía,Aston Villa,AVL,MID,85,7,0
+1,Guessand,Crystal Palace,CRY,MID,27,1,0
+1,Tielemans,Man Utd,MUN,MID,66,5,0
+1,McGinn,Aston Villa,AVL,MID,81,6,0
+1,Barkley,Aston Villa,AVL,MID,73,1,0
+1,Kamara,Aston Villa,AVL,MID,90,7,0
+1,George Hemmings,Aston Villa,AVL,MID,90,5,0
+1,Alysson,Aston Villa,AVL,MID,8,3,0
+1,Gomes,Aston Villa,AVL,MID,39,7,0
+1,Petrović,Bournemouth,BOU,GKP,90,0,0
+1,Hill,Bournemouth,BOU,DEF,90,6,0
+1,Truffert,Bournemouth,BOU,DEF,90,7,0
+1,Smith,Bournemouth,BOU,DEF,90,5,0
+1,Rayan,Bournemouth,BOU,MID,88,1,0
+1,Tavernier,Bournemouth,BOU,MID,90,8,0
+1,Scott,Bournemouth,BOU,MID,90,11,0
+1,Kluivert,Bournemouth,BOU,MID,74,9,0
+1,Cook,Bournemouth,BOU,MID,75,7,0
+1,Gannon-Doak,Bournemouth,BOU,MID,1,1,0
+1,Adams,Bournemouth,BOU,MID,15,3,0
+1,Tóth.A,Bournemouth,BOU,MID,15,2,0
+1,Evanilson,Bournemouth,BOU,FWD,74,8,0
+1,Kelleher,Brentford,BRE,GKP,90,0,0
+1,Collins,Brentford,BRE,DEF,90,3,0
+1,Lewis-Potter,Brentford,BRE,MID,90,10,0
+1,Ajer,Brentford,BRE,DEF,90,10,1
+1,Kayode,Brentford,BRE,DEF,75,4,0
+1,Hickey,Brentford,BRE,DEF,14,0,0
+1,Schade,Brentford,BRE,MID,90,9,0
+1,O.Dango,Brentford,BRE,MID,66,6,0
+1,Damsgaard,Brentford,BRE,MID,14,4,0
+1,Jensen,Brentford,BRE,MID,66,5,0
+1,Janelt,Brentford,BRE,MID,90,13,1
+1,Yarmoliuk,Brentford,BRE,MID,23,6,0
+1,Onyeka,Coventry City,COV,MID,90,9,0
+1,Anthony,Brentford,BRE,MID,23,8,0
+1,Thiago,Brentford,BRE,FWD,82,5,0
+1,Wilson,Brentford,BRE,FWD,7,0,0
+1,Verbruggen,Brighton,BHA,GKP,90,0,0
+1,Rushworth,Coventry City,COV,GKP,90,0,0
+1,Van Hecke,Spurs,TOT,DEF,90,9,0
+1,Boscagli,Brighton,BHA,DEF,90,6,0
+1,De Cuyper,Brighton,BHA,DEF,77,4,0
+1,Dunk,Brighton,BHA,DEF,90,2,0
+1,Costinha,Brighton,BHA,DEF,26,4,0
+1,Hinshelwood,Brighton,BHA,MID,63,3,0
+1,Groß,Brighton,BHA,MID,90,5,0
+1,Georginio,Brighton,BHA,FWD,90,7,0
+1,Gomez,Brighton,BHA,MID,85,6,0
+1,Ayari,Brighton,BHA,MID,63,4,0
+1,Wieffer,Brighton,BHA,DEF,77,8,0
+1,Yohanna,Brighton,BHA,MID,12,0,0
+1,Kostoulas,Brighton,BHA,FWD,26,2,0
+1,Sánchez,Chelsea,CHE,GKP,90,0,0
+1,James,Chelsea,CHE,DEF,90,6,0
+1,Gusto,Chelsea,CHE,DEF,75,3,0
+1,Hato,Chelsea,CHE,DEF,64,3,0
+1,Colwill,Chelsea,CHE,DEF,90,4,0
+1,Acheampong,Chelsea,CHE,DEF,90,15,1
+1,Palmer,Chelsea,CHE,MID,82,9,0
+1,Enzo,Man City,MCI,MID,25,3,0
+1,Neto,Chelsea,CHE,MID,14,4,0
+1,Estêvão,Chelsea,CHE,MID,7,1,0
+1,Garnacho,Aston Villa,AVL,MID,4,0,0
+1,Lavia,Chelsea,CHE,MID,64,9,0
+1,Andrey Santos,Man Utd,MUN,MID,66,9,0
+1,Quenda,Chelsea,CHE,MID,8,1,0
+1,João Pedro,Chelsea,CHE,FWD,90,3,0
+1,Thomas,Coventry City,COV,DEF,90,10,1
+1,van Ewijk,Coventry City,COV,DEF,90,7,0
+1,Dasilva,Coventry City,COV,DEF,90,6,0
+1,Amenda,Coventry City,COV,DEF,90,9,0
+1,Rudoni,Coventry City,COV,MID,20,5,0
+1,Grimes,Coventry City,COV,MID,90,7,0
+1,Torp,Coventry City,COV,MID,28,1,0
+1,Tchaouna,Coventry City,COV,MID,81,8,0
+1,Thomas-Asante,Coventry City,COV,FWD,69,6,0
+1,Simms,Coventry City,COV,FWD,69,3,0
+1,Henderson,Crystal Palace,CRY,GKP,90,0,0
+1,Lacroix,Chelsea,CHE,DEF,90,12,1
+1,Muñoz,Nott'm Forest,NFO,DEF,54,4,0
+1,Richards,Crystal Palace,CRY,DEF,90,16,1
+1,Canvot,Crystal Palace,CRY,DEF,90,8,0
+1,Mitchell,Crystal Palace,CRY,DEF,90,5,0
+1,Chadi Riad,Crystal Palace,CRY,DEF,72,7,0
+1,Johnson,Everton,EVE,MID,6,2,0
+1,Wharton,Crystal Palace,CRY,MID,90,14,1
+1,Yeremy,Crystal Palace,CRY,MID,35,5,0
+1,Kamada,Crystal Palace,CRY,MID,90,14,1
+1,Strand Larsen,Crystal Palace,CRY,FWD,27,0,0
+1,Mateta,Crystal Palace,CRY,FWD,62,5,0
+1,Nketiah,Crystal Palace,CRY,FWD,55,3,0
+1,Pickford,Everton,EVE,GKP,90,0,0
+1,Tarkowski,Everton,EVE,DEF,90,9,0
+1,Branthwaite,Everton,EVE,DEF,90,8,0
+1,Mykolenko,Everton,EVE,DEF,90,4,0
+1,Dewsbury-Hall,Everton,EVE,MID,90,8,0
+1,Ndiaye,Man City,MCI,MID,90,12,1
+1,Grealish,Everton,EVE,MID,8,1,0
+1,Garner,Everton,EVE,MID,11,1,0
+1,McNeil,Crystal Palace,CRY,MID,62,5,0
+1,George,Everton,EVE,MID,83,7,0
+1,Alcaraz,Everton,EVE,MID,1,3,0
+1,Armstrong,Everton,EVE,MID,90,16,1
+1,Röhl,Everton,EVE,MID,90,9,0
+1,Hackney,Everton,EVE,MID,78,7,0
+1,Beto,Everton,EVE,FWD,11,0,0
+1,Barry,Everton,EVE,FWD,78,3,0
+1,Leno,Fulham,FUL,GKP,90,0,0
+1,Robinson,Fulham,FUL,DEF,81,7,0
+1,J.Cuenca,Fulham,FUL,DEF,90,10,1
+1,Bassey,Fulham,FUL,DEF,90,4,0
+1,Castagne,Fulham,FUL,DEF,90,6,0
+1,Diop,Ipswich Town,IPS,DEF,90,5,0
+1,Wilson,Leeds,LEE,MID,65,2,0
+1,Iwobi,Fulham,FUL,MID,90,10,0
+1,Kevin,Fulham,FUL,MID,17,3,0
+1,Bobb,Fulham,FUL,MID,66,6,0
+1,Berge,Fulham,FUL,MID,72,4,0
+1,Lukić,Ipswich Town,IPS,MID,90,6,0
+1,King,Fulham,FUL,MID,90,8,0
+1,Sessegnon,Fulham,FUL,DEF,17,1,0
+1,Muniz,Fulham,FUL,FWD,8,1,0
+1,Egan,Hull City,HUL,DEF,90,21,1
+1,Ajayi,Hull City,HUL,DEF,63,7,0
+1,Coyle,Hull City,HUL,DEF,69,2,0
+1,Drameh,Hull City,HUL,DEF,20,3,0
+1,Giles,Hull City,HUL,DEF,84,6,0
+1,McNair,Hull City,HUL,DEF,26,2,0
+1,Belloumi,Hull City,HUL,MID,90,10,0
+1,Millar,Hull City,HUL,MID,19,3,0
+1,Crooks,Hull City,HUL,MID,90,9,0
+1,Slater,Hull City,HUL,MID,90,3,0
+1,McBurnie,Hull City,HUL,FWD,90,5,0
+1,O'Shea,Ipswich Town,IPS,DEF,90,18,1
+1,Davis,Ipswich Town,IPS,DEF,90,7,0
+1,Greaves,Ipswich Town,IPS,DEF,90,7,0
+1,Núñez,Ipswich Town,IPS,MID,79,12,1
+1,Clarke,Ipswich Town,IPS,MID,19,2,0
+1,Fatawu,Ipswich Town,IPS,MID,65,7,0
+1,Emersonn,Ipswich Town,IPS,FWD,65,3,0
+1,Akpom,Ipswich Town,IPS,FWD,24,3,0
+1,Walle Egeli,Ipswich Town,IPS,FWD,10,0,0
+1,McAteer,Ipswich Town,IPS,MID,24,3,0
+1,Bijol,Leeds,LEE,DEF,90,12,1
+1,Rodon,Leeds,LEE,DEF,90,7,0
+1,Bogle,Leeds,LEE,DEF,90,3,0
+1,Justin,Leeds,LEE,DEF,90,12,1
+1,Muharemović,Leeds,LEE,DEF,90,7,0
+1,Stach,Leeds,LEE,MID,90,16,1
+1,Okafor,Leeds,LEE,MID,24,5,0
+1,Aaronson,Leeds,LEE,MID,81,7,0
+1,Ampadu,Leeds,LEE,MID,90,13,1
+1,Longstaff,Leeds,LEE,MID,8,0,0
+1,Calvert-Lewin,Leeds,LEE,FWD,90,2,0
+1,A.Becker,Liverpool,LIV,GKP,90,0,0
+1,Virgil,Liverpool,LIV,DEF,90,11,1
+1,Frimpong,Liverpool,LIV,DEF,90,2,0
+1,Kerkez,Liverpool,LIV,DEF,90,7,0
+1,Jacquet,Liverpool,LIV,DEF,69,3,0
+1,Wirtz,Liverpool,LIV,MID,62,5,0
+1,Gakpo,Liverpool,LIV,MID,90,12,1
+1,Szoboszlai,Liverpool,LIV,MID,90,7,0
+1,Ngumoha,Liverpool,LIV,MID,62,3,0
+1,Gravenberch,Liverpool,LIV,MID,77,11,0
+1,Mac Allister,Liverpool,LIV,MID,27,3,0
+1,Munoz,Liverpool,LIV,MID,27,0,0
+1,Isak,Liverpool,LIV,FWD,90,1,0
+1,Koumas,Liverpool,LIV,MID,12,1,0
+1,Donnarumma,Man City,MCI,GKP,90,0,0
+1,Trafford,Leeds,LEE,GKP,90,0,0
+1,O'Reilly,Man City,MCI,DEF,62,2,0
+1,Guéhi,Man City,MCI,DEF,90,4,0
+1,Matheus N.,Man City,MCI,DEF,33,1,0
+1,Rúben,Man City,MCI,DEF,90,6,0
+1,Gvardiol,Man City,MCI,DEF,90,7,0
+1,Khusanov,Man City,MCI,DEF,90,4,0
+1,Lewis,Man City,MCI,DEF,56,2,0
+1,Semenyo,Man City,MCI,MID,90,5,0
+1,Foden,Man City,MCI,MID,81,6,0
+1,Cherki,Man City,MCI,MID,27,0,0
+1,Kovačić,Man City,MCI,MID,27,2,0
+1,Haaland,Man City,MCI,FWD,90,3,0
+1,Lammens,Man Utd,MUN,GKP,90,0,0
+1,Dorgu,Man Utd,MUN,MID,45,1,0
+1,Dalot,Man Utd,MUN,DEF,10,3,0
+1,Maguire,Man Utd,MUN,DEF,90,4,0
+1,Heaven,Man Utd,MUN,DEF,90,2,0
+1,Mazraoui,Man Utd,MUN,DEF,79,5,0
+1,Shaw,Man Utd,MUN,DEF,90,4,0
+1,B.Fernandes,Man Utd,MUN,MID,90,6,0
+1,Mbeumo,Man Utd,MUN,MID,90,4,0
+1,Cunha,Man Utd,MUN,MID,79,3,0
+1,Rashford,Man Utd,MUN,MID,45,1,0
+1,Mainoo,Man Utd,MUN,MID,23,1,0
+1,Lacey,Man Utd,MUN,MID,10,1,0
+1,Šeško,Man Utd,MUN,FWD,23,0,0
+1,Thiaw,Newcastle,NEW,DEF,90,15,1
+1,Schär,Newcastle,NEW,DEF,1,0,0
+1,Botman,Newcastle,NEW,DEF,90,10,1
+1,Hall,Newcastle,NEW,DEF,90,11,1
+1,Barnes,Newcastle,NEW,MID,90,8,0
+1,Elanga,Newcastle,NEW,MID,75,2,0
+1,Tonali,Spurs,TOT,MID,90,4,0
+1,J.Ramsey,Newcastle,NEW,MID,34,6,0
+1,J.Murphy,Newcastle,NEW,MID,14,2,0
+1,L.Miley,Newcastle,NEW,MID,75,13,1
+1,Willock,Newcastle,NEW,MID,34,3,0
+1,Steur,Newcastle,NEW,MID,55,2,0
+1,Wissa,Newcastle,NEW,FWD,90,8,0
+1,Osula,Newcastle,NEW,FWD,55,5,0
+1,Sels,Nott'm Forest,NFO,GKP,90,0,0
+1,N.Williams,Nott'm Forest,NFO,DEF,90,6,0
+1,Milenković,Nott'm Forest,NFO,DEF,90,7,0
+1,Murillo,Nott'm Forest,NFO,DEF,90,14,1
+1,Aina,Nott'm Forest,NFO,DEF,73,2,0
+1,Jair Cunha,Nott'm Forest,NFO,DEF,90,8,0
+1,Netz,Nott'm Forest,NFO,DEF,16,0,0
+1,Gibbs-White,Nott'm Forest,NFO,MID,90,3,0
+1,Anderson,Man City,MCI,MID,62,6,0
+1,Ndoye,Nott'm Forest,NFO,MID,61,3,0
+1,McAtee,Nott'm Forest,NFO,MID,73,8,0
+1,I.Sangaré,Nott'm Forest,NFO,MID,90,6,0
+1,Wood,Nott'm Forest,NFO,FWD,28,1,0
+1,Igor Jesus,Nott'm Forest,NFO,FWD,90,3,0
+1,Awoniyi,Coventry City,COV,FWD,20,1,0
+1,Kalimuendo,Nott'm Forest,NFO,FWD,1,0,0
+1,Kinsky,Spurs,TOT,GKP,90,0,0
+1,Senesi,Spurs,TOT,DEF,90,16,1
+1,Robertson,Spurs,TOT,DEF,90,11,1
+1,Vuskovic,Brighton,BHA,DEF,90,4,0
+1,Udogie,Spurs,TOT,DEF,4,0,0
+1,Tel,Spurs,TOT,MID,90,8,0
+1,Maddison,Spurs,TOT,MID,22,2,0
+1,Bentancur,Spurs,TOT,MID,45,5,0
+1,Gallagher,Spurs,TOT,MID,45,3,0
+1,Bergvall,Spurs,TOT,MID,45,8,0
+1,Gray,Spurs,TOT,MID,85,5,0
+1,Moore,Spurs,TOT,MID,67,2,0
+1,Fernandes,Spurs,TOT,MID,45,2,0
+1,Solanke,Spurs,TOT,FWD,22,0,0
+1,Richarlison,Spurs,TOT,FWD,67,1,0
+1,Roefs,Sunderland,SUN,GKP,90,0,0
+1,Ballard,Sunderland,SUN,DEF,90,9,0
+1,Hume,Sunderland,SUN,DEF,79,4,0
+1,Alderete,Sunderland,SUN,DEF,23,0,0
+1,Reinildo,Sunderland,SUN,DEF,90,8,0
+1,O'Nien,Sunderland,SUN,DEF,66,5,0
+1,Meunier,Sunderland,SUN,DEF,90,4,0
+1,E.Le Fée,Sunderland,SUN,MID,79,2,0
+1,Diarra,Sunderland,SUN,MID,10,0,0
+1,Xhaka,Sunderland,SUN,MID,90,13,1
+1,Sadiki,Sunderland,SUN,MID,90,2,0
+1,Rigg,Sunderland,SUN,MID,10,1,0
+1,Talbi,Sunderland,SUN,MID,31,2,0
+1,N.Angulo,Sunderland,SUN,MID,58,7,0
+1,Brobbey,Sunderland,SUN,FWD,66,0,0
+1,Isidor,Sunderland,SUN,FWD,23,0,0
+1,Targett,Hull City,HUL,DEF,5,0,0
+1,Tzolis,Arsenal,ARS,MID,75,6,0
+1,Schlager,Nott'm Forest,NFO,MID,16,1,0
+1,Bamba,Newcastle,NEW,MID,14,2,0
+1,Maeda,Ipswich Town,IPS,MID,79,9,0
+1,Scherpen,Ipswich Town,IPS,GKP,90,0,0
+1,M.Sangaré,Brentford,BRE,MID,75,13,1
+1,Silva,Bournemouth,BOU,DEF,90,13,1
+1,Horníček,Newcastle,NEW,GKP,90,0,0
+1,Gonzalo,Fulham,FUL,FWD,90,2,0
+1,Palacios,Fulham,FUL,MID,72,4,0
+1,Tzolakis,Hull City,HUL,GKP,90,0,0
+1,Yirenkyi,Coventry City,COV,MID,61,3,0
+1,Stroud,Hull City,HUL,MID,70,6,0
+1,Tomiyasu,Crystal Palace,CRY,DEF,18,1,0
+1,Araujo,Liverpool,LIV,DEF,20,4,0
+1,Charles,Fulham,FUL,MID,23,3,0
+1,Chavarria,Chelsea,CHE,DEF,25,1,0
+1,Hamer,Coventry City,COV,MID,8,1,0
+1,Herrington,Hull City,HUL,DEF,26,4,0
+1,Mendy,Hull City,HUL,DEF,63,13,1
+1,Khalaili,Crystal Palace,CRY,DEF,35,9,0
+1,Enciso,Ipswich Town,IPS,MID,70,8,0
+1,Ouattara,Ipswich Town,IPS,DEF,10,2,0
+1,Dedić,Newcastle,NEW,DEF,90,9,0
+1,Ruggeri,Aston Villa,AVL,DEF,8,2,0
+1,Osman,Brighton,BHA,MID,12,2,0
+1,Yalcouyé,Brighton,BHA,MID,4,0,0
+1,Jebbison,Bournemouth,BOU,FWD,15,1,0
+2,Raya,Arsenal,ARS,GKP,90,0,0
+2,Gabriel,Arsenal,ARS,DEF,90,10,1
+2,Lewis-Skelly,Arsenal,ARS,MID,70,5,0
+2,Calafiori,Arsenal,ARS,DEF,90,3,0
+2,White,Arsenal,ARS,DEF,90,4,0
+2,Mosquera,Arsenal,ARS,DEF,78,4,0
+2,Saka,Arsenal,ARS,MID,90,11,0
+2,Rice,Arsenal,ARS,MID,84,12,1
+2,Eze,Arsenal,ARS,MID,45,3,0
+2,Ødegaard,Arsenal,ARS,MID,70,5,0
+2,Merino,Arsenal,ARS,MID,19,4,0
+2,Zubimendi,Arsenal,ARS,MID,5,2,0
+2,Havertz,Arsenal,ARS,FWD,90,5,0
+2,Martinez,Chelsea,CHE,GKP,90,0,0
+2,Konsa,Arsenal,ARS,DEF,11,1,0
+2,Cash,Aston Villa,AVL,DEF,77,6,0
+2,Pau,Aston Villa,AVL,DEF,90,4,0
+2,Maatsen,Aston Villa,AVL,DEF,90,8,0
+2,Lindelöf,Aston Villa,AVL,DEF,90,7,0
+2,Rogers,Chelsea,CHE,MID,90,5,0
+2,Buendía,Aston Villa,AVL,MID,90,5,0
+2,Guessand,Crystal Palace,CRY,MID,27,1,0
+2,Tielemans,Man Utd,MUN,MID,90,13,1
+2,McGinn,Aston Villa,AVL,MID,90,4,0
+2,Barkley,Aston Villa,AVL,MID,77,10,0
+2,Kamara,Aston Villa,AVL,MID,90,8,0
+2,George Hemmings,Aston Villa,AVL,MID,70,6,0
+2,Alysson,Aston Villa,AVL,MID,19,2,0
+2,Abraham,Aston Villa,AVL,FWD,19,0,0
+2,Petrović,Bournemouth,BOU,GKP,90,0,0
+2,Hill,Bournemouth,BOU,DEF,90,12,1
+2,Truffert,Bournemouth,BOU,DEF,90,9,0
+2,Smith,Bournemouth,BOU,DEF,90,6,0
+2,Rayan,Bournemouth,BOU,MID,90,5,0
+2,Tavernier,Bournemouth,BOU,MID,90,11,0
+2,Scott,Bournemouth,BOU,MID,86,15,1
+2,Kluivert,Bournemouth,BOU,MID,80,5,0
+2,Cook,Bournemouth,BOU,MID,68,2,0
+2,Adams,Bournemouth,BOU,MID,21,3,0
+2,Brooks,Bournemouth,BOU,MID,9,0,0
+2,Christie,Bournemouth,BOU,MID,3,2,0
+2,Evanilson,Bournemouth,BOU,FWD,80,3,0
+2,Rodríguez,Bournemouth,BOU,FWD,9,1,0
+2,Kelleher,Brentford,BRE,GKP,90,0,0
+2,Collins,Brentford,BRE,DEF,90,13,1
+2,Lewis-Potter,Brentford,BRE,MID,87,11,0
+2,Ajer,Brentford,BRE,DEF,90,17,1
+2,Kayode,Brentford,BRE,DEF,87,4,0
+2,Henry,Brentford,BRE,DEF,2,0,0
+2,Hickey,Brentford,BRE,DEF,2,1,0
+2,Pinnock,Coventry City,COV,DEF,12,2,0
+2,Schade,Brentford,BRE,MID,87,9,0
+2,O.Dango,Brentford,BRE,MID,29,7,0
+2,Damsgaard,Brentford,BRE,MID,68,9,0
+2,Janelt,Brentford,BRE,MID,90,10,0
+2,Yarmoliuk,Brentford,BRE,MID,21,0,0
+2,Anthony,Brentford,BRE,MID,60,1,0
+2,Thiago,Brentford,BRE,FWD,90,4,0
+2,Wilson,Brentford,BRE,FWD,2,1,0
+2,Verbruggen,Brighton,BHA,GKP,90,0,0
+2,Rushworth,Coventry City,COV,GKP,90,0,0
+2,Van Hecke,Spurs,TOT,DEF,90,8,0
+2,F.Kadıoğlu,Brighton,BHA,DEF,90,0,0
+2,Boscagli,Brighton,BHA,DEF,90,3,0
+2,De Cuyper,Brighton,BHA,DEF,90,2,0
+2,Dunk,Brighton,BHA,DEF,90,3,0
+2,Costinha,Brighton,BHA,DEF,10,0,0
+2,Groß,Brighton,BHA,MID,90,6,0
+2,Gomez,Brighton,BHA,MID,90,5,0
+2,Wieffer,Brighton,BHA,DEF,79,7,0
+2,Kostoulas,Brighton,BHA,FWD,79,6,0
+2,James,Chelsea,CHE,DEF,22,0,0
+2,Gusto,Chelsea,CHE,DEF,90,5,0
+2,Fofana,Chelsea,CHE,DEF,67,9,0
+2,Hato,Chelsea,CHE,DEF,90,6,0
+2,Colwill,Chelsea,CHE,DEF,71,9,0
+2,Acheampong,Chelsea,CHE,DEF,22,3,0
+2,Disasi,Crystal Palace,CRY,DEF,16,1,0
+2,Palmer,Chelsea,CHE,MID,90,8,0
+2,Neto,Chelsea,CHE,MID,67,4,0
+2,Caicedo,Chelsea,CHE,MID,13,0,0
+2,Garnacho,Aston Villa,AVL,MID,12,2,0
+2,Lavia,Chelsea,CHE,MID,67,7,0
+2,Andrey Santos,Man Utd,MUN,MID,10,5,0
+2,João Pedro,Chelsea,CHE,FWD,90,3,0
+2,N.Jackson,Aston Villa,AVL,FWD,70,3,0
+2,Delap,Nott'm Forest,NFO,FWD,24,0,0
+2,Thomas,Coventry City,COV,DEF,77,9,0
+2,van Ewijk,Coventry City,COV,DEF,90,2,0
+2,Dasilva,Coventry City,COV,DEF,90,3,0
+2,Amenda,Coventry City,COV,DEF,90,4,0
+2,Rudoni,Coventry City,COV,MID,70,6,0
+2,Grimes,Coventry City,COV,MID,90,10,0
+2,Sakamoto,Coventry City,COV,MID,31,4,0
+2,Mason-Clark,Coventry City,COV,MID,57,4,0
+2,Torp,Coventry City,COV,MID,19,2,0
+2,Tchaouna,Coventry City,COV,MID,58,6,0
+2,Thomas-Asante,Coventry City,COV,FWD,32,2,0
+2,Henderson,Crystal Palace,CRY,GKP,90,0,0
+2,Lacroix,Chelsea,CHE,DEF,90,9,0
+2,Richards,Crystal Palace,CRY,DEF,90,6,0
+2,Canvot,Crystal Palace,CRY,DEF,90,7,0
+2,Mitchell,Crystal Palace,CRY,DEF,90,5,0
+2,Mingueza,Crystal Palace,CRY,DEF,15,1,0
+2,Johnson,Everton,EVE,MID,28,2,0
+2,Wharton,Crystal Palace,CRY,MID,90,7,0
+2,Yeremy,Crystal Palace,CRY,MID,67,10,0
+2,Kamada,Crystal Palace,CRY,MID,90,9,0
+2,Strand Larsen,Crystal Palace,CRY,FWD,62,4,0
+2,Nketiah,Crystal Palace,CRY,FWD,67,6,0
+2,Pickford,Everton,EVE,GKP,90,0,0
+2,Tarkowski,Everton,EVE,DEF,90,10,1
+2,Branthwaite,Everton,EVE,DEF,90,12,1
+2,Mykolenko,Everton,EVE,DEF,90,12,1
+2,Dewsbury-Hall,Everton,EVE,MID,90,10,0
+2,Ndiaye,Man City,MCI,MID,90,13,1
+2,Garner,Everton,EVE,MID,61,10,0
+2,Iroegbunam,Hull City,HUL,MID,4,0,0
+2,McNeil,Crystal Palace,CRY,MID,22,2,0
+2,George,Everton,EVE,MID,61,2,0
+2,Alcaraz,Everton,EVE,MID,4,0,0
+2,Armstrong,Everton,EVE,MID,86,9,0
+2,Röhl,Everton,EVE,MID,85,9,0
+2,Hackney,Everton,EVE,MID,28,3,0
+2,Beto,Everton,EVE,FWD,20,1,0
+2,Barry,Everton,EVE,FWD,69,3,0
+2,Leno,Fulham,FUL,GKP,90,0,0
+2,Andersen,Fulham,FUL,DEF,90,8,0
+2,Robinson,Fulham,FUL,DEF,90,3,0
+2,Bassey,Fulham,FUL,DEF,90,7,0
+2,Castagne,Fulham,FUL,DEF,67,2,0
+2,Diop,Ipswich Town,IPS,DEF,90,12,1
+2,Wilson,Leeds,LEE,MID,45,6,0
+2,Iwobi,Fulham,FUL,MID,90,4,0
+2,Smith Rowe,Fulham,FUL,MID,14,1,0
+2,Kevin,Fulham,FUL,MID,7,0,0
+2,Bobb,Fulham,FUL,MID,67,5,0
+2,Berge,Fulham,FUL,MID,82,2,0
+2,Lukić,Ipswich Town,IPS,MID,72,11,0
+2,King,Fulham,FUL,MID,90,4,0
+2,Sessegnon,Fulham,FUL,DEF,22,1,0
+2,Egan,Hull City,HUL,DEF,90,13,1
+2,Ajayi,Hull City,HUL,DEF,90,7,0
+2,Coyle,Hull City,HUL,DEF,45,4,0
+2,Drameh,Hull City,HUL,DEF,45,3,0
+2,Giles,Hull City,HUL,DEF,90,2,0
+2,Belloumi,Hull City,HUL,MID,82,10,0
+2,Millar,Hull City,HUL,MID,31,1,0
+2,Slater,Hull City,HUL,MID,90,10,0
+2,McBurnie,Hull City,HUL,FWD,90,4,0
+2,O'Shea,Ipswich Town,IPS,DEF,90,1,0
+2,Davis,Ipswich Town,IPS,DEF,90,4,0
+2,Greaves,Ipswich Town,IPS,DEF,90,10,1
+2,Furlong,Ipswich Town,IPS,DEF,17,3,0
+2,Núñez,Ipswich Town,IPS,MID,61,9,0
+2,Fatawu,Ipswich Town,IPS,MID,82,4,0
+2,Emersonn,Ipswich Town,IPS,FWD,45,1,0
+2,Akpom,Ipswich Town,IPS,FWD,45,0,0
+2,McAteer,Ipswich Town,IPS,MID,7,1,0
+2,Bijol,Leeds,LEE,DEF,45,5,0
+2,Rodon,Leeds,LEE,DEF,33,4,0
+2,Bogle,Leeds,LEE,DEF,67,7,0
+2,Justin,Leeds,LEE,DEF,90,8,0
+2,Muharemović,Leeds,LEE,DEF,90,19,1
+2,Stach,Leeds,LEE,MID,90,16,1
+2,Okafor,Leeds,LEE,MID,68,2,0
+2,Aaronson,Leeds,LEE,MID,45,3,0
+2,Ampadu,Leeds,LEE,MID,90,10,0
+2,James,Leeds,LEE,MID,22,2,0
+2,Tanaka,Leeds,LEE,MID,45,11,0
+2,Calvert-Lewin,Leeds,LEE,FWD,90,4,0
+2,Nmecha,Leeds,LEE,FWD,21,1,0
+2,A.Becker,Liverpool,LIV,GKP,90,0,0
+2,Virgil,Liverpool,LIV,DEF,90,7,0
+2,Frimpong,Liverpool,LIV,DEF,70,6,0
+2,Kerkez,Liverpool,LIV,DEF,70,8,0
+2,Jacquet,Liverpool,LIV,DEF,76,11,1
+2,Tsimikas,Liverpool,LIV,DEF,19,0,0
+2,Wirtz,Liverpool,LIV,MID,90,10,0
+2,Gakpo,Liverpool,LIV,MID,70,3,0
+2,Szoboszlai,Liverpool,LIV,MID,90,13,1
+2,Ngumoha,Liverpool,LIV,MID,19,0,0
+2,Gravenberch,Liverpool,LIV,MID,19,1,0
+2,Mac Allister,Liverpool,LIV,MID,76,10,0
+2,Nyoni,Liverpool,LIV,MID,13,5,0
+2,Munoz,Liverpool,LIV,MID,90,7,0
+2,Isak,Liverpool,LIV,FWD,90,1,0
+2,Donnarumma,Man City,MCI,GKP,90,0,0
+2,Trafford,Leeds,LEE,GKP,90,0,0
+2,O'Reilly,Man City,MCI,DEF,88,1,0
+2,Guéhi,Man City,MCI,DEF,90,5,0
+2,Rúben,Man City,MCI,DEF,90,6,0
+2,Gvardiol,Man City,MCI,DEF,74,2,0
+2,Khusanov,Man City,MCI,DEF,88,7,0
+2,Vitor Reis,Man City,MCI,DEF,1,0,0
+2,Semenyo,Man City,MCI,MID,90,3,0
+2,Foden,Man City,MCI,MID,90,7,0
+2,Cherki,Man City,MCI,MID,81,3,0
+2,Marmoush,Spurs,TOT,FWD,90,4,0
+2,N.Gonzalez,Newcastle,NEW,MID,70,4,0
+2,Kovačić,Man City,MCI,MID,15,0,0
+2,Haaland,Man City,MCI,FWD,90,5,0
+2,Lammens,Man Utd,MUN,GKP,90,0,0
+2,Dorgu,Man Utd,MUN,MID,10,2,0
+2,Dalot,Man Utd,MUN,DEF,73,4,0
+2,Maguire,Man Utd,MUN,DEF,90,5,0
+2,Martinez,Man Utd,MUN,DEF,90,0,0
+2,Yoro,Man Utd,MUN,DEF,16,2,0
+2,Mazraoui,Man Utd,MUN,DEF,17,0,0
+2,Shaw,Man Utd,MUN,DEF,72,8,0
+2,B.Fernandes,Man Utd,MUN,MID,90,8,0
+2,Mbeumo,Man Utd,MUN,MID,90,5,0
+2,Cunha,Man Utd,MUN,MID,79,2,0
+2,Rashford,Man Utd,MUN,MID,79,6,0
+2,Mainoo,Man Utd,MUN,MID,79,15,1
+2,Šeško,Man Utd,MUN,FWD,10,3,0
+2,Thiaw,Newcastle,NEW,DEF,90,3,0
+2,Botman,Newcastle,NEW,DEF,90,5,0
+2,Hall,Newcastle,NEW,DEF,90,13,1
+2,Bruno G.,Arsenal,ARS,MID,19,3,0
+2,Barnes,Newcastle,NEW,MID,90,4,0
+2,Elanga,Newcastle,NEW,MID,81,3,0
+2,Tonali,Spurs,TOT,MID,74,4,0
+2,J.Ramsey,Newcastle,NEW,MID,8,1,0
+2,J.Murphy,Newcastle,NEW,MID,8,3,0
+2,L.Miley,Newcastle,NEW,MID,90,9,0
+2,Willock,Newcastle,NEW,MID,70,2,0
+2,Touré,Newcastle,NEW,MID,1,0,0
+2,Steur,Newcastle,NEW,MID,19,3,0
+2,Woltemade,Newcastle,NEW,FWD,19,0,0
+2,Wissa,Newcastle,NEW,FWD,81,6,0
+2,Sels,Nott'm Forest,NFO,GKP,90,0,0
+2,N.Williams,Nott'm Forest,NFO,DEF,90,12,1
+2,Milenković,Nott'm Forest,NFO,DEF,90,13,1
+2,Murillo,Nott'm Forest,NFO,DEF,90,6,0
+2,Aina,Nott'm Forest,NFO,DEF,85,5,0
+2,Jair Cunha,Nott'm Forest,NFO,DEF,90,8,0
+2,Netz,Nott'm Forest,NFO,DEF,4,1,0
+2,Gibbs-White,Nott'm Forest,NFO,MID,90,5,0
+2,Anderson,Man City,MCI,MID,81,14,1
+2,Hudson-Odoi,Nott'm Forest,NFO,MID,1,0,0
+2,Ndoye,Nott'm Forest,NFO,MID,65,9,0
+2,McAtee,Nott'm Forest,NFO,MID,90,8,0
+2,Dominguez,Nott'm Forest,NFO,MID,1,0,0
+2,Igor Jesus,Nott'm Forest,NFO,FWD,90,5,0
+2,Awoniyi,Coventry City,COV,FWD,90,3,0
+2,Kinsky,Spurs,TOT,GKP,90,0,0
+2,Pedro Porro,Spurs,TOT,DEF,90,4,0
+2,Robertson,Spurs,TOT,DEF,67,3,0
+2,Van de Ven,Spurs,TOT,DEF,90,8,0
+2,Vuskovic,Brighton,BHA,DEF,90,8,0
+2,Udogie,Spurs,TOT,DEF,22,1,0
+2,Kudus,Spurs,TOT,MID,22,2,0
+2,Tel,Spurs,TOT,MID,67,3,0
+2,Bentancur,Spurs,TOT,MID,90,11,0
+2,Gray,Spurs,TOT,MID,67,6,0
+2,Moore,Spurs,TOT,MID,22,1,0
+2,Fernandes,Spurs,TOT,MID,90,8,0
+2,Solanke,Spurs,TOT,FWD,15,0,0
+2,Roefs,Sunderland,SUN,GKP,90,0,0
+2,Ballard,Sunderland,SUN,DEF,90,10,1
+2,Mukiele,Sunderland,SUN,DEF,90,19,1
+2,Hume,Sunderland,SUN,DEF,90,6,0
+2,Reinildo,Sunderland,SUN,DEF,90,7,0
+2,Meunier,Sunderland,SUN,DEF,90,8,0
+2,E.Le Fée,Sunderland,SUN,MID,89,6,0
+2,Diarra,Sunderland,SUN,MID,18,0,0
+2,Xhaka,Sunderland,SUN,MID,90,7,0
+2,Sadiki,Sunderland,SUN,MID,90,11,0
+2,Mundle,Sunderland,SUN,MID,1,1,0
+2,Rigg,Sunderland,SUN,MID,7,0,0
+2,N.Angulo,Sunderland,SUN,MID,64,5,0
+2,Brobbey,Sunderland,SUN,FWD,63,4,0
+2,Isidor,Sunderland,SUN,FWD,26,0,0
+2,Tzolis,Arsenal,ARS,MID,45,3,0
+2,Schlager,Nott'm Forest,NFO,MID,90,15,1
+2,Maeda,Ipswich Town,IPS,MID,72,5,0
+2,Morita,Hull City,HUL,MID,45,3,0
+2,Scherpen,Ipswich Town,IPS,GKP,90,0,0
+2,M.Sangaré,Brentford,BRE,MID,90,14,1
+2,Silva,Bournemouth,BOU,DEF,90,10,1
+2,Horníček,Newcastle,NEW,GKP,90,0,0
+2,Barco,Chelsea,CHE,MID,8,1,0
+2,Gonzalo,Fulham,FUL,FWD,90,4,0
+2,Palacios,Fulham,FUL,MID,75,9,0
+2,Tzolakis,Hull City,HUL,GKP,90,0,0
+2,Yirenkyi,Coventry City,COV,MID,70,7,0
+2,Stroud,Hull City,HUL,MID,58,7,0
+2,Tomiyasu,Crystal Palace,CRY,DEF,73,8,0
+2,Araujo,Liverpool,LIV,DEF,13,1,0
+2,Charles,Fulham,FUL,MID,22,2,0
+2,Chavarria,Chelsea,CHE,DEF,18,3,0
+2,Hamer,Coventry City,COV,MID,19,0,0
+2,Herrington,Hull City,HUL,DEF,31,1,0
+2,Mendy,Hull City,HUL,DEF,58,9,0
+2,Khalaili,Crystal Palace,CRY,DEF,74,14,1
+2,Gourna-Douath,Hull City,HUL,MID,45,6,0
+2,Enciso,Ipswich Town,IPS,MID,90,8,0
+2,Ouattara,Ipswich Town,IPS,DEF,17,0,0
+2,Dedić,Newcastle,NEW,DEF,90,8,0
+2,David,Brighton,BHA,FWD,10,0,0
+2,Gozo,Crystal Palace,CRY,MID,22,1,0
+2,Suzuki,Aston Villa,AVL,GKP,90,0,0
+2,Elvedi,Leeds,LEE,DEF,56,6,0
+2,Osman,Brighton,BHA,MID,16,1,0
+2,Yalcouyé,Brighton,BHA,MID,73,7,0
+2,Wan-Bissaka,Aston Villa,AVL,DEF,12,2,0
+2,Bouaddi,Man City,MCI,MID,8,1,0
+2,Cho,Hull City,HUL,MID,7,0,0
+2,Palacios,Ipswich Town,IPS,MID,28,6,0
+2,McAidoo,Man City,MCI,MID,8,0,0
+2,Braithwaite,Man City,MCI,DEF,1,0,0
+3,Raya,Arsenal,ARS,GKP,90,0,0
+3,Gabriel,Arsenal,ARS,DEF,90,7,0
+3,Lewis-Skelly,Arsenal,ARS,MID,66,2,0
+3,Calafiori,Arsenal,ARS,DEF,66,1,0
+3,Hincapie,Arsenal,ARS,DEF,23,3,0
+3,White,Arsenal,ARS,DEF,90,6,0
+3,Saka,Arsenal,ARS,MID,89,4,0
+3,Rice,Arsenal,ARS,MID,90,6,0
+3,Ødegaard,Arsenal,ARS,MID,76,3,0
+3,Madueke,Arsenal,ARS,MID,1,1,0
+3,Merino,Arsenal,ARS,MID,13,0,0
+3,Zubimendi,Arsenal,ARS,MID,23,4,0
+3,Gyökeres,Arsenal,ARS,FWD,12,1,0
+3,Havertz,Arsenal,ARS,FWD,77,1,0
+3,Martinez,Chelsea,CHE,GKP,90,0,0
+3,Konsa,Arsenal,ARS,DEF,90,10,1
+3,Cash,Aston Villa,AVL,DEF,84,1,0
+3,Mings,Aston Villa,AVL,DEF,90,5,0
+3,Maatsen,Aston Villa,AVL,DEF,74,3,0
+3,Lindelöf,Aston Villa,AVL,DEF,90,4,0
+3,Rogers,Chelsea,CHE,MID,86,5,0
+3,Buendía,Aston Villa,AVL,MID,74,2,0
+3,Tielemans,Man Utd,MUN,MID,90,7,0
+3,McGinn,Aston Villa,AVL,MID,90,5,0
+3,Barkley,Aston Villa,AVL,MID,90,6,0
+3,Kamara,Aston Villa,AVL,MID,90,10,0
+3,George Hemmings,Aston Villa,AVL,MID,74,7,0
+3,Alysson,Aston Villa,AVL,MID,15,1,0
+3,Abraham,Aston Villa,AVL,FWD,5,1,0
+3,Petrović,Bournemouth,BOU,GKP,90,0,0
+3,Hill,Bournemouth,BOU,DEF,90,6,0
+3,Truffert,Bournemouth,BOU,DEF,90,6,0
+3,Smith,Bournemouth,BOU,DEF,90,4,0
+3,Rayan,Bournemouth,BOU,MID,88,2,0
+3,Tavernier,Bournemouth,BOU,MID,88,9,0
+3,Scott,Bournemouth,BOU,MID,90,11,0
+3,Kluivert,Bournemouth,BOU,MID,75,4,0
+3,Cook,Bournemouth,BOU,MID,14,1,0
+3,Gannon-Doak,Bournemouth,BOU,MID,1,2,0
+3,Adams,Bournemouth,BOU,MID,75,12,1
+3,Brooks,Bournemouth,BOU,MID,14,0,0
+3,Christie,Bournemouth,BOU,MID,1,0,0
+3,Evanilson,Bournemouth,BOU,FWD,90,7,0
+3,Kelleher,Brentford,BRE,GKP,90,0,0
+3,Collins,Brentford,BRE,DEF,16,1,0
+3,Lewis-Potter,Brentford,BRE,MID,90,6,0
+3,Ajer,Brentford,BRE,DEF,90,5,0
+3,Kayode,Brentford,BRE,DEF,45,5,0
+3,Hickey,Brentford,BRE,DEF,45,5,0
+3,Pinnock,Coventry City,COV,DEF,90,13,1
+3,Schuster,Brentford,BRE,DEF,73,10,1
+3,Schade,Brentford,BRE,MID,90,5,0
+3,O.Dango,Brentford,BRE,MID,45,11,0
+3,Damsgaard,Brentford,BRE,MID,85,4,0
+3,Janelt,Brentford,BRE,MID,90,12,1
+3,Yarmoliuk,Brentford,BRE,MID,45,5,0
+3,Onyeka,Coventry City,COV,MID,62,3,0
+3,Anthony,Brentford,BRE,MID,45,4,0
+3,Thiago,Brentford,BRE,FWD,90,6,0
+3,Wilson,Brentford,BRE,FWD,4,1,0
+3,Verbruggen,Brighton,BHA,GKP,90,0,0
+3,Rushworth,Coventry City,COV,GKP,90,0,0
+3,Van Hecke,Spurs,TOT,DEF,90,4,0
+3,F.Kadıoğlu,Brighton,BHA,DEF,77,5,0
+3,Boscagli,Brighton,BHA,DEF,90,4,0
+3,De Cuyper,Brighton,BHA,DEF,76,2,0
+3,Dunk,Brighton,BHA,DEF,90,12,1
+3,Costinha,Brighton,BHA,DEF,12,1,0
+3,Groß,Brighton,BHA,MID,90,4,0
+3,Gomez,Brighton,BHA,MID,90,9,0
+3,Ayari,Brighton,BHA,MID,90,3,0
+3,Welbeck,Chelsea,CHE,FWD,3,0,0
+3,Kostoulas,Brighton,BHA,FWD,90,8,0
+3,James,Chelsea,CHE,DEF,90,3,0
+3,Gusto,Chelsea,CHE,DEF,30,2,0
+3,Fofana,Chelsea,CHE,DEF,90,17,1
+3,Hato,Chelsea,CHE,DEF,59,6,0
+3,Acheampong,Chelsea,CHE,DEF,90,1,0
+3,Disasi,Crystal Palace,CRY,DEF,90,13,1
+3,Palmer,Chelsea,CHE,MID,90,3,0
+3,Enzo,Man City,MCI,MID,75,3,0
+3,Neto,Chelsea,CHE,MID,80,7,0
+3,Estêvão,Chelsea,CHE,MID,9,0,0
+3,Garnacho,Aston Villa,AVL,MID,15,0,0
+3,Lavia,Chelsea,CHE,MID,59,6,0
+3,Andrey Santos,Man Utd,MUN,MID,6,4,0
+3,João Pedro,Chelsea,CHE,FWD,90,1,0
+3,N.Jackson,Aston Villa,AVL,FWD,84,2,0
+3,Delap,Nott'm Forest,NFO,FWD,73,5,0
+3,Thomas,Coventry City,COV,DEF,90,12,1
+3,van Ewijk,Coventry City,COV,DEF,90,11,1
+3,Dasilva,Coventry City,COV,DEF,84,7,0
+3,Amenda,Coventry City,COV,DEF,90,3,0
+3,Rudoni,Coventry City,COV,MID,62,5,0
+3,Grimes,Coventry City,COV,MID,90,8,0
+3,Mason-Clark,Coventry City,COV,MID,70,5,0
+3,Tchaouna,Coventry City,COV,MID,27,1,0
+3,Thomas-Asante,Coventry City,COV,FWD,19,3,0
+3,Simms,Coventry City,COV,FWD,19,0,0
+3,Henderson,Crystal Palace,CRY,GKP,90,0,0
+3,Lacroix,Chelsea,CHE,DEF,90,11,1
+3,Muñoz,Nott'm Forest,NFO,DEF,31,1,0
+3,Richards,Crystal Palace,CRY,DEF,90,9,0
+3,Canvot,Crystal Palace,CRY,DEF,90,9,0
+3,Mitchell,Crystal Palace,CRY,DEF,73,6,0
+3,Mingueza,Crystal Palace,CRY,DEF,1,1,0
+3,Johnson,Everton,EVE,MID,65,8,0
+3,Wharton,Crystal Palace,CRY,MID,90,8,0
+3,Yeremy,Crystal Palace,CRY,MID,88,5,0
+3,Hughes,Crystal Palace,CRY,MID,16,3,0
+3,Kamada,Crystal Palace,CRY,MID,88,4,0
+3,Strand Larsen,Crystal Palace,CRY,FWD,45,4,0
+3,Nketiah,Crystal Palace,CRY,FWD,45,2,0
+3,Pickford,Everton,EVE,GKP,90,0,0
+3,Tarkowski,Everton,EVE,DEF,90,12,1
+3,Branthwaite,Everton,EVE,DEF,90,11,1
+3,Mykolenko,Everton,EVE,DEF,90,6,0
+3,Dewsbury-Hall,Everton,EVE,MID,90,11,0
+3,Ndiaye,Man City,MCI,MID,86,5,0
+3,Grealish,Everton,EVE,MID,24,1,0
+3,Garner,Everton,EVE,MID,76,8,0
+3,George,Everton,EVE,MID,90,4,0
+3,Armstrong,Everton,EVE,MID,90,5,0
+3,Röhl,Everton,EVE,MID,74,6,0
+3,Hackney,Everton,EVE,MID,15,1,0
+3,Barry,Everton,EVE,FWD,90,4,0
+3,Leno,Fulham,FUL,GKP,90,0,0
+3,Andersen,Fulham,FUL,DEF,90,7,0
+3,Robinson,Fulham,FUL,DEF,78,5,0
+3,Bassey,Fulham,FUL,DEF,90,2,0
+3,Castagne,Fulham,FUL,DEF,90,7,0
+3,Diop,Ipswich Town,IPS,DEF,90,11,1
+3,Wilson,Leeds,LEE,MID,17,1,0
+3,Iwobi,Fulham,FUL,MID,82,4,0
+3,Smith Rowe,Fulham,FUL,MID,11,0,0
+3,Bobb,Fulham,FUL,MID,78,4,0
+3,Berge,Fulham,FUL,MID,29,2,0
+3,Lukić,Ipswich Town,IPS,MID,90,4,0
+3,King,Fulham,FUL,MID,90,7,0
+3,Sessegnon,Fulham,FUL,DEF,11,1,0
+3,Muniz,Fulham,FUL,FWD,7,0,0
+3,Egan,Hull City,HUL,DEF,90,7,0
+3,Ajayi,Hull City,HUL,DEF,90,6,0
+3,Coyle,Hull City,HUL,DEF,63,0,0
+3,Giles,Hull City,HUL,DEF,90,4,0
+3,Belloumi,Hull City,HUL,MID,81,12,1
+3,Slater,Hull City,HUL,MID,90,6,0
+3,McBurnie,Hull City,HUL,FWD,90,3,0
+3,O'Shea,Ipswich Town,IPS,DEF,90,11,1
+3,Davis,Ipswich Town,IPS,DEF,90,6,0
+3,Greaves,Ipswich Town,IPS,DEF,90,7,0
+3,Clarke,Ipswich Town,IPS,MID,24,2,0
+3,Fatawu,Ipswich Town,IPS,MID,78,6,0
+3,Emersonn,Ipswich Town,IPS,FWD,65,3,0
+3,McAteer,Ipswich Town,IPS,MID,11,1,0
+3,Bijol,Leeds,LEE,DEF,29,4,0
+3,Struijk,Brighton,BHA,DEF,1,0,0
+3,Bogle,Leeds,LEE,DEF,60,2,0
+3,Gudmundsson,Leeds,LEE,DEF,90,5,0
+3,Justin,Leeds,LEE,DEF,90,10,1
+3,Muharemović,Leeds,LEE,DEF,90,13,1
+3,Stach,Leeds,LEE,MID,90,6,0
+3,Okafor,Leeds,LEE,MID,61,0,0
+3,Aaronson,Leeds,LEE,MID,28,0,0
+3,Ampadu,Leeds,LEE,MID,90,11,0
+3,Tanaka,Leeds,LEE,MID,72,8,0
+3,Calvert-Lewin,Leeds,LEE,FWD,72,3,0
+3,Nmecha,Leeds,LEE,FWD,17,0,0
+3,A.Becker,Liverpool,LIV,GKP,90,0,0
+3,Virgil,Liverpool,LIV,DEF,90,7,0
+3,Kerkez,Liverpool,LIV,DEF,90,5,0
+3,Jacquet,Liverpool,LIV,DEF,90,9,0
+3,Wirtz,Liverpool,LIV,MID,90,4,0
+3,Gakpo,Liverpool,LIV,MID,90,10,0
+3,Szoboszlai,Liverpool,LIV,MID,90,9,0
+3,Gravenberch,Liverpool,LIV,MID,26,2,0
+3,Mac Allister,Liverpool,LIV,MID,83,11,0
+3,Nyoni,Liverpool,LIV,MID,6,0,0
+3,Munoz,Liverpool,LIV,MID,63,4,0
+3,Isak,Liverpool,LIV,FWD,63,3,0
+3,Koumas,Liverpool,LIV,MID,1,0,0
+3,Donnarumma,Man City,MCI,GKP,90,0,0
+3,Trafford,Leeds,LEE,GKP,90,0,0
+3,Guéhi,Man City,MCI,DEF,90,9,0
+3,Rúben,Man City,MCI,DEF,90,3,0
+3,Gvardiol,Man City,MCI,DEF,90,8,0
+3,Khusanov,Man City,MCI,DEF,90,6,0
+3,Semenyo,Man City,MCI,MID,90,4,0
+3,Foden,Man City,MCI,MID,24,1,0
+3,Cherki,Man City,MCI,MID,65,3,0
+3,Marmoush,Spurs,TOT,FWD,83,0,0
+3,Sávio,Spurs,TOT,MID,60,0,0
+3,N.Gonzalez,Newcastle,NEW,MID,76,7,0
+3,Haaland,Man City,MCI,FWD,90,7,0
+3,Lammens,Man Utd,MUN,GKP,90,0,0
+3,Dorgu,Man Utd,MUN,MID,20,3,0
+3,Dalot,Man Utd,MUN,DEF,83,4,0
+3,Maguire,Man Utd,MUN,DEF,90,12,1
+3,Martinez,Man Utd,MUN,DEF,90,10,1
+3,Yoro,Man Utd,MUN,DEF,6,3,0
+3,Mazraoui,Man Utd,MUN,DEF,1,1,0
+3,Shaw,Man Utd,MUN,DEF,90,8,0
+3,B.Fernandes,Man Utd,MUN,MID,90,2,0
+3,Mbeumo,Man Utd,MUN,MID,90,8,0
+3,Cunha,Man Utd,MUN,MID,69,3,0
+3,Rashford,Man Utd,MUN,MID,69,4,0
+3,Mainoo,Man Utd,MUN,MID,83,15,1
+3,Šeško,Man Utd,MUN,FWD,20,0,0
+3,Thiaw,Newcastle,NEW,DEF,90,3,0
+3,Botman,Newcastle,NEW,DEF,90,9,0
+3,Hall,Newcastle,NEW,DEF,89,6,0
+3,Livramento,Newcastle,NEW,DEF,1,0,0
+3,Barnes,Newcastle,NEW,MID,90,6,0
+3,Elanga,Newcastle,NEW,MID,76,4,0
+3,Tonali,Spurs,TOT,MID,90,12,1
+3,J.Ramsey,Newcastle,NEW,MID,27,4,0
+3,J.Murphy,Newcastle,NEW,MID,13,1,0
+3,L.Miley,Newcastle,NEW,MID,62,4,0
+3,Willock,Newcastle,NEW,MID,62,3,0
+3,Steur,Newcastle,NEW,MID,13,2,0
+3,Wissa,Newcastle,NEW,FWD,90,3,0
+3,Sels,Nott'm Forest,NFO,GKP,90,0,0
+3,N.Williams,Nott'm Forest,NFO,DEF,90,6,0
+3,Milenković,Nott'm Forest,NFO,DEF,90,11,1
+3,Murillo,Nott'm Forest,NFO,DEF,89,10,1
+3,Aina,Nott'm Forest,NFO,DEF,58,7,0
+3,Jair Cunha,Nott'm Forest,NFO,DEF,90,12,1
+3,Gibbs-White,Nott'm Forest,NFO,MID,90,7,0
+3,Anderson,Man City,MCI,MID,90,11,0
+3,Ndoye,Nott'm Forest,NFO,MID,58,5,0
+3,McAtee,Nott'm Forest,NFO,MID,90,7,0
+3,Wood,Nott'm Forest,NFO,FWD,16,0,0
+3,Igor Jesus,Nott'm Forest,NFO,FWD,31,1,0
+3,Awoniyi,Coventry City,COV,FWD,70,5,0
+3,Kinsky,Spurs,TOT,GKP,90,0,0
+3,Pedro Porro,Spurs,TOT,DEF,90,4,0
+3,Danso,Sunderland,SUN,DEF,90,8,0
+3,Robertson,Spurs,TOT,DEF,29,1,0
+3,Van de Ven,Spurs,TOT,DEF,90,9,0
+3,Vuskovic,Brighton,BHA,DEF,90,10,1
+3,Udogie,Spurs,TOT,DEF,60,3,0
+3,Kudus,Spurs,TOT,MID,29,3,0
+3,Tel,Spurs,TOT,MID,73,2,0
+3,Bentancur,Spurs,TOT,MID,90,17,1
+3,Gallagher,Spurs,TOT,MID,83,11,0
+3,Fernandes,Spurs,TOT,MID,7,0,0
+3,Solanke,Spurs,TOT,FWD,6,1,0
+3,Roefs,Sunderland,SUN,GKP,90,0,0
+3,Ballard,Sunderland,SUN,DEF,90,10,1
+3,Mukiele,Sunderland,SUN,DEF,90,14,1
+3,Hume,Sunderland,SUN,DEF,26,2,0
+3,Reinildo,Sunderland,SUN,DEF,90,7,0
+3,Meunier,Sunderland,SUN,DEF,63,2,0
+3,E.Le Fée,Sunderland,SUN,MID,90,6,0
+3,Xhaka,Sunderland,SUN,MID,90,15,1
+3,Sadiki,Sunderland,SUN,MID,73,3,0
+3,N.Angulo,Sunderland,SUN,MID,63,5,0
+3,Brobbey,Sunderland,SUN,FWD,90,3,0
+3,Isidor,Sunderland,SUN,FWD,26,2,0
+3,Tzolis,Arsenal,ARS,MID,90,8,0
+3,Schlager,Nott'm Forest,NFO,MID,90,10,0
+3,Maeda,Ipswich Town,IPS,MID,65,5,0
+3,Scherpen,Ipswich Town,IPS,GKP,90,0,0
+3,M.Sangaré,Brentford,BRE,MID,45,5,0
+3,Silva,Bournemouth,BOU,DEF,90,8,0
+3,Horníček,Newcastle,NEW,GKP,90,0,0
+3,Gonzalo,Fulham,FUL,FWD,90,7,0
+3,Palacios,Fulham,FUL,MID,60,0,0
+3,Tzolakis,Hull City,HUL,GKP,90,0,0
+3,Hjertø-Dahl,Hull City,HUL,MID,8,1,0
+3,Yirenkyi,Coventry City,COV,MID,27,6,0
+3,Stroud,Hull City,HUL,MID,62,2,0
+3,Mudryk,Spurs,TOT,MID,16,0,0
+3,Araujo,Liverpool,LIV,DEF,90,10,1
+3,Charles,Fulham,FUL,MID,78,11,0
+3,Diomande,Nott'm Forest,NFO,DEF,1,0,0
+3,Chavarria,Chelsea,CHE,DEF,30,2,0
+3,Hamer,Coventry City,COV,MID,5,2,0
+3,Herrington,Hull City,HUL,DEF,19,2,0
+3,Mendy,Hull City,HUL,DEF,70,10,1
+3,Khalaili,Crystal Palace,CRY,DEF,90,10,1
+3,Gourna-Douath,Hull City,HUL,MID,81,10,0
+3,Enciso,Ipswich Town,IPS,MID,90,5,0
+3,Ouattara,Ipswich Town,IPS,DEF,12,0,0
+3,Dedić,Newcastle,NEW,DEF,90,1,0
+3,David,Brighton,BHA,FWD,13,0,0
+3,Ruggeri,Aston Villa,AVL,DEF,15,1,0
+3,Suzuki,Aston Villa,AVL,GKP,90,0,0
+3,Elvedi,Leeds,LEE,DEF,90,10,1
+3,Yalcouyé,Brighton,BHA,MID,90,5,0
+3,Jebbison,Bournemouth,BOU,FWD,1,0,0
+3,Wan-Bissaka,Aston Villa,AVL,DEF,5,1,0
+3,Bouaddi,Man City,MCI,MID,14,5,0
+3,Cho,Hull City,HUL,MID,8,0,0
+3,Palacios,Ipswich Town,IPS,MID,77,19,1
+3,McAidoo,Man City,MCI,MID,3,4,0
+3,Barcola,Liverpool,LIV,MID,26,0,0
+3,Fernandez-Pardo,Newcastle,NEW,FWD,27,1,0
+3,Larsson,Fulham,FUL,MID,11,1,0
+3,Norton-Cuffy,Hull City,HUL,DEF,26,1,0
+3,Flemming,Ipswich Town,IPS,FWD,24,0,0
+3,Thomas,Hull City,HUL,MID,27,1,0
+3,Chilwell,Crystal Palace,CRY,DEF,16,0,0
+3,Timber,Crystal Palace,CRY,MID,73,6,0
+3,Fofana,Sunderland,SUN,MID,16,0,0
+3,Osorio,Crystal Palace,CRY,MID,1,1,0
+3,Maitland-Niles,Everton,EVE,DEF,13,0,0

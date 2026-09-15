@@ -1,0 +1,597 @@
+{
+  "season": "2026-27",
+  "gameweek": 4,
+  "captured_at": "2026-09-13T11:35:41+00:00",
+  "note": "GW4 mid-week: 7 of 10 matches played (provisional), COV-BHA / MUN-MCI / LEE-NEW to come",
+  "league": 14074,
+  "entries": [
+    1214902,
+    1839018,
+    106621,
+    59121,
+    697829,
+    1822529,
+    1141204,
+    5416475,
+    5927562,
+    8620371,
+    68978,
+    46116,
+    5261548,
+    8098746,
+    7772798,
+    7419481,
+    4109748,
+    3465753,
+    696521,
+    5139489,
+    7608038,
+    6717125
+  ],
+  "gameweek_state": {
+    "deadline_time": "2026-09-12T12:30:00Z",
+    "finished": false,
+    "data_checked": false,
+    "average_entry_score": 42,
+    "highest_score": 121
+  },
+  "matches": {
+    "total": 10,
+    "started": 7,
+    "finished": 0
+  },
+  "files": {
+    "bootstrap-static.json.gz": {
+      "url": "bootstrap-static/",
+      "bytes_raw": 1749514,
+      "bytes_stored": 158554,
+      "sha256": "e97f11545f82a111447b8c73293ed2beb0750f395ee5d7d6545217ebcf1f0a9b"
+    },
+    "fixtures.json.gz": {
+      "url": "fixtures/",
+      "bytes_raw": 202479,
+      "bytes_stored": 14453,
+      "sha256": "58e46dcb83ed48ecfcc693f1fc2182ca55e5b193b69894920c53103162f7dcc0"
+    },
+    "event-04-live.json.gz": {
+      "url": "event/4/live/",
+      "bytes_raw": 461954,
+      "bytes_stored": 10556,
+      "sha256": "29b0c36e5454e3748f79fc9cba5ff374b6768e1b97f34d00a88ea1d1348ec377"
+    },
+    "league-14074-standings.json.gz": {
+      "url": "leagues-classic/14074/standings/",
+      "bytes_raw": 4613,
+      "bytes_stored": 1474,
+      "sha256": "0c56721c92dba9f7b03697fe3523444ae23eabc00d34e75cef24ce18db39cc5e"
+    },
+    "entries/1214902/entry.json.gz": {
+      "url": "entry/1214902/",
+      "bytes_raw": 5346,
+      "bytes_stored": 1157,
+      "sha256": "0afd8a5d1183bcae9f546aac89fc473380825f69f409f0c669467d44ff26f7b5"
+    },
+    "entries/1214902/history.json.gz": {
+      "url": "entry/1214902/history/",
+      "bytes_raw": 1846,
+      "bytes_stored": 528,
+      "sha256": "3e9d3ee00e86d7df7bf9f91cd1dbc589008335c6189b2f9b495dbae161ee0a75"
+    },
+    "entries/1214902/transfers.json.gz": {
+      "url": "entry/1214902/transfers/",
+      "bytes_raw": 431,
+      "bytes_stored": 187,
+      "sha256": "2d44125aaa73e79b129dbf58fd4e2beee906340177f2f78b886b3d555cf20c66"
+    },
+    "entries/1214902/picks-gw04.json.gz": {
+      "url": "entry/1214902/event/4/picks/",
+      "bytes_raw": 1862,
+      "bytes_stored": 397,
+      "sha256": "98cda8742187819eaf75d65b0b857cdcc99940c2ba6bdfb864f416222db7f967"
+    },
+    "entries/1839018/entry.json.gz": {
+      "url": "entry/1839018/",
+      "bytes_raw": 7571,
+      "bytes_stored": 1470,
+      "sha256": "dbace554e6afec68e834b1672b8da442b4fa07ff2cf4dc95cd396dea25c69729"
+    },
+    "entries/1839018/history.json.gz": {
+      "url": "entry/1839018/history/",
+      "bytes_raw": 1377,
+      "bytes_stored": 444,
+      "sha256": "c04c7bd6f706759461550c6d36ff8383381133a8af7e1424d8f318097a6ac67e"
+    },
+    "entries/1839018/transfers.json.gz": {
+      "url": "entry/1839018/transfers/",
+      "bytes_raw": 431,
+      "bytes_stored": 201,
+      "sha256": "965d46f801aa2185686577e05fb2921db988072af4432b97a67516730e83b67a"
+    },
+    "entries/1839018/picks-gw04.json.gz": {
+      "url": "entry/1839018/event/4/picks/",
+      "bytes_raw": 1864,
+      "bytes_stored": 399,
+      "sha256": "03a303e282f3df227f10327018bbd93a590115682f5cfae6e420eb005287d13e"
+    },
+    "entries/106621/entry.json.gz": {
+      "url": "entry/106621/",
+      "bytes_raw": 6077,
+      "bytes_stored": 1264,
+      "sha256": "96ec0389e0e086b48ff05ff90a60fc63b113d8a1c3816e93593963ab2f291cd6"
+    },
+    "entries/106621/history.json.gz": {
+      "url": "entry/106621/history/",
+      "bytes_raw": 1861,
+      "bytes_stored": 529,
+      "sha256": "701155329b90280c10c21b6f669f8c48de4ecf72909334b98ccb4d61ee755192"
+    },
+    "entries/106621/transfers.json.gz": {
+      "url": "entry/106621/transfers/",
+      "bytes_raw": 5232,
+      "bytes_stored": 803,
+      "sha256": "5cf682d63c17492297c95c08483967bfc079b51ac99bf45b22f17992846b6f26"
+    },
+    "entries/106621/picks-gw04.json.gz": {
+      "url": "entry/106621/event/4/picks/",
+      "bytes_raw": 1866,
+      "bytes_stored": 398,
+      "sha256": "dfdb25e20422facfcc1e089a9b4984d3d17b6a1254b3283c715c7f1bff8f3f8f"
+    },
+    "entries/59121/entry.json.gz": {
+      "url": "entry/59121/",
+      "bytes_raw": 14690,
+      "bytes_stored": 2223,
+      "sha256": "f229810fb8472883cb84d24b4d1ca0e661c247bb475a34e848f3dc7a2dedfc1e"
+    },
+    "entries/59121/history.json.gz": {
+      "url": "entry/59121/history/",
+      "bytes_raw": 2215,
+      "bytes_stored": 605,
+      "sha256": "e37cf33ee36974dcf5ec98f74d84fbb3de4ae72fb6a43d577765f4a53f8b6b3d"
+    },
+    "entries/59121/transfers.json.gz": {
+      "url": "entry/59121/transfers/",
+      "bytes_raw": 5904,
+      "bytes_stored": 760,
+      "sha256": "1b55d11685ebfbe18351fbae60e59aca53d0330df9d5a57f3f3d37e2faec13f3"
+    },
+    "entries/59121/picks-gw04.json.gz": {
+      "url": "entry/59121/event/4/picks/",
+      "bytes_raw": 1858,
+      "bytes_stored": 397,
+      "sha256": "7387cf526ea4c5d20c0616b7e9d66b596473b752db84f895995bbf5e018da65d"
+    },
+    "entries/697829/entry.json.gz": {
+      "url": "entry/697829/",
+      "bytes_raw": 8971,
+      "bytes_stored": 1607,
+      "sha256": "1fad2a62198a960dca268a89b386cf754287c2b3c66408fd49e0265d0d5d783d"
+    },
+    "entries/697829/history.json.gz": {
+      "url": "entry/697829/history/",
+      "bytes_raw": 1904,
+      "bytes_stored": 522,
+      "sha256": "f86614bd0602cfa6e505e9e6c5e6193f5edbbf11844671d20e818fc72bb9985b"
+    },
+    "entries/697829/transfers.json.gz": {
+      "url": "entry/697829/transfers/",
+      "bytes_raw": 426,
+      "bytes_stored": 191,
+      "sha256": "5e4586541857ad248af2ba2b4659fbe1ff7f2b7acc3af43e8db6e8034aa64fdb"
+    },
+    "entries/697829/picks-gw04.json.gz": {
+      "url": "entry/697829/event/4/picks/",
+      "bytes_raw": 1863,
+      "bytes_stored": 394,
+      "sha256": "672f01f3312e7fa8e136d1d1854c686c1868c1795c51560f413fa8f347fa0a94"
+    },
+    "entries/1822529/entry.json.gz": {
+      "url": "entry/1822529/",
+      "bytes_raw": 15678,
+      "bytes_stored": 2554,
+      "sha256": "477e78a7c3f1c5247da233b3bb63a3f62589bbb47f6a170cb509a486aa24d716"
+    },
+    "entries/1822529/history.json.gz": {
+      "url": "entry/1822529/history/",
+      "bytes_raw": 2090,
+      "bytes_stored": 600,
+      "sha256": "0a01cfffef03bd6bf7bfe03e2d16972e1fa577ba0e14c96282f3be6d9ac64367"
+    },
+    "entries/1822529/transfers.json.gz": {
+      "url": "entry/1822529/transfers/",
+      "bytes_raw": 1715,
+      "bytes_stored": 345,
+      "sha256": "da8f39db73db7744400346c6286d6f50323c4c61e75d996b9b01e2867e53d915"
+    },
+    "entries/1822529/picks-gw04.json.gz": {
+      "url": "entry/1822529/event/4/picks/",
+      "bytes_raw": 1869,
+      "bytes_stored": 402,
+      "sha256": "43ecc75523d14a32705cbbf86a603ff5359841d085317dc75f162b0b57441037"
+    },
+    "entries/1141204/entry.json.gz": {
+      "url": "entry/1141204/",
+      "bytes_raw": 16290,
+      "bytes_stored": 2556,
+      "sha256": "2911ad45cbad13cfd1b303c9932295fac6a272dbb30abb0e330ddd50bf1e9aa3"
+    },
+    "entries/1141204/history.json.gz": {
+      "url": "entry/1141204/history/",
+      "bytes_raw": 2206,
+      "bytes_stored": 582,
+      "sha256": "790550b93640f9a10a624fbe27ffafe9e1fc72a2c74efc4a24a99e2aa49f8d6b"
+    },
+    "entries/1141204/transfers.json.gz": {
+      "url": "entry/1141204/transfers/",
+      "bytes_raw": 429,
+      "bytes_stored": 199,
+      "sha256": "153602a4eeef8280c96a0ae0ee4914a96d5339325647cad8bbcbaa02a3826ca3"
+    },
+    "entries/1141204/picks-gw04.json.gz": {
+      "url": "entry/1141204/event/4/picks/",
+      "bytes_raw": 1864,
+      "bytes_stored": 398,
+      "sha256": "dbce8a68d7394a717b3c9aeae1546eaf43e8880bb9a2d126776ff671e2fed949"
+    },
+    "entries/5416475/entry.json.gz": {
+      "url": "entry/5416475/",
+      "bytes_raw": 5386,
+      "bytes_stored": 1190,
+      "sha256": "1cddb462e0a724f2e1ca9f7f24e40874d7d0154e7e650124f0a03d02e4a9a0b3"
+    },
+    "entries/5416475/history.json.gz": {
+      "url": "entry/5416475/history/",
+      "bytes_raw": 1381,
+      "bytes_stored": 441,
+      "sha256": "fc0f9fa3383a48d3e3c3638a4962f5bee9d094f83ad54d6f9e7c084835f631fb"
+    },
+    "entries/5416475/transfers.json.gz": {
+      "url": "entry/5416475/transfers/",
+      "bytes_raw": 431,
+      "bytes_stored": 194,
+      "sha256": "dd47781b08bdd468d884ede68205517d6a48c16405eed21eff7d59a8105e3118"
+    },
+    "entries/5416475/picks-gw04.json.gz": {
+      "url": "entry/5416475/event/4/picks/",
+      "bytes_raw": 1866,
+      "bytes_stored": 402,
+      "sha256": "3a632029377d9989c32d19e580afcf9111bbaba995c1d89a7bb066a97d3c27d4"
+    },
+    "entries/5927562/entry.json.gz": {
+      "url": "entry/5927562/",
+      "bytes_raw": 6169,
+      "bytes_stored": 1314,
+      "sha256": "777bd87eb0e877c0f7b80799ba5ec341c0dba27ebe4334200fc31ac2a1dbddbb"
+    },
+    "entries/5927562/history.json.gz": {
+      "url": "entry/5927562/history/",
+      "bytes_raw": 990,
+      "bytes_stored": 308,
+      "sha256": "0930318fffd1c1239ec3174e5d0bb082e990211b27b0c05a0ecaf0b77de594a2"
+    },
+    "entries/5927562/transfers.json.gz": {
+      "url": "entry/5927562/transfers/",
+      "bytes_raw": 2,
+      "bytes_stored": 37,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "entries/5927562/picks-gw04.json.gz": {
+      "url": "entry/5927562/event/4/picks/",
+      "bytes_raw": 1860,
+      "bytes_stored": 397,
+      "sha256": "3d0afdf13111eefc804531aee3a498d6fc34cc0c0085b2be01a6c49e130336f7"
+    },
+    "entries/8620371/entry.json.gz": {
+      "url": "entry/8620371/",
+      "bytes_raw": 6832,
+      "bytes_stored": 1382,
+      "sha256": "ee4f05874d666a610d0353ba34e2dcdc3d1443e734dabca6c7eae69a9d25800d"
+    },
+    "entries/8620371/history.json.gz": {
+      "url": "entry/8620371/history/",
+      "bytes_raw": 1410,
+      "bytes_stored": 426,
+      "sha256": "4fd7e5a374e01652dd2df8d0de91fe62800a1867a0dd1aa46e94a9644f4ab0fc"
+    },
+    "entries/8620371/transfers.json.gz": {
+      "url": "entry/8620371/transfers/",
+      "bytes_raw": 286,
+      "bytes_stored": 173,
+      "sha256": "6db3c4afa67b8890440fbff5b49bba44a373829f580c1815d83736b37dbf16c1"
+    },
+    "entries/8620371/picks-gw04.json.gz": {
+      "url": "entry/8620371/event/4/picks/",
+      "bytes_raw": 1867,
+      "bytes_stored": 405,
+      "sha256": "ce5abe1c86713d5c5de77998fb77c9879fa5e9cca328402ed520afe303f50903"
+    },
+    "entries/68978/entry.json.gz": {
+      "url": "entry/68978/",
+      "bytes_raw": 7638,
+      "bytes_stored": 1491,
+      "sha256": "75c059d12c34d4a7ac1df892642d5f185205c736b09a23a0d31659b5e16098de"
+    },
+    "entries/68978/history.json.gz": {
+      "url": "entry/68978/history/",
+      "bytes_raw": 2379,
+      "bytes_stored": 618,
+      "sha256": "5edfa97ca42f43ce9a49412e58b53234f78ea0ffa16c6b493d11bfb41d3828cf"
+    },
+    "entries/68978/transfers.json.gz": {
+      "url": "entry/68978/transfers/",
+      "bytes_raw": 2,
+      "bytes_stored": 37,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "entries/68978/picks-gw04.json.gz": {
+      "url": "entry/68978/event/4/picks/",
+      "bytes_raw": 1867,
+      "bytes_stored": 398,
+      "sha256": "fd069107b42c094490ffbb498ce88d8e17346bf24e0f09d1fb105f6c4d6f0ae3"
+    },
+    "entries/46116/entry.json.gz": {
+      "url": "entry/46116/",
+      "bytes_raw": 11230,
+      "bytes_stored": 1955,
+      "sha256": "bc405fe1f36947a742dbbaa493bae7f6935f21ad61f80222c7b3d998e9cc355b"
+    },
+    "entries/46116/history.json.gz": {
+      "url": "entry/46116/history/",
+      "bytes_raw": 2617,
+      "bytes_stored": 690,
+      "sha256": "6d1e916070a4a9c812e01d1c093d231c3ab5fbc938408ed4c721e2763953b612"
+    },
+    "entries/46116/transfers.json.gz": {
+      "url": "entry/46116/transfers/",
+      "bytes_raw": 2952,
+      "bytes_stored": 516,
+      "sha256": "eb0a9535c4a858926ead8a64414a77b029d231f7923b20661fd5eb6e23dd8b3e"
+    },
+    "entries/46116/picks-gw04.json.gz": {
+      "url": "entry/46116/event/4/picks/",
+      "bytes_raw": 1873,
+      "bytes_stored": 406,
+      "sha256": "522c5d2030a5bf21a12ab595f9074f8b4b7495ae84631f00024f3a8340619c3a"
+    },
+    "entries/5261548/entry.json.gz": {
+      "url": "entry/5261548/",
+      "bytes_raw": 4692,
+      "bytes_stored": 1130,
+      "sha256": "1cd0c1c326ae9f729477160e5cf2408c223b143a188074db9aa65972577b7f0d"
+    },
+    "entries/5261548/history.json.gz": {
+      "url": "entry/5261548/history/",
+      "bytes_raw": 1628,
+      "bytes_stored": 512,
+      "sha256": "4d0b6fc1a0058d8aa60e716255c64da0bac4c90f99d7c9ac21be1b1affbf9ca1"
+    },
+    "entries/5261548/transfers.json.gz": {
+      "url": "entry/5261548/transfers/",
+      "bytes_raw": 4419,
+      "bytes_stored": 610,
+      "sha256": "6bdaadf35e516ebf8b0ef2cff4aede37f9841df1730f78b16c1e1683851ba64c"
+    },
+    "entries/5261548/picks-gw04.json.gz": {
+      "url": "entry/5261548/event/4/picks/",
+      "bytes_raw": 1869,
+      "bytes_stored": 405,
+      "sha256": "dd18b60d7d1e1ece6f039ccefbadcfcccab0378f30bff6895919bc6ab37d855e"
+    },
+    "entries/8098746/entry.json.gz": {
+      "url": "entry/8098746/",
+      "bytes_raw": 6303,
+      "bytes_stored": 1402,
+      "sha256": "1a14d706067984b673180dee119de9d5002131c7761eb443eb0bb4f720cf6237"
+    },
+    "entries/8098746/history.json.gz": {
+      "url": "entry/8098746/history/",
+      "bytes_raw": 1415,
+      "bytes_stored": 422,
+      "sha256": "0404224a2d7120dade8076b9eba82011b04874be631758a96d3d0a04690467e1"
+    },
+    "entries/8098746/transfers.json.gz": {
+      "url": "entry/8098746/transfers/",
+      "bytes_raw": 428,
+      "bytes_stored": 198,
+      "sha256": "43fe4e9b2bb36cd325a76bff2b865e6360fa3d44ef97c6db7a552b4025629830"
+    },
+    "entries/8098746/picks-gw04.json.gz": {
+      "url": "entry/8098746/event/4/picks/",
+      "bytes_raw": 1865,
+      "bytes_stored": 401,
+      "sha256": "5a4c47e983898cbef0125cb659db5ff62fef641eb1272879e854c5ac07dee41e"
+    },
+    "entries/7772798/entry.json.gz": {
+      "url": "entry/7772798/",
+      "bytes_raw": 4709,
+      "bytes_stored": 1166,
+      "sha256": "b3b229ff6b6834dd5a29879431b8bf09bda05c997d9e5261f63f09e0772211e4"
+    },
+    "entries/7772798/history.json.gz": {
+      "url": "entry/7772798/history/",
+      "bytes_raw": 1138,
+      "bytes_stored": 394,
+      "sha256": "447a3d71474e2338710a69ff32d6c04d682d44e1dc963c3b288a7b3f74a0c3c5"
+    },
+    "entries/7772798/transfers.json.gz": {
+      "url": "entry/7772798/transfers/",
+      "bytes_raw": 430,
+      "bytes_stored": 191,
+      "sha256": "f5e3de9d24a405f167b6e0a38837fe1e9c57ed6b8ea8256682e33a87d956fcdf"
+    },
+    "entries/7772798/picks-gw04.json.gz": {
+      "url": "entry/7772798/event/4/picks/",
+      "bytes_raw": 1866,
+      "bytes_stored": 406,
+      "sha256": "bd11477e7d4d0bb5510da4c70c91a8d4e61b5827bc56155dc5972617e16283e1"
+    },
+    "entries/7419481/entry.json.gz": {
+      "url": "entry/7419481/",
+      "bytes_raw": 6142,
+      "bytes_stored": 1319,
+      "sha256": "2a9551904a4136b6a0a82f96494950fcab37c1d6024f9f826ff1ace963cec4dc"
+    },
+    "entries/7419481/history.json.gz": {
+      "url": "entry/7419481/history/",
+      "bytes_raw": 1164,
+      "bytes_stored": 378,
+      "sha256": "6d928dfe22d1cc8b996ae4b4b6eff0806c7721afc9449dc557640392cd2a10e5"
+    },
+    "entries/7419481/transfers.json.gz": {
+      "url": "entry/7419481/transfers/",
+      "bytes_raw": 429,
+      "bytes_stored": 178,
+      "sha256": "4dcacdabd7c240690eff94f95269d76dbacaa95a3fc8b0e210134dc7d5ca1110"
+    },
+    "entries/7419481/picks-gw04.json.gz": {
+      "url": "entry/7419481/event/4/picks/",
+      "bytes_raw": 1869,
+      "bytes_stored": 407,
+      "sha256": "fda7e4687a32466a1b2f612b76e01d84f6411ae8bf0a07c3fe60e70efcd35e18"
+    },
+    "entries/4109748/entry.json.gz": {
+      "url": "entry/4109748/",
+      "bytes_raw": 7078,
+      "bytes_stored": 1520,
+      "sha256": "1d0814241e3c2a0b2978ee7711a3299a028ba9acf105212b5a904151d2678ceb"
+    },
+    "entries/4109748/history.json.gz": {
+      "url": "entry/4109748/history/",
+      "bytes_raw": 1494,
+      "bytes_stored": 437,
+      "sha256": "8edb848d9f7d2942a0a39b212c1ad1c35ad6f1a3d29d98d8d642a515d5f89a99"
+    },
+    "entries/4109748/transfers.json.gz": {
+      "url": "entry/4109748/transfers/",
+      "bytes_raw": 2,
+      "bytes_stored": 37,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "entries/4109748/picks-gw04.json.gz": {
+      "url": "entry/4109748/event/4/picks/",
+      "bytes_raw": 1864,
+      "bytes_stored": 400,
+      "sha256": "1b6d48e06ae8baa8456cb8afae2d1d87f4ad4b73f73eecaace02cac2942761a2"
+    },
+    "entries/3465753/entry.json.gz": {
+      "url": "entry/3465753/",
+      "bytes_raw": 5434,
+      "bytes_stored": 1236,
+      "sha256": "78c4b40b85c3f42c7d5d750e6235a41a15a96f6ac664015ee3711e83eb1bc8fb"
+    },
+    "entries/3465753/history.json.gz": {
+      "url": "entry/3465753/history/",
+      "bytes_raw": 1053,
+      "bytes_stored": 369,
+      "sha256": "e2e6cc85cfd14d1603c9326db066c552487334b45b09cf9b56ec424292fb97d3"
+    },
+    "entries/3465753/transfers.json.gz": {
+      "url": "entry/3465753/transfers/",
+      "bytes_raw": 568,
+      "bytes_stored": 205,
+      "sha256": "92b1ba9c1088b31c5a9adb5e5ae0be263dfc0b88ad191ee4f373624fe64ba695"
+    },
+    "entries/3465753/picks-gw04.json.gz": {
+      "url": "entry/3465753/event/4/picks/",
+      "bytes_raw": 1865,
+      "bytes_stored": 407,
+      "sha256": "67df07ea166361c1cd4856d2b14bbf43ab2cdc5f694c85e8518e37c6bee7da92"
+    },
+    "entries/696521/entry.json.gz": {
+      "url": "entry/696521/",
+      "bytes_raw": 9901,
+      "bytes_stored": 1861,
+      "sha256": "b42b53ae76a9ec5a8a8e707865b248df61c05c27a3a01b80b65a3f5d1943c971"
+    },
+    "entries/696521/history.json.gz": {
+      "url": "entry/696521/history/",
+      "bytes_raw": 2546,
+      "bytes_stored": 648,
+      "sha256": "7e90ac81ac281c8dc2479d9ff5b31bc5e65af3d747d3de90320a35c1d7c95b0d"
+    },
+    "entries/696521/transfers.json.gz": {
+      "url": "entry/696521/transfers/",
+      "bytes_raw": 425,
+      "bytes_stored": 190,
+      "sha256": "635c29ad213f6c7d8f0b192c6f47e1752d774b416a9f046a6407101e23b457ca"
+    },
+    "entries/696521/picks-gw04.json.gz": {
+      "url": "entry/696521/event/4/picks/",
+      "bytes_raw": 1867,
+      "bytes_stored": 403,
+      "sha256": "6528db316083bdfc5936e9818c3b58a900a5e58706ea90deb767aa9b4edab6eb"
+    },
+    "entries/5139489/entry.json.gz": {
+      "url": "entry/5139489/",
+      "bytes_raw": 7635,
+      "bytes_stored": 1526,
+      "sha256": "3dabd14962ed3f23dda53855b3a1ef7ed21738921ef498272da4e63feb86167c"
+    },
+    "entries/5139489/history.json.gz": {
+      "url": "entry/5139489/history/",
+      "bytes_raw": 1786,
+      "bytes_stored": 535,
+      "sha256": "ed2df17c17d9b8903cd552fa95355a1bbd5fdec7cb6ba868066c7456cf060bf6"
+    },
+    "entries/5139489/transfers.json.gz": {
+      "url": "entry/5139489/transfers/",
+      "bytes_raw": 1283,
+      "bytes_stored": 286,
+      "sha256": "6a8c2bf82ccff64261ec7af502b281348547bcef25a813576672c5a1a387c21f"
+    },
+    "entries/5139489/picks-gw04.json.gz": {
+      "url": "entry/5139489/event/4/picks/",
+      "bytes_raw": 1872,
+      "bytes_stored": 412,
+      "sha256": "890237bf78bb2c9b3e3aece80564465f20e7234b49c75141259f6a9b7a32f344"
+    },
+    "entries/7608038/entry.json.gz": {
+      "url": "entry/7608038/",
+      "bytes_raw": 7870,
+      "bytes_stored": 1648,
+      "sha256": "7a9f9edefd0922e47e48e0d6eca490a223096a6b96dbda5f2c4a28763ee2fe31"
+    },
+    "entries/7608038/history.json.gz": {
+      "url": "entry/7608038/history/",
+      "bytes_raw": 1655,
+      "bytes_stored": 504,
+      "sha256": "e14c4d0940c4e135da25900e960cb2044fe15f552e79aeb724e1ef726029e463"
+    },
+    "entries/7608038/transfers.json.gz": {
+      "url": "entry/7608038/transfers/",
+      "bytes_raw": 1710,
+      "bytes_stored": 321,
+      "sha256": "16bd0c91bb92350de6266fb2a9c45f44c77b065e12c7e95d6e8c3e6c2eb1601e"
+    },
+    "entries/7608038/picks-gw04.json.gz": {
+      "url": "entry/7608038/event/4/picks/",
+      "bytes_raw": 1868,
+      "bytes_stored": 405,
+      "sha256": "0a869d79fd0d15a591bbefbf072a59063511f19df545ace23fbf0b878040d404"
+    },
+    "entries/6717125/entry.json.gz": {
+      "url": "entry/6717125/",
+      "bytes_raw": 5440,
+      "bytes_stored": 1219,
+      "sha256": "169d125911f36318fd28025f185f0318d348f98cac1f4f66cf9258cfff563736"
+    },
+    "entries/6717125/history.json.gz": {
+      "url": "entry/6717125/history/",
+      "bytes_raw": 1982,
+      "bytes_stored": 565,
+      "sha256": "365a60b18a8261f5e17992e23c5b4f5868268df8b737d39b9439ade4b8230e68"
+    },
+    "entries/6717125/transfers.json.gz": {
+      "url": "entry/6717125/transfers/",
+      "bytes_raw": 3140,
+      "bytes_stored": 500,
+      "sha256": "0d407dcc7913e929a854e2f5e2e0c107d35a2c10f9bbe2dddfbe10a6c1dbb48b"
+    },
+    "entries/6717125/picks-gw04.json.gz": {
+      "url": "entry/6717125/event/4/picks/",
+      "bytes_raw": 1868,
+      "bytes_stored": 404,
+      "sha256": "211308b5a966a7f8275a50db820857674dac58959017347bbd0993dbf1ccaad5"
+    }
+  }
+}
