@@ -538,19 +538,30 @@ def main() -> None:
         b["units_left"] = b.entry.map(units_left).fillna(0)
         b["projected"] = (b.live_pts + b.units_left * ppu).round(0)
         b["proj_rank"] = b.projected.rank(ascending=False, method="min").astype(int)
-        my = b[b.entry == me].iloc[0]
         my_contrib = df[(df.entry == me) & (df.multiplier > 0) & df.played].copy()
         my_contrib["scored"] = my_contrib.multiplier * my_contrib.gw_points
         top2 = my_contrib.nlargest(2, "scored")
 
+        # Where everyone stood before this gameweek's points landed, so the
+        # headline can say which way you actually moved. `prev` is a previous
+        # look *within* this gameweek and is often absent on a first run; the
+        # pre-gameweek table is always recoverable from the live scores.
+        gw_score = (df[df.multiplier > 0]
+                    .assign(scored=lambda d: d.multiplier * d.gw_points)
+                    .groupby("entry").scored.sum())
+        b["pre_pts"] = b.live_pts - b.entry.map(gw_score).fillna(0)
+        b["pre_rank"] = b.pre_pts.rank(ascending=False, method="min").astype(int)
+        my = b[b.entry == me].iloc[0]
+
         slides = []
         if played:
-            moved = ""
-            if prev is not None:
-                pr = int(prev[prev.entry == me]["rank"].iloc[0])
-                moved = f" from {ordinal(pr)}" if pr != int(my["rank"]) else ""
+            pr, now_rank = int(my.pre_rank), int(my["rank"])
+            move_title = (
+                f"You have held {ordinal(now_rank)} of {n}" if now_rank == pr else
+                f"You have {'climbed' if now_rank < pr else 'slipped'} "
+                f"from {ordinal(pr)} to {ordinal(now_rank)} of {n}")
             slides += [
-                (f"You have climbed{moved} to {ordinal(int(my['rank']))} of {n}",
+                (move_title,
                  slide_standings(b, me, label="Total points so far this season"), foot),
                 (f"But you are {ordinal(int(my.proj_rank))} once you count who still has "
                  f"players to play",
@@ -573,7 +584,8 @@ def main() -> None:
             (f"The game is buying {top_buy}, and {top_buy_owners} of the {n} here own him",
              slide_bandwagon(bootstrap, df, n, next_gw, top_buy),
              foot + f" Orange marks {top_buy}, the most-bought player in the game."),
-            (f"{in_top4} of the five most consistent managers are already in the top four",
+            (f"{in_top4} of the five most consistent managers "
+             f"{'is' if in_top4 == 1 else 'are'} already in the top four",
              slide_standings(b, me, highlight=lambda r: r.grp == "top5",
                              label="Total points so far this season"),
              foot + " Orange marks the five most consistent managers."),
