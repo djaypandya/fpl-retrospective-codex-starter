@@ -58,7 +58,7 @@ def svg(fig) -> str:
 
 
 def load(gws: list[int]) -> pd.DataFrame:
-    bs = json.load(gzip.open(sorted(SNAP.glob("gw03/*/bootstrap-static.json.gz"))[-1]))
+    bs = json.load(gzip.open(sorted(SNAP.glob("gw*/*/bootstrap-static.json.gz"))[-1]))
     name = {t["id"]: t["name"] for t in bs["teams"]}
     short = {t["id"]: t["short_name"] for t in bs["teams"]}
     club = {e["id"]: e["team"] for e in bs["elements"]}
@@ -94,7 +94,7 @@ def load_defcon(gws: list[int]) -> pd.DataFrame:
     up actions across eleven players and have nobody reach a threshold, which
     earns nothing. Both are returned so the gap can be shown.
     """
-    bs = json.load(gzip.open(sorted(SNAP.glob("gw03/*/bootstrap-static.json.gz"))[-1]))
+    bs = json.load(gzip.open(sorted(SNAP.glob("gw*/*/bootstrap-static.json.gz"))[-1]))
     meta = {e["id"]: (e["team"], e["element_type"], e["web_name"]) for e in bs["elements"]}
     name = {t["id"]: t["name"] for t in bs["teams"]}
     short = {t["id"]: t["short_name"] for t in bs["teams"]}
@@ -113,6 +113,29 @@ def load_defcon(gws: list[int]) -> pd.DataFrame:
                              mins=st["minutes"], dc=dc,
                              hit=int(dc >= DEFCON_THRESHOLD.get(pos, 10 ** 9))))
     return pd.DataFrame(rows)
+
+
+ENTRY = 46116  # the manager this report is written for
+
+
+def my_squad(gw: int) -> pd.DataFrame:
+    """The fifteen actually fielded in `gw`, from the newest snapshot of it.
+
+    The wildcard drafts under ``outputs/gw4_wildcard/`` are proposals, and the
+    squad that went in differed from them — so the snapshot's picks are the only
+    honest source for what was owned.
+    """
+    caps = sorted(SNAP.glob(f"gw{gw:02d}/*/entries/{ENTRY}/picks-gw{gw:02d}.json.gz"))
+    if not caps:
+        raise SystemExit(f"no snapshot of entry {ENTRY} for GW{gw}; run scripts/snapshot.py")
+    bs = json.load(gzip.open(sorted(SNAP.glob("gw*/*/bootstrap-static.json.gz"))[-1]))
+    el = {e["id"]: e for e in bs["elements"]}
+    name = {t["id"]: t["name"] for t in bs["teams"]}
+    picks = json.load(gzip.open(caps[-1]))["picks"]
+    return pd.DataFrame([
+        dict(player=el[p["element"]]["web_name"], pos=POSNAME[el[p["element"]]["element_type"]],
+             club=name[el[p["element"]]["team"]], starting=p["position"] <= 11)
+        for p in picks])
 
 
 def summarise(d: pd.DataFrame) -> pd.DataFrame:
@@ -333,12 +356,14 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--gws", type=int, nargs="+", default=[1, 2, 3])
     ap.add_argument("--out", default="TEAM_XG_TRENDS_GW1_3.pdf")
+    ap.add_argument("--squad-gw", type=int, default=None,
+                    help="gameweek whose locked squad to report on (default: last of --gws)")
     args = ap.parse_args()
 
     d = load(args.gws)
     a = summarise(d)
-    mine = set(pd.read_csv(REPO / "outputs/gw4_wildcard/squad_locked.csv")
-               .merge(a, left_on="club", right_on="team").short.unique())
+    squad = my_squad(args.squad_gw or args.gws[-1])
+    mine = set(squad.merge(a, left_on="club", right_on="team").short.unique())
 
     span = f"Gameweeks {args.gws[0]} to {args.gws[-1]}"
     foot = (f"{span}, {len(args.gws)} games per club. Expected goals measure the quality of "
@@ -365,7 +390,6 @@ def main() -> None:
     t = t.merge(bypos[["team", "DEF", "MID"]], on="team").rename(
         columns={"DEF": "def_hits", "MID": "mid_hits"})
 
-    squad = pd.read_csv(REPO / "outputs/gw4_wildcard/squad_locked.csv")
     owned = set(zip(squad.player, squad.club))
     mine_players = played.groupby(["player", "team", "pos"], as_index=False).agg(
         mins=("mins", "sum"), dc=("dc", "sum"), hits=("hit", "sum"))
