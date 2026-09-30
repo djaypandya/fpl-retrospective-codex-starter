@@ -240,6 +240,7 @@ def cmd_restore(season: str, gw: int, into: Path, at: str | None) -> None:
     into.mkdir(parents=True, exist_ok=True)
     (into / "picks").mkdir(exist_ok=True)
     (into / "history").mkdir(exist_ok=True)
+    (into / "transfers").mkdir(exist_ok=True)
 
     (into / "bootstrap.json").write_bytes(read_gz(src / "bootstrap-static.json.gz"))
     fixtures = json.loads(read_gz(src / "fixtures.json.gz"))
@@ -249,12 +250,23 @@ def cmd_restore(season: str, gw: int, into: Path, at: str | None) -> None:
     league_file = src / f"league-{league}-standings.json.gz"
     if league_file.exists():
         (into / f"standings_{league}.json").write_bytes(read_gz(league_file))
+    # league_report.py reads all three of these per entry. Leaving transfers out
+    # would send it back to the live API for them, which defeats the point of the
+    # archive and stops working entirely once the season rolls over.
+    missing = []
     for eid in m["entries"]:
         for stem, dest in [(f"picks-gw{gw:02d}", into / "picks" / f"{eid}.json"),
-                           ("history", into / "history" / f"{eid}.json")]:
+                           ("history", into / "history" / f"{eid}.json"),
+                           ("transfers", into / "transfers" / f"{eid}.json")]:
             f = src / "entries" / str(eid) / f"{stem}.json.gz"
             if f.exists():
                 dest.write_bytes(read_gz(f))
+            else:
+                missing.append(f"{eid}/{stem}")
+    if missing:
+        print(f"  WARNING: {len(missing)} file(s) absent from this capture, so the "
+              f"report will refetch them: {', '.join(missing[:5])}"
+              f"{' ...' if len(missing) > 5 else ''}")
     print(f"restored {m['captured_at']} ({m['matches']['finished']}/{m['matches']['total']} "
           f"matches finished) -> {into}")
 
