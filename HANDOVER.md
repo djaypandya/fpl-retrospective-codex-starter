@@ -25,8 +25,11 @@ it was written later and checked against the data.
 
 ## 1. Current state, verified 2026-09-30
 
-**Season:** 2026/27, live. GW5 is finished. **GW6 deadline is 2026-10-10 10:00Z** —
-a long gap because of the international break, so there is time to catch up.
+**Season:** 2026/27, live. GW5 is finished and archived. **GW6 deadline is
+2026-10-10 10:00Z** — a long gap because of the international break.
+
+**Snapshots:** gw01–gw05 all present under `data/snapshots/2026-27/`. GW4 has four
+captures spanning the gameweek; GW5 has one, taken after completion.
 
 **The user's season so far** (entry `46116`, "Numbers Don't Lie"):
 
@@ -51,44 +54,44 @@ user has seen the number and has not yet chosen to act on it.
 
 ### Git state
 
-- On branch `gw5-2026-27-plan`, clean, **pushed but not merged**.
-- `main` is at the GW4 merge (PR #14).
+`main` is current as of 2026-09-30 and holds everything below. It is a safe base to
+work from.
 
-**⚠ Two real bug fixes are stranded on the unmerged `gw5-2026-27-plan` branch.** If you
-work from `main` you will be running the broken versions. Verified by diffing the two
-branches:
-
-| | on `main` | on `gw5-2026-27-plan` |
-|---|---|---|
-| `team_trends.py` squad source | reads the **draft** `outputs/gw4_wildcard/squad_locked.csv` (2 call sites) — reports on a squad that was never fielded | reads the snapshot's actual picks |
-| `team_trends.py` `load_defcon` | player metadata pinned to the **GW3** bootstrap (2 call sites) — misses anyone registered since | newest bootstrap in the archive |
-| `--squad-gw` flag | absent | present |
-
-That branch also holds the GW5 diary entry, the GW1–4 trends refresh and
-`TEAM_XG_TRENDS_GW1_4.pdf`. Merging it is the cleanest way to un-strand the fixes —
-ask the user first.
+- PR #14 (GW4), **#16 (this handover)** and **#17 (GW5 journal + team-trends fixes)**
+  are all merged.
+- `scripts/team_trends.py` on `main` now reads the squad from the snapshot rather than
+  the wildcard draft CSV, takes the newest bootstrap in `load_defcon`, and exposes
+  `--squad-gw`. Both fixes were briefly stranded on an unmerged branch; they are not
+  any more. Verified on `main`.
+- **PR [#15](https://github.com/djaypandya/fpl-retrospective-codex-starter/pull/15) is
+  still open** — the OneDrive duplicate cleanup. Unmerged by choice so far, so the two
+  tracked duplicates `diary/2026-27/gw02 2.txt` and `gw03 2.txt` are still in `main`
+  and the `.gitignore` rule is not in effect. See trap 7 in §7.
+- PR #11 (`add-decision-cockpit`) has been open since July and appears abandoned — ask
+  before touching it.
 - **Two PRs are open and unmerged:**
   - [#15](https://github.com/djaypandya/fpl-retrospective-codex-starter/pull/15) — OneDrive duplicate cleanup
   - this handover's PR
-- Merged history: PR #12 (GW1), #13 (GW3), #14 (GW4). PR #11 (`add-decision-cockpit`)
-  has been open since July and appears abandoned — ask before touching it.
+- Merged history: PR #12 (GW1), #13 (GW3), #14 (GW4), #16 (handover), #17 (GW5).
 
 ---
 
 ## 2. Do these first
 
-**① Capture the GW5 snapshot. It was never taken.**
+**① ~~Capture the GW5 snapshot~~ — done 2026-09-30.**
 
-`data/snapshots/2026-27/` holds gw01–gw04 only. GW5 has been played and there is no
-archive of it. The picks, live scores and transfers are still fetchable today (I
-confirmed `entry/46116/event/5/picks/` still returns data), but the API **wipes all
-of it at season rollover** and there is no archive endpoint. Run:
+GW5 had been played and never archived; the gap was caught and closed twelve days
+late. `data/snapshots/2026-27/gw05/2026-09-30T0530Z/` now holds all 22 entries, 10/10
+matches finished, `data_checked=True` (so bonus points are final, unlike the GW4
+captures which were all taken while provisional). `snapshot.py verify` passes.
 
-```bash
-python3 scripts/snapshot.py capture --league 14074 --gw 5 --note "GW5 final, captured late"
-```
+**Still outstanding: the GW5 report and story have never been built** (§6.3). Run
+those next — the snapshot makes it reproducible offline now, so it is no longer
+time-critical.
 
-Then the report and story for GW5 (§6.3), which have also never been built.
+**The lesson worth keeping:** the snapshot is the one step that cannot be deferred
+safely. Everything else in the weekly cycle can be rebuilt from it afterwards. Capture
+first, analyse later.
 
 **② Backfill the midweek log for late September.** The log covers EFL Cup R2 (24 Aug),
 UCL MD1 (8–10 Sep) and Europa League MD1 (16–17 Sep), plus one future row for
@@ -274,8 +277,8 @@ python3 scripts/team_trends.py --gws 1 2 3 4 5 --out TEAM_XG_TRENDS_GW1_5.pdf
 ```
 
 `--squad-gw N` picks which gameweek's locked squad the DEFCON pages report on; it
-defaults to the last gameweek in `--gws`. **That flag, and the two fixes below, exist
-only on `gw5-2026-27-plan` — see the warning in §1 before running this from `main`.**
+defaults to the last gameweek in `--gws`. That flag and the two fixes below are on
+`main` as of 2026-09-30.
 
 This script read the user's squad from `outputs/gw4_wildcard/squad_locked.csv`, which
 is a **draft proposal, not the team that was fielded** — so it was describing a squad
