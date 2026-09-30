@@ -1,5 +1,20 @@
 # AGENTS.md
 
+> **Start with [HANDOVER.md](HANDOVER.md), not this file.**
+>
+> This document describes the project's first phase: a retrospective analysis of the
+> **2025/26** season for entry `816200`, run as a notebook with a sprint and kanban
+> workflow. That phase is finished and reached its conclusions — there is no live
+> sprint, and `STATUS.md` has not moved since 2026-05-30.
+>
+> The project is now live weekly decision support for the **2026/27** season, entry
+> `46116`, mini-league `14074`, driven by the scripts in `scripts/`. `HANDOVER.md` has
+> the current state, the weekly SOPs, and the data traps.
+>
+> Still accurate below, and worth reading: **Coding rules**, **Data rules**,
+> **FPL API assumptions**, **FPL scoring and rules context**, **Modelling principles**
+> and **Communication style**. The working style and entry ID have moved on.
+
 ## Project role
 
 You are the coding agent for an FPL season retrospective project.
